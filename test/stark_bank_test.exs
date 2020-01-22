@@ -2,7 +2,7 @@ defmodule StarkBankTest do
   use ExUnit.Case
   doctest StarkBank
 
-  test "greets the world" do
-    assert StarkBank.hello() == :world
+  test "logs into API" do
+    assert StarkBank.login()
   end
 end

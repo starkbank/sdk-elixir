@@ -1,18 +1,18 @@
 defmodule StarkBank do
   @moduledoc """
-  Documentation for StarkBank.
+  SDK to facilitate Elixir integrations with the Stark Bank API.
   """
 
   @doc """
-  Hello world.
+  Login.
 
   ## Examples
 
-      iex> StarkBank.hello()
+      iex> StarkBank.login()
       :world
 
   """
-  def hello do
-    :world
+  def login do
+    Credentials.login(:sandbox, "cdottori", "caio.dottori@starkbank.com", "starkstark")
   end
 end

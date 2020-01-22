@@ -6,7 +6,7 @@ defmodule StarkBank.MixProject do
       app: :stark_bank,
       name: :stark_bank,
       organization: :stark_bank,
-      licenses: [:MIT]
+      licenses: [:MIT],
       version: "1.0.0",
       homepage_url: "https://starkbank.com",
       source_url: "https://github.com/starkbank/sdk-elixir",
@@ -21,14 +21,10 @@ defmodule StarkBank.MixProject do
     "SDK to make integrations with the Stark Bank API easier."
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    []
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
