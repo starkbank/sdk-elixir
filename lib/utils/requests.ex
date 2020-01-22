@@ -13,7 +13,7 @@ defmodule Requests do
 
     url = get_base_url(credentials) ++ endpoint
 
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, _body}} =
+    {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
       :httpc.request(
         method,
         get_request_params(credentials, url, body),
@@ -29,14 +29,14 @@ defmodule Requests do
       body == nil ->
         {
           url,
-          map_to_json(get_headers(credentials)),
+          get_headers(credentials),
           'text/plain'
         }
 
       true ->
         {
           url,
-          map_to_json(get_headers(credentials)),
+          get_headers(credentials),
           'text/plain',
           map_to_json(body)
         }
@@ -48,15 +48,15 @@ defmodule Requests do
 
     cond do
       access_token == nil ->
-        %{
-          "Content-Type": 'application/json'
-        }
+        [
+          {'Content-Type', 'application/json'}
+        ]
 
       true ->
-        %{
-          "Content-Type": 'application/json',
-          "Access-Token": access_token
-        }
+        [
+          {'Content-Type', 'application/json'},
+          {'Access-Token', to_charlist(access_token)}
+        ]
     end
   end
 

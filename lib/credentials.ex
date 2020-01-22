@@ -17,7 +17,8 @@ defmodule Credentials do
       Requests.post(credentials, 'auth/access-token', %{
         workspace: Agent.get(credentials, fn map -> Map.get(map, :workspace) end),
         email: Agent.get(credentials, fn map -> Map.get(map, :email) end),
-        password: Agent.get(credentials, fn map -> Map.get(map, :password) end)
+        password: Agent.get(credentials, fn map -> Map.get(map, :password) end),
+        platform: "api"
       })
 
     Agent.update(credentials, fn map -> Map.put(map, :access_token, access_token) end)
