@@ -7,11 +7,11 @@ defmodule Requests do
     send(credentials, endpoint, :post, body, nil)
   end
 
-  def del(credentials, endpoint, parameters \\ nil) do
+  def delete(credentials, endpoint, parameters \\ nil) do
     send(credentials, endpoint, :delete, nil, parameters)
   end
 
-  defp send(credentials, endpoint, method, body \\ nil, parameters \\ nil) do
+  defp send(credentials, endpoint, method, body, parameters) do
     Application.ensure_all_started(:inets)
     Application.ensure_all_started(:ssl)
 
@@ -70,7 +70,7 @@ defmodule Requests do
     end
   end
 
-  defp get_url(credentials, endpoint, parameters \\ nil) do
+  defp get_url(credentials, endpoint, parameters) do
     url = get_base_url(credentials) ++ endpoint
 
     if parameters != nil do

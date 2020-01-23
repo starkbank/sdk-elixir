@@ -28,10 +28,16 @@ defmodule Charge do
       ids = for customer <- customers, do: extract_id_from_customer(customer)
 
       parameters = [
-        ids: ids
+        ids: treat_list(ids)
       ]
 
-      {status, response} = Requests.del(credentials, 'charge/customer', parameters)
+      {status, response} = Requests.delete(credentials, 'charge/customer', parameters)
+
+      if status == :ok do
+        {status, for(customer <- response["customers"], do: decode_customer(customer))}
+      else
+        {status, response}
+      end
     end
 
     defp treat_list(list) when list == nil do
