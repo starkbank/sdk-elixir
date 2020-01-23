@@ -19,10 +19,10 @@ defmodule Auth do
         platform: "api"
       })
 
-    access_token = body[:acessToken]
-    member_info = body[:memberInfo]
-    member_id = member_info[:id]
-    workspace_id = member_info[:workspaceId]
+    access_token = body["accessToken"]
+    member_info = body["memberInfo"]
+    member_id = member_info["id"]
+    workspace_id = member_info["workspaceId"]
 
     Agent.update(credentials, fn map -> Map.put(map, :access_token, access_token) end)
     Agent.update(credentials, fn map -> Map.put(map, :member_id, member_id) end)
