@@ -13,13 +13,15 @@ defmodule Requests do
 
     url = get_base_url(credentials) ++ endpoint
 
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
+    {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, body}} =
       :httpc.request(
         method,
         get_request_params(credentials, url, body),
         [],
         []
       )
+
+    {process_status_code(status_code), JSON.decode(body)}
   end
 
   defp get_request_params(credentials, url, body) do
@@ -38,13 +40,13 @@ defmodule Requests do
           url,
           get_headers(credentials),
           'text/plain',
-          map_to_json(body)
+          JSON.encode(body)
         }
     end
   end
 
   defp get_headers(credentials) do
-    access_token = get_access_token(credentials)
+    access_token = Auth.get_access_token(credentials)
 
     cond do
       access_token == nil ->
@@ -60,13 +62,8 @@ defmodule Requests do
     end
   end
 
-  defp map_to_json(map) do
-    list = for {k, v} <- map, do: "\"#{k}\": \"#{v}\""
-    to_charlist("{" <> Enum.join(list, ", ") <> "}")
-  end
-
   defp get_base_url(credentials) do
-    env = Agent.get(credentials, fn map -> Map.get(map, :env) end)
+    env = Auth.get_env(credentials)
 
     cond do
       env == :sandbox -> 'https://sandbox.api.starkbank.com/v1/'
@@ -74,7 +71,10 @@ defmodule Requests do
     end
   end
 
-  defp get_access_token(credentials) do
-    Agent.get(credentials, fn map -> Map.get(map, :access_token) end)
+  defp process_status_code(status_code) do
+    cond do
+      status_code == 200 -> :ok
+      true -> :error
+    end
   end
 end

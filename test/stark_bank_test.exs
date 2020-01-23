@@ -3,6 +3,6 @@ defmodule StarkBankTest do
   doctest StarkBank
 
   test "logs into API" do
-    assert StarkBank.login()
+    {:ok, _} = StarkBank.login(:sandbox, "username", "usuario@email.com", "password")
   end
 end
