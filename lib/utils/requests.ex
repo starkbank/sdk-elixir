@@ -1,6 +1,6 @@
 defmodule Requests do
-  def get(credentials, endpoint, parameters \\ nil) do
-    send(credentials, endpoint, :get, nil, parameters)
+  def get(credentials, endpoint, parameters \\ nil, decode_json \\ true) do
+    send(credentials, endpoint, :get, nil, parameters, decode_json)
   end
 
   def post(credentials, endpoint, body \\ nil) do
@@ -15,15 +15,14 @@ defmodule Requests do
     send(credentials, endpoint, :delete, nil, parameters)
   end
 
-  defp send(credentials, endpoint, method, body, parameters) do
+  defp send(credentials, endpoint, method, body, parameters, decode_json \\ true) do
     Application.ensure_all_started(:inets)
     Application.ensure_all_started(:ssl)
 
     url = get_url(credentials, endpoint, parameters)
 
-    IO.puts(url)
-
     IO.puts("\nsending " <> to_string(method))
+    IO.puts(url)
     IO.puts(inspect(get_request_params(credentials, url, body)))
     IO.puts(inspect(get_headers(credentials)))
 
@@ -36,9 +35,13 @@ defmodule Requests do
       )
 
     IO.puts("\nreceived")
-    IO.puts(to_string(body))
+    # IO.puts(to_string(body))
 
-    {process_status_code(status_code), JSON.decode(body)}
+    if decode_json do
+      {process_status_code(status_code), JSON.decode(body)}
+    else
+      {process_status_code(status_code), body}
+    end
   end
 
   defp get_request_params(credentials, url, body) when body == nil do

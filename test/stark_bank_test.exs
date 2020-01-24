@@ -97,6 +97,16 @@ defmodule StarkBankTest do
         50
       )
 
+    {:ok, pdf} =
+      Charge.get_pdf(
+        credentials,
+        hd(all_charges).id
+      )
+
+    {:ok, file} = File.open("charge.pdf", [:write])
+    IO.binwrite(file, to_string(pdf))
+    File.close(file)
+
     {:ok, _deleted_charges} =
       Charge.delete(
         credentials,

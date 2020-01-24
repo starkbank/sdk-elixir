@@ -120,4 +120,13 @@ defmodule Charge do
       {status, response}
     end
   end
+
+  def get_pdf(credentials, id) do
+    Requests.get(
+      credentials,
+      'charge/' ++ to_charlist(Helpers.extract_id(id)) ++ '/pdf',
+      nil,
+      false
+    )
+  end
 end
