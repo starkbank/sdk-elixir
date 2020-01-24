@@ -106,4 +106,18 @@ defmodule Charge do
       {status, response}
     end
   end
+
+  def delete(credentials, ids) do
+    parameters = [
+      ids: Helpers.treat_list(ids)
+    ]
+
+    {status, response} = Requests.delete(credentials, 'charge', parameters)
+
+    if status == :ok do
+      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
+    else
+      {status, response}
+    end
+  end
 end

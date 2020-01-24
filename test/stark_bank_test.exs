@@ -97,6 +97,12 @@ defmodule StarkBankTest do
         50
       )
 
+    {:ok, _deleted_charges} =
+      Charge.delete(
+        credentials,
+        [hd(all_charges).id]
+      )
+
     {:ok, _response} = Charge.Customer.delete(credentials, customers)
   end
 end

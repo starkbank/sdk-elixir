@@ -7,6 +7,10 @@ defmodule Requests do
     send(credentials, endpoint, :post, body, nil)
   end
 
+  def put(credentials, endpoint, body \\ nil) do
+    send(credentials, endpoint, :put, body, nil)
+  end
+
   def delete(credentials, endpoint, parameters \\ nil) do
     send(credentials, endpoint, :delete, nil, parameters)
   end
@@ -70,14 +74,21 @@ defmodule Requests do
     end
   end
 
-  defp get_url(credentials, endpoint, parameters) do
-    url = get_base_url(credentials) ++ endpoint
+  defp get_url(credentials, endpoint, parameters) when is_nil(parameters) do
+    get_base_url(credentials) ++ endpoint
+  end
 
-    if parameters != nil do
-      list = for {k, v} <- parameters, v != nil, do: "#{k}=#{v}"
-      url ++ to_charlist("?" <> String.replace(Enum.join(list, "&"), " ", "%20"))
+  defp get_url(credentials, endpoint, parameters) do
+    list = for {k, v} <- parameters, v != nil, do: "#{k}=#{v}"
+
+    if length(list) > 0 do
+      get_url(
+        credentials,
+        endpoint ++ to_charlist("?" <> String.replace(Enum.join(list, "&"), " ", "%20")),
+        nil
+      )
     else
-      url
+      get_url(credentials, endpoint, nil)
     end
   end
 
