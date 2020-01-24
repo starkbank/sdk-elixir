@@ -21,20 +21,7 @@ defmodule Requests do
 
     url = get_url(credentials, endpoint, parameters)
 
-    IO.puts("\nsending " <> to_string(method))
-    IO.puts(url)
-    IO.puts(inspect(get_request_params(credentials, url, body)))
-    IO.puts(inspect(get_headers(credentials)))
-
     {status_code, body} = make_http_request(method, credentials, url, body)
-
-    IO.puts("\nreceived:")
-
-    if String.contains?(to_string(url), "pdf") do
-      IO.puts("pdf")
-    else
-      IO.puts(to_string(body))
-    end
 
     if decode_json do
       {process_status_code(status_code), JSON.decode(body)}
