@@ -34,8 +34,13 @@ defmodule Requests do
         []
       )
 
-    IO.puts("\nreceived")
-    # IO.puts(to_string(body))
+    IO.puts("\nreceived:")
+
+    if String.contains?(to_string(url), "pdf") do
+      IO.puts("pdf")
+    else
+      IO.puts(to_string(body))
+    end
 
     if decode_json do
       {process_status_code(status_code), JSON.decode(body)}

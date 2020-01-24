@@ -94,6 +94,8 @@ defmodule StarkBankTest do
         ["cash-in"],
         [hd(all_charges).id],
         ["id", "taxId"],
+        Date.add(Date.utc_today(), -1),
+        Date.add(Date.utc_today(), 1),
         50
       )
 

@@ -245,12 +245,42 @@ defmodule Charge do
   @heredocs """
   accepted status: created, registered, paid, overdue, canceled, failed
   """
-  def get(credentials, status \\ nil, tags \\ nil, ids \\ nil, fields \\ nil, limit \\ nil) do
-    recursive_get(credentials, status, tags, ids, fields, limit, nil)
+  def get(
+        credentials,
+        status \\ nil,
+        tags \\ nil,
+        ids \\ nil,
+        fields \\ nil,
+        filter_after \\ nil,
+        filter_before \\ nil,
+        limit \\ nil
+      ) do
+    recursive_get(credentials, status, tags, ids, fields, filter_after, filter_before, limit, nil)
   end
 
-  defp recursive_get(credentials, status, tags, ids, fields, limit, cursor) do
-    {status, response} = partial_get(credentials, status, tags, ids, fields, limit, cursor)
+  defp recursive_get(
+         credentials,
+         status,
+         tags,
+         ids,
+         fields,
+         filter_after,
+         filter_before,
+         limit,
+         cursor
+       ) do
+    {status, response} =
+      partial_get(
+        credentials,
+        status,
+        tags,
+        ids,
+        fields,
+        filter_after,
+        filter_before,
+        limit,
+        cursor
+      )
 
     if status != :ok do
       {status, response}
@@ -267,6 +297,8 @@ defmodule Charge do
             tags,
             ids,
             fields,
+            filter_after,
+            filter_before,
             Helpers.get_recursive_limit(limit),
             new_cursor
           )
@@ -280,12 +312,24 @@ defmodule Charge do
     end
   end
 
-  defp partial_get(credentials, status, tags, ids, fields, limit, cursor) do
+  defp partial_get(
+         credentials,
+         status,
+         tags,
+         ids,
+         fields,
+         filter_after,
+         filter_before,
+         limit,
+         cursor
+       ) do
     parameters = [
       status: status,
       tags: Helpers.treat_list(tags),
       ids: Helpers.treat_list(ids),
       fields: Helpers.treat_list(fields),
+      after: Helpers.date_to_string(filter_after),
+      before: Helpers.date_to_string(filter_before),
       limit: limit,
       cursor: cursor
     ]
