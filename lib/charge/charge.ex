@@ -85,4 +85,25 @@ defmodule Charge do
       {status, response}
     end
   end
+
+  @heredocs """
+  accepted status: created, registered, paid, overdue, canceled, failed
+  """
+  def get(credentials, status \\ nil, tags \\ nil, ids \\ nil, fields \\ nil, limit \\ 100) do
+    parameters = [
+      status: status,
+      tags: Helpers.treat_list(tags),
+      ids: Helpers.treat_list(ids),
+      fields: Helpers.treat_list(fields),
+      limit: limit
+    ]
+
+    {status, response} = Requests.get(credentials, 'charge', parameters)
+
+    if status == :ok do
+      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
+    else
+      {status, response}
+    end
+  end
 end

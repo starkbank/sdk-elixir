@@ -45,7 +45,8 @@ defmodule StarkBankTest do
 
     {:ok, customers} = Charge.Customer.register(credentials, customers)
 
-    {:ok, _all_customers} = Charge.Customer.get(credentials, nil, ["Stark"], nil, 100)
+    {:ok, _all_customers} = Charge.Customer.get(credentials)
+    {:ok, _stark_customers} = Charge.Customer.get(credentials, nil, ["Stark"], nil, 100)
 
     {:ok, _customer} = Charge.Customer.get_by_id(credentials, hd(customers))
     {:ok, customer} = Charge.Customer.get_by_id(credentials, hd(customers).id)
@@ -58,12 +59,12 @@ defmodule StarkBankTest do
 
     charges = [
       %ChargeData{
-        amount: 10000,
-        customer_id: altered_customer.id
+        amount: 10_000,
+        customer: altered_customer.id
       },
       %ChargeData{
         amount: 100_000,
-        customer_id: "self",
+        customer: "self",
         due_date: Date.utc_today(),
         fine: 10,
         interest: 15,
@@ -72,17 +73,29 @@ defmodule StarkBankTest do
         descriptions: [
           %ChargeDescriptionData{
             text: "part-1",
-            amount: 30000
+            amount: 30_000
           },
           %ChargeDescriptionData{
             text: "part-2",
-            amount: 70000
+            amount: 70_000
           }
         ]
       }
     ]
 
     {:ok, _charges} = Charge.create(credentials, charges)
+
+    {:ok, all_charges} = Charge.get(credentials)
+
+    {:ok, _cash_in_charges} =
+      Charge.get(
+        credentials,
+        "registered",
+        ["cash-in"],
+        [hd(all_charges).id],
+        ["id", "taxId"],
+        50
+      )
 
     {:ok, _response} = Charge.Customer.delete(credentials, customers)
   end

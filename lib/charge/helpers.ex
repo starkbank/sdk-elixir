@@ -51,7 +51,7 @@ defmodule Helpers do
     def encode(charge) do
       %{
         amount: charge.amount,
-        customerId: Helpers.extract_id(charge.customer_id),
+        customerId: Helpers.extract_id(charge.customer),
         dueDate: Helpers.date_to_string(charge.due_date),
         fine: charge.fine,
         interest: charge.interest,
@@ -64,13 +64,28 @@ defmodule Helpers do
     def decode(charge_map) do
       %ChargeData{
         amount: charge_map["amount"],
-        customer_id: charge_map["customer_id"],
+        id: charge_map["id"],
+        bar_code: charge_map["barCode"],
+        line: charge_map["line"],
         due_date: charge_map["dueDate"],
         fine: charge_map["fine"],
         interest: charge_map["interest"],
         overdue_limit: charge_map["overdueLimit"],
         tags: charge_map["tags"],
-        descriptions: decode_descriptions(charge_map["descriptions"])
+        descriptions: decode_descriptions(charge_map["descriptions"]),
+        customer: %CustomerData{
+          name: charge_map["name"],
+          tax_id: charge_map["taxId"],
+          id: charge_map["customerId"],
+          address: %AddressData{
+            street_line_1: charge_map["streetLine1"],
+            street_line_2: charge_map["streetLine2"],
+            district: charge_map["district"],
+            city: charge_map["city"],
+            state_code: charge_map["stateCode"],
+            zip_code: charge_map["zipCode"]
+          }
+        }
       }
     end
 

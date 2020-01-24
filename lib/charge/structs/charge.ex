@@ -1,11 +1,15 @@
 defmodule ChargeData do
   defstruct [
-    :customer_id,
+    :customer,
     :amount,
+    id: nil,
+    bar_code: nil,
+    line: nil,
     due_date: nil,
+    issue_date: nil,
+    overdue_limit: nil,
     fine: nil,
     interest: nil,
-    overdue_limit: nil,
     tags: [],
     descriptions: []
   ]
