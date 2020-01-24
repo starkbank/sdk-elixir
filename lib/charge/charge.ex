@@ -145,7 +145,7 @@ defmodule Charge do
   end
 
   defmodule Log do
-    @heredocs """
+    @doc """
     allowed events: [register, registered, overdue, updated, canceled, failed, paid, bank]
     """
     def get(credentials, charge_ids, events \\ nil, limit \\ nil) do
@@ -242,7 +242,7 @@ defmodule Charge do
     end
   end
 
-  @heredocs """
+  @doc """
   accepted status: created, registered, paid, overdue, canceled, failed
   """
   def get(
