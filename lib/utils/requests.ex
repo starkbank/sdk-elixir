@@ -26,13 +26,7 @@ defmodule Requests do
     IO.puts(inspect(get_request_params(credentials, url, body)))
     IO.puts(inspect(get_headers(credentials)))
 
-    {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, body}} =
-      :httpc.request(
-        method,
-        get_request_params(credentials, url, body),
-        [],
-        []
-      )
+    {status_code, body} = make_http_request(method, credentials, url, body)
 
     IO.puts("\nreceived:")
 
@@ -46,6 +40,45 @@ defmodule Requests do
       {process_status_code(status_code), JSON.decode(body)}
     else
       {process_status_code(status_code), body}
+    end
+  end
+
+  defp make_http_request(method, credentials, url, body, is_retry \\ false) do
+    {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, body}} =
+      :httpc.request(
+        method,
+        get_request_params(credentials, url, body),
+        [],
+        []
+      )
+
+    if authentication_error?(body) do
+      if is_retry do
+        {401, body}
+      else
+        Auth.update_access_token(credentials)
+        make_http_request(method, credentials, url, body, true)
+      end
+    else
+      {status_code, body}
+    end
+  end
+
+  defp authentication_error?(body) do
+    if String.contains?(to_string(body), "invalidAccessToken") do
+      error = JSON.decode(body)["error"]
+
+      if !is_map(error) do
+        false
+      else
+        if error["code"] != "invalidAccessToken" do
+          false
+        else
+          true
+        end
+      end
+    else
+      false
     end
   end
 

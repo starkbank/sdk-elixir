@@ -174,4 +174,14 @@ defmodule Helpers do
   def chunk_list_by_max_limit(list) do
     Stream.chunk_every(list, @cursor_limit)
   end
+
+  def flatten_responses(response_list) do
+    errors = List.flatten(for {:error, response} <- response_list, do: response)
+
+    if length(errors) > 0 do
+      {:error, errors}
+    else
+      {:ok, List.flatten(for {:ok, response} <- response_list, do: response)}
+    end
+  end
 end

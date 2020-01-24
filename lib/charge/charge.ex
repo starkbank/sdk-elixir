@@ -5,11 +5,7 @@ defmodule Charge do
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
             do: partial_register(credentials, partial_customers)
 
-      try do
-        {:ok, List.flatten(for {:ok, response} <- registrations, do: response)}
-      rescue
-        e in MatchError -> {:error, e}
-      end
+      Helpers.flatten_responses(registrations)
     end
 
     defp partial_register(credentials, customers) do
@@ -108,11 +104,7 @@ defmodule Charge do
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
             do: partial_delete(credentials, partial_customers)
 
-      try do
-        {:ok, List.flatten(for {:ok, response} <- deletions, do: response)}
-      rescue
-        e in MatchError -> {:error, e}
-      end
+      Helpers.flatten_responses(deletions)
     end
 
     defp partial_delete(credentials, customers) do
@@ -222,11 +214,7 @@ defmodule Charge do
       for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
           do: partial_create(credentials, partial_charges)
 
-    try do
-      {:ok, List.flatten(for {:ok, response} <- creations, do: response)}
-    rescue
-      e in MatchError -> {:error, e}
-    end
+    Helpers.flatten_responses(creations)
   end
 
   defp partial_create(credentials, charges) do
@@ -354,11 +342,7 @@ defmodule Charge do
       for partial_ids <- Helpers.chunk_list_by_max_limit(ids),
           do: partial_delete(credentials, partial_ids)
 
-    try do
-      {:ok, List.flatten(for {:ok, response} <- deletions, do: response)}
-    rescue
-      e in MatchError -> {:error, e}
-    end
+    Helpers.flatten_responses(deletions)
   end
 
   defp partial_delete(credentials, ids) do
