@@ -117,7 +117,9 @@ defmodule StarkBankTest do
 
     {:ok, _response} = Charge.Log.get(credentials, hd(all_charges).id)
 
-    {:ok, _response} =
+    {:ok, charge_logs} =
       Charge.Log.get(credentials, hd(all_charges).id, ["registered", "cancel"], 30)
+
+    {:ok, _response} = Charge.Log.get_by_id(credentials, hd(charge_logs).id)
   end
 end
