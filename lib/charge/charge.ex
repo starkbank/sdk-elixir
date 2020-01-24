@@ -73,6 +73,39 @@ defmodule Charge do
     end
   end
 
+  defmodule Log do
+    @heredocs """
+    allowed events: [register, registered, overdue, updated, canceled, failed, paid, bank]
+    """
+    def get(credentials, charge_id, events \\ nil, limit \\ nil) do
+      parameters = [
+        chargeId: Helpers.extract_id(charge_id),
+        events: Helpers.treat_list(events),
+        limit: limit
+      ]
+
+      {status, response} = Requests.get(credentials, 'charge/log', parameters)
+
+      if status == :ok do
+        {status, for(log <- response["logs"], do: Helpers.ChargeLog.decode(log))}
+      else
+        {status, response}
+      end
+    end
+
+    def get_by_id(credentials, charge_log_id) do
+      id = Helpers.extract_id(charge_log_id)
+
+      {status, response} = Requests.get(credentials, 'charge/log/' ++ to_charlist(id))
+
+      if status == :ok do
+        {status, Helpers.ChargeLog.decode(response["log"])}
+      else
+        {status, response}
+      end
+    end
+  end
+
   def create(credentials, charges) do
     encoded_charges = for charge <- charges, do: Helpers.Charge.encode(charge)
     body = %{charges: encoded_charges}

@@ -109,6 +109,18 @@ defmodule Helpers do
     end
   end
 
+  defmodule ChargeLog do
+    def decode(charge_log_map) do
+      %ChargeLogData{
+        id: charge_log_map["id"],
+        event: charge_log_map["event"],
+        created: charge_log_map["created"],
+        errors: charge_log_map["errors"],
+        charge: Charge.decode(charge_log_map["charge"])
+      }
+    end
+  end
+
   def treat_list(list) when list == nil do
     nil
   end

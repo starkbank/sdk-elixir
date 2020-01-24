@@ -104,7 +104,7 @@ defmodule StarkBankTest do
       )
 
     {:ok, file} = File.open("charge.pdf", [:write])
-    IO.binwrite(file, to_string(pdf))
+    IO.binwrite(file, pdf)
     File.close(file)
 
     {:ok, _deleted_charges} =
@@ -114,5 +114,10 @@ defmodule StarkBankTest do
       )
 
     {:ok, _response} = Charge.Customer.delete(credentials, customers)
+
+    {:ok, _response} = Charge.Log.get(credentials, hd(all_charges).id)
+
+    {:ok, _response} =
+      Charge.Log.get(credentials, hd(all_charges).id, ["registered", "cancel"], 30)
   end
 end
