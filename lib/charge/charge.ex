@@ -1,32 +1,93 @@
 defmodule Charge do
   defmodule Customer do
     def register(credentials, customers) do
+      registrations =
+        for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
+            do: partial_register(credentials, partial_customers)
+
+      try do
+        {:ok, List.flatten(for {:ok, response} <- registrations, do: response)}
+      rescue
+        e in MatchError -> {:error, e}
+      end
+    end
+
+    defp partial_register(credentials, customers) do
       encoded_customers = for customer <- customers, do: Helpers.Customer.encode(customer)
       body = %{customers: encoded_customers}
 
       {status, response} = Requests.post(credentials, 'charge/customer', body)
 
-      if status == :ok do
-        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
       end
     end
 
-    def get(credentials, fields \\ nil, tags \\ nil, taxId \\ nil, limit \\ 100) do
+    def get(credentials, fields \\ nil, tags \\ nil, taxId \\ nil, limit \\ nil) do
+      recursive_get(credentials, fields, tags, taxId, limit, nil)
+    end
+
+    defp recursive_get(credentials, fields, tags, taxId, limit, cursor) do
+      {status, response} = partial_get(credentials, fields, tags, taxId, limit, cursor)
+
+      if status != :ok do
+        {status, response}
+      else
+        %{cursor: new_cursor, customers: customers} = response
+
+        if is_nil(cursor) or Helpers.check_limit(limit) do
+          {status, response[:customers]}
+        else
+          {new_status, new_response} =
+            recursive_get(
+              credentials,
+              fields,
+              tags,
+              taxId,
+              Helpers.get_recursive_limit(limit),
+              new_cursor
+            )
+
+          if new_status != :ok do
+            {new_status, new_response}
+          else
+            {new_status, customers ++ new_response[:customers]}
+          end
+        end
+      end
+    end
+
+    defp partial_get(
+           credentials,
+           fields,
+           tags,
+           taxId,
+           limit,
+           cursor
+         ) do
       parameters = [
         fields: Helpers.treat_list(fields),
         tags: Helpers.treat_list(tags),
         taxId: taxId,
-        limit: limit
+        limit: Helpers.truncate_limit(limit),
+        cursor: cursor
       ]
 
       {status, response} = Requests.get(credentials, 'charge/customer', parameters)
 
-      if status == :ok do
-        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {
+          status,
+          %{
+            cursor: response["cursor"],
+            customers:
+              for(customer <- response["customers"], do: Helpers.Customer.decode(customer))
+          }
+        }
       end
     end
 
@@ -35,26 +96,36 @@ defmodule Charge do
 
       {status, response} = Requests.get(credentials, 'charge/customer/' ++ to_charlist(id))
 
-      if status == :ok do
-        {status, Helpers.Customer.decode(response["customer"])}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {status, Helpers.Customer.decode(response["customer"])}
       end
     end
 
     def delete(credentials, customers) do
-      ids = for customer <- customers, do: Helpers.extract_id(customer)
+      deletions =
+        for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
+            do: partial_delete(credentials, partial_customers)
 
+      try do
+        {:ok, List.flatten(for {:ok, response} <- deletions, do: response)}
+      rescue
+        e in MatchError -> {:error, e}
+      end
+    end
+
+    defp partial_delete(credentials, customers) do
       parameters = [
-        ids: Helpers.treat_list(ids)
+        ids: Helpers.treat_list(for customer <- customers, do: Helpers.extract_id(customer))
       ]
 
       {status, response} = Requests.delete(credentials, 'charge/customer', parameters)
 
-      if status == :ok do
-        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
       end
     end
 
@@ -65,10 +136,10 @@ defmodule Charge do
       {status, response} =
         Requests.put(credentials, 'charge/customer/' ++ to_charlist(customer.id), body)
 
-      if status == :ok do
-        {status, Helpers.Customer.decode(response["customer"])}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {status, Helpers.Customer.decode(response["customer"])}
       end
     end
   end
@@ -78,18 +149,58 @@ defmodule Charge do
     allowed events: [register, registered, overdue, updated, canceled, failed, paid, bank]
     """
     def get(credentials, charge_id, events \\ nil, limit \\ nil) do
+      recursive_get(credentials, charge_id, events, limit, nil)
+    end
+
+    defp recursive_get(credentials, charge_id, events, limit, cursor) do
+      {status, response} = partial_get(credentials, charge_id, events, limit, cursor)
+
+      if status != :ok do
+        {status, response}
+      else
+        %{cursor: new_cursor, logs: logs} = response
+
+        if is_nil(cursor) or Helpers.check_limit(limit) do
+          {status, response[:logs]}
+        else
+          {new_status, new_response} =
+            recursive_get(
+              credentials,
+              charge_id,
+              events,
+              Helpers.get_recursive_limit(limit),
+              new_cursor
+            )
+
+          if new_status != :ok do
+            {new_status, new_response}
+          else
+            {new_status, logs ++ new_response[:logs]}
+          end
+        end
+      end
+    end
+
+    defp partial_get(credentials, charge_id, events, limit, cursor) do
       parameters = [
         chargeId: Helpers.extract_id(charge_id),
         events: Helpers.treat_list(events),
-        limit: limit
+        limit: limit,
+        cursor: cursor
       ]
 
       {status, response} = Requests.get(credentials, 'charge/log', parameters)
 
-      if status == :ok do
-        {status, for(log <- response["logs"], do: Helpers.ChargeLog.decode(log))}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {
+          status,
+          %{
+            cursor: response["cursor"],
+            logs: for(log <- response["logs"], do: Helpers.ChargeLog.decode(log))
+          }
+        }
       end
     end
 
@@ -98,59 +209,125 @@ defmodule Charge do
 
       {status, response} = Requests.get(credentials, 'charge/log/' ++ to_charlist(id))
 
-      if status == :ok do
-        {status, Helpers.ChargeLog.decode(response["log"])}
-      else
+      if status != :ok do
         {status, response}
+      else
+        {status, Helpers.ChargeLog.decode(response["log"])}
       end
     end
   end
 
   def create(credentials, charges) do
+    creations =
+      for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
+          do: partial_create(credentials, partial_charges)
+
+    try do
+      {:ok, List.flatten(for {:ok, response} <- creations, do: response)}
+    rescue
+      e in MatchError -> {:error, e}
+    end
+  end
+
+  defp partial_create(credentials, charges) do
     encoded_charges = for charge <- charges, do: Helpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
     {status, response} = Requests.post(credentials, 'charge', body)
 
-    if status == :ok do
-      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
-    else
+    if status != :ok do
       {status, response}
+    else
+      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
     end
   end
 
   @heredocs """
   accepted status: created, registered, paid, overdue, canceled, failed
   """
-  def get(credentials, status \\ nil, tags \\ nil, ids \\ nil, fields \\ nil, limit \\ 100) do
+  def get(credentials, status \\ nil, tags \\ nil, ids \\ nil, fields \\ nil, limit \\ nil) do
+    recursive_get(credentials, status, tags, ids, fields, limit, nil)
+  end
+
+  defp recursive_get(credentials, status, tags, ids, fields, limit, cursor) do
+    {status, response} = partial_get(credentials, status, tags, ids, fields, limit, cursor)
+
+    if status != :ok do
+      {status, response}
+    else
+      %{cursor: new_cursor, charges: charges} = response
+
+      if is_nil(cursor) or Helpers.check_limit(limit) do
+        {status, response[:charges]}
+      else
+        {new_status, new_response} =
+          recursive_get(
+            credentials,
+            status,
+            tags,
+            ids,
+            fields,
+            Helpers.get_recursive_limit(limit),
+            new_cursor
+          )
+
+        if new_status != :ok do
+          {new_status, new_response}
+        else
+          {new_status, charges ++ new_response[:charges]}
+        end
+      end
+    end
+  end
+
+  defp partial_get(credentials, status, tags, ids, fields, limit, cursor) do
     parameters = [
       status: status,
       tags: Helpers.treat_list(tags),
       ids: Helpers.treat_list(ids),
       fields: Helpers.treat_list(fields),
-      limit: limit
+      limit: limit,
+      cursor: cursor
     ]
 
     {status, response} = Requests.get(credentials, 'charge', parameters)
 
-    if status == :ok do
-      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
-    else
+    if status != :ok do
       {status, response}
+    else
+      {
+        status,
+        %{
+          cursor: response["cursor"],
+          charges: for(charge <- response["charges"], do: Helpers.Charge.decode(charge))
+        }
+      }
     end
   end
 
   def delete(credentials, ids) do
+    deletions =
+      for partial_ids <- Helpers.chunk_list_by_max_limit(ids),
+          do: partial_delete(credentials, partial_ids)
+
+    try do
+      {:ok, List.flatten(for {:ok, response} <- deletions, do: response)}
+    rescue
+      e in MatchError -> {:error, e}
+    end
+  end
+
+  defp partial_delete(credentials, ids) do
     parameters = [
       ids: Helpers.treat_list(ids)
     ]
 
     {status, response} = Requests.delete(credentials, 'charge', parameters)
 
-    if status == :ok do
-      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
-    else
+    if status != :ok do
       {status, response}
+    else
+      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
     end
   end
 

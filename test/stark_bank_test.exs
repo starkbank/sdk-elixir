@@ -46,7 +46,7 @@ defmodule StarkBankTest do
     {:ok, customers} = Charge.Customer.register(credentials, customers)
 
     {:ok, _all_customers} = Charge.Customer.get(credentials)
-    {:ok, _stark_customers} = Charge.Customer.get(credentials, nil, ["Stark"], nil, 100)
+    {:ok, _stark_customers} = Charge.Customer.get(credentials, nil, ["Stark"], nil, nil)
 
     {:ok, _customer} = Charge.Customer.get_by_id(credentials, hd(customers))
     {:ok, customer} = Charge.Customer.get_by_id(credentials, hd(customers).id)

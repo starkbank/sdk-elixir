@@ -1,4 +1,6 @@
 defmodule Helpers do
+  @cursor_limit 100
+
   defmodule Customer do
     def encode(customer) do
       address = customer.address
@@ -147,5 +149,29 @@ defmodule Helpers do
 
   def date_to_string(date) do
     "#{date.year}-#{date.month}-#{date.day}"
+  end
+
+  def get_recursive_limit(limit) when is_nil(limit) do
+    nil
+  end
+
+  def get_recursive_limit(limit) do
+    limit - @cursor_limit
+  end
+
+  def truncate_limit(limit) when is_nil(limit) or limit > @cursor_limit do
+    @cursor_limit
+  end
+
+  def truncate_limit(limit) do
+    limit
+  end
+
+  def check_limit(limit) do
+    !is_nil(limit) and limit <= @cursor_limit
+  end
+
+  def chunk_list_by_max_limit(list) do
+    Stream.chunk_every(list, @cursor_limit)
   end
 end
