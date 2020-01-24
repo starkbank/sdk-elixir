@@ -167,7 +167,7 @@ defmodule Helpers do
     limit
   end
 
-  def check_limit(limit) do
+  def limit_below_maximum?(limit) do
     !is_nil(limit) and limit <= @cursor_limit
   end
 

@@ -37,7 +37,7 @@ defmodule Charge do
       else
         %{cursor: new_cursor, customers: customers} = response
 
-        if is_nil(cursor) or Helpers.check_limit(limit) do
+        if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
           {status, response[:customers]}
         else
           {new_status, new_response} =
@@ -160,7 +160,7 @@ defmodule Charge do
       else
         %{cursor: new_cursor, logs: logs} = response
 
-        if is_nil(cursor) or Helpers.check_limit(limit) do
+        if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
           {status, response[:logs]}
         else
           {new_status, new_response} =
@@ -257,7 +257,7 @@ defmodule Charge do
     else
       %{cursor: new_cursor, charges: charges} = response
 
-      if is_nil(cursor) or Helpers.check_limit(limit) do
+      if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
         {status, response[:charges]}
       else
         {new_status, new_response} =
