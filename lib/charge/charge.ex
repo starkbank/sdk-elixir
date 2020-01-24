@@ -148,12 +148,12 @@ defmodule Charge do
     @heredocs """
     allowed events: [register, registered, overdue, updated, canceled, failed, paid, bank]
     """
-    def get(credentials, charge_id, events \\ nil, limit \\ nil) do
-      recursive_get(credentials, charge_id, events, limit, nil)
+    def get(credentials, charge_ids, events \\ nil, limit \\ nil) do
+      recursive_get(credentials, charge_ids, events, limit, nil)
     end
 
-    defp recursive_get(credentials, charge_id, events, limit, cursor) do
-      {status, response} = partial_get(credentials, charge_id, events, limit, cursor)
+    defp recursive_get(credentials, charge_ids, events, limit, cursor) do
+      {status, response} = partial_get(credentials, charge_ids, events, limit, cursor)
 
       if status != :ok do
         {status, response}
@@ -166,7 +166,7 @@ defmodule Charge do
           {new_status, new_response} =
             recursive_get(
               credentials,
-              charge_id,
+              charge_ids,
               events,
               Helpers.get_recursive_limit(limit),
               new_cursor
@@ -181,9 +181,9 @@ defmodule Charge do
       end
     end
 
-    defp partial_get(credentials, charge_id, events, limit, cursor) do
+    defp partial_get(credentials, charge_ids, events, limit, cursor) do
       parameters = [
-        chargeId: Helpers.extract_id(charge_id),
+        chargeIds: for(charge_id <- charge_ids, do: Helpers.extract_id(charge_id)),
         events: Helpers.treat_list(events),
         limit: limit,
         cursor: cursor
