@@ -72,4 +72,17 @@ defmodule Charge do
       end
     end
   end
+
+  def create(credentials, charges) do
+    encoded_charges = for charge <- charges, do: Helpers.Charge.encode(charge)
+    body = %{charges: encoded_charges}
+
+    {status, response} = Requests.post(credentials, 'charge', body)
+
+    if status == :ok do
+      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
+    else
+      {status, response}
+    end
+  end
 end

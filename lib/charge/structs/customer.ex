@@ -5,7 +5,7 @@ defmodule CustomerData do
             tax_id: "",
             phone: "",
             id: nil,
-            charge_count: %ChargeCount{},
+            charge_count: %ChargeCountData{},
             address: %AddressData{},
             tags: []
 end

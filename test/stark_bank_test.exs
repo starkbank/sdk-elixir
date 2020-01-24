@@ -7,7 +7,7 @@ defmodule StarkBankTest do
   @email "user@email.com"
   @password "password"
 
-  test "charge customer" do
+  test "charge" do
     {:ok, credentials} = Auth.login(@env, @username, @email, @password)
 
     customers = [
@@ -52,9 +52,37 @@ defmodule StarkBankTest do
 
     altered_customer = %{customer | name: "No One"}
 
-    {:ok, _altered_customer} = Charge.Customer.overwrite(credentials, altered_customer)
+    {:ok, altered_customer} = Charge.Customer.overwrite(credentials, altered_customer)
 
     {:ok, customers} = Charge.Customer.get(credentials, nil, ["Stark"], nil, 100)
+
+    charges = [
+      %ChargeData{
+        amount: 10000,
+        customer_id: altered_customer.id
+      },
+      %ChargeData{
+        amount: 100_000,
+        customer_id: "self",
+        due_date: Date.utc_today(),
+        fine: 10,
+        interest: 15,
+        overdue_limit: 3,
+        tags: ["cash-in"],
+        descriptions: [
+          %ChargeDescriptionData{
+            text: "part-1",
+            amount: 30000
+          },
+          %ChargeDescriptionData{
+            text: "part-2",
+            amount: 70000
+          }
+        ]
+      }
+    ]
+
+    {:ok, _charges} = Charge.create(credentials, charges)
 
     {:ok, _response} = Charge.Customer.delete(credentials, customers)
   end

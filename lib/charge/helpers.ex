@@ -1,20 +1,4 @@
 defmodule Helpers do
-  def treat_list(list) when list == nil do
-    nil
-  end
-
-  def treat_list(list) do
-    Enum.join(list, ",")
-  end
-
-  def extract_id(id) when is_binary(id) or is_integer(id) do
-    id
-  end
-
-  def extract_id(struct) do
-    struct.id
-  end
-
   defmodule Customer do
     def encode(customer) do
       address = customer.address
@@ -46,7 +30,7 @@ defmodule Helpers do
         tax_id: customer_map["taxId"],
         phone: customer_map["phone"],
         id: customer_map["id"],
-        charge_count: %ChargeCount{
+        charge_count: %ChargeCountData{
           overdue: charge_count["overdue"],
           pending: charge_count["pending"]
         },
@@ -65,49 +49,76 @@ defmodule Helpers do
 
   defmodule Charge do
     def encode(charge) do
-      address = charge.address
-
       %{
-        name: charge.name,
-        email: charge.email,
-        taxId: charge.tax_id,
-        phone: charge.phone,
+        amount: charge.amount,
+        customerId: Helpers.extract_id(charge.customer_id),
+        dueDate: Helpers.date_to_string(charge.due_date),
+        fine: charge.fine,
+        interest: charge.interest,
+        overdueLimit: charge.overdue_limit,
         tags: charge.tags,
-        address: %{
-          streetLine1: address.street_line_1,
-          streetLine2: address.street_line_2,
-          district: address.district,
-          city: address.city,
-          stateCode: address.state_code,
-          zipCode: address.zip_code
-        }
+        descriptions: for(description <- charge.descriptions, do: encode_description(description))
       }
     end
 
     def decode(charge_map) do
-      charge_count = charge_map["chargeCount"]
-      address = charge_map["address"]
-
-      %CustomerData{
-        name: charge_map["name"],
-        email: charge_map["email"],
-        tax_id: charge_map["taxId"],
-        phone: charge_map["phone"],
-        id: charge_map["id"],
-        charge_count: %ChargeCount{
-          overdue: charge_count["overdue"],
-          pending: charge_count["pending"]
-        },
-        address: %AddressData{
-          street_line_1: address["streetLine1"],
-          street_line_2: address["streetLine2"],
-          district: address["district"],
-          city: address["city"],
-          state_code: address["stateCode"],
-          zip_code: address["zipCode"]
-        },
-        tags: charge_map["tags"]
+      %ChargeData{
+        amount: charge_map["amount"],
+        customer_id: charge_map["customer_id"],
+        due_date: charge_map["dueDate"],
+        fine: charge_map["fine"],
+        interest: charge_map["interest"],
+        overdue_limit: charge_map["overdueLimit"],
+        tags: charge_map["tags"],
+        descriptions: decode_descriptions(charge_map["descriptions"])
       }
     end
+
+    defp encode_description(description) do
+      %{text: description.text, amount: description.amount}
+    end
+
+    defp decode_descriptions(descriptions) when is_nil(descriptions) do
+      []
+    end
+
+    defp decode_descriptions(descriptions) do
+      for description_map <- descriptions, do: decode_description(description_map)
+    end
+
+    defp decode_description(description) do
+      %ChargeDescriptionData{
+        text: description["text"],
+        amount: description["amount"]
+      }
+    end
+  end
+
+  def treat_list(list) when list == nil do
+    nil
+  end
+
+  def treat_list(list) do
+    Enum.join(list, ",")
+  end
+
+  def extract_id(id) when is_binary(id) or is_integer(id) do
+    id
+  end
+
+  def extract_id(struct) do
+    struct.id
+  end
+
+  def date_to_string(date) when is_nil(date) do
+    nil
+  end
+
+  def date_to_string(date) when is_binary(date) do
+    date
+  end
+
+  def date_to_string(date) do
+    "#{date.year}-#{date.month}-#{date.day}"
   end
 end
