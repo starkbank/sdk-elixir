@@ -1,5 +1,7 @@
 defmodule StarkBank.Utils.Requests do
   alias StarkBank.Utils.JSON, as: JSON
+  alias StarkBank.Utils.Requests.APILinks, as: APILinks
+  alias StarkBank.Utils.Requests.HTTPStatus, as: HTTPStatus
 
   def get(credentials, endpoint, parameters \\ nil, decode_json \\ true) do
     send(credentials, endpoint, :get, nil, parameters, decode_json)
@@ -43,7 +45,7 @@ defmodule StarkBank.Utils.Requests do
 
     if authentication_error?(response_body) do
       if is_retry do
-        {401, response_body}
+        {HTTPStatus.unauthorized(), response_body}
       else
         StarkBank.Auth.update_access_token(credentials)
         make_http_request(method, credentials, url, body, true)
@@ -119,17 +121,13 @@ defmodule StarkBank.Utils.Requests do
   end
 
   defp get_base_url(credentials) do
-    env = StarkBank.Auth.get_env(credentials)
-
-    cond do
-      env == :sandbox -> 'https://sandbox.api.starkbank.com/v1/'
-      env == :production -> 'https://api.starkbank.com/v1/'
-    end
+    StarkBank.Auth.get_env(credentials)
+    |> APILinks.get_url_by_env()
   end
 
   defp process_status_code(status_code) do
     cond do
-      status_code == 200 -> :ok
+      status_code == HTTPStatus.ok() -> :ok
       true -> :error
     end
   end
