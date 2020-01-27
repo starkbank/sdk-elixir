@@ -57,14 +57,10 @@ defmodule StarkBank.Utils.Requests do
     if String.contains?(to_string(body), "invalidAccessToken") do
       error = JSON.decode(body)["error"]
 
-      if !is_map(error) do
-        false
-      else
-        if error["code"] != "invalidAccessToken" do
-          false
-        else
-          true
-        end
+      cond do
+        !is_map(error) -> false
+        error["code"] == "invalidAccessToken" -> true
+        true -> false
       end
     else
       false
