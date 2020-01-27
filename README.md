@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a simplified pure Elixir SDK to ease integrations with the Auth and Charge sections of the [Stark Bank](https://starkbank.com) [API](https://docs.api.starkbank.com/?version=latest) v1.
+This is a simplified pure Elixir SDK to ease integrations with the Auth and Charge services of the [Stark Bank](https://starkbank.com) [API](https://docs.api.starkbank.com/?version=latest) v1.
 
 ## Installation
 
@@ -158,4 +158,13 @@ StarkBank.Charge.delete(
 {:ok, response} = StarkBank.Charge.Log.get(credentials, [hd(all_charges).id])
 # or
 {:ok, response} = StarkBank.Charge.Log.get_by_id(credentials, hd(charge_logs).id)
+```
+
+## Test
+
+Alter @env, @username, @email, @password to your values on test/stark_bank_test.exs. IMPORTANT: Avoid using your production credentials to run this test script, as it will request creations and deletions of charges and related entities.
+
+Afterwards, run:
+```sh
+mix test
 ```
