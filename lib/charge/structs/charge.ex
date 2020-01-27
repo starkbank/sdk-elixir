@@ -1,4 +1,4 @@
-defmodule ChargeData do
+defmodule StarkBank.Charge.Structs.ChargeData do
   defstruct [
     :customer,
     :amount,

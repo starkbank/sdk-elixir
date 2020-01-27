@@ -1,4 +1,4 @@
-defmodule Auth do
+defmodule StarkBank.Auth do
   @doc """
   creates a new access-token and invalidates all others
 
@@ -12,6 +12,9 @@ defmodule Auth do
   PID of agent that holds the credentials information, including the access-token
   this PID must be passed as parameter to all SDK calls
   """
+
+  alias StarkBank.Utils.Requests, as: Requests
+
   def login(env, workspace, email, password) do
     {:ok, credentials} = Agent.start_link(fn -> %{} end)
 

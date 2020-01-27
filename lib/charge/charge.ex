@@ -1,5 +1,13 @@
-defmodule Charge do
+defmodule StarkBank.Charge do
+  alias StarkBank.Utils.Helpers, as: Helpers
+  alias StarkBank.Utils.Requests, as: Requests
+  alias StarkBank.Charge.Helpers, as: ChargeHelpers
+
   defmodule Customer do
+    @doc """
+    Registers a new customer that can be linked with charge emissions
+    """
+
     def register(credentials, customers) do
       registrations =
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
@@ -9,7 +17,7 @@ defmodule Charge do
     end
 
     defp partial_register(credentials, customers) do
-      encoded_customers = for customer <- customers, do: Helpers.Customer.encode(customer)
+      encoded_customers = for customer <- customers, do: ChargeHelpers.Customer.encode(customer)
       body = %{customers: encoded_customers}
 
       {status, response} = Requests.post(credentials, 'charge/customer', body)
@@ -17,7 +25,8 @@ defmodule Charge do
       if status != :ok do
         {status, response}
       else
-        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
+        {status,
+         for(customer <- response["customers"], do: ChargeHelpers.Customer.decode(customer))}
       end
     end
 
@@ -81,7 +90,7 @@ defmodule Charge do
           %{
             cursor: response["cursor"],
             customers:
-              for(customer <- response["customers"], do: Helpers.Customer.decode(customer))
+              for(customer <- response["customers"], do: ChargeHelpers.Customer.decode(customer))
           }
         }
       end
@@ -95,7 +104,7 @@ defmodule Charge do
       if status != :ok do
         {status, response}
       else
-        {status, Helpers.Customer.decode(response["customer"])}
+        {status, ChargeHelpers.Customer.decode(response["customer"])}
       end
     end
 
@@ -117,12 +126,13 @@ defmodule Charge do
       if status != :ok do
         {status, response}
       else
-        {status, for(customer <- response["customers"], do: Helpers.Customer.decode(customer))}
+        {status,
+         for(customer <- response["customers"], do: ChargeHelpers.Customer.decode(customer))}
       end
     end
 
     def overwrite(credentials, customer) do
-      encoded_customers = Helpers.Customer.encode(customer)
+      encoded_customers = ChargeHelpers.Customer.encode(customer)
       body = %{customer: encoded_customers}
 
       {status, response} =
@@ -131,7 +141,7 @@ defmodule Charge do
       if status != :ok do
         {status, response}
       else
-        {status, Helpers.Customer.decode(response["customer"])}
+        {status, ChargeHelpers.Customer.decode(response["customer"])}
       end
     end
   end
@@ -190,7 +200,7 @@ defmodule Charge do
           status,
           %{
             cursor: response["cursor"],
-            logs: for(log <- response["logs"], do: Helpers.ChargeLog.decode(log))
+            logs: for(log <- response["logs"], do: ChargeHelpers.ChargeLog.decode(log))
           }
         }
       end
@@ -204,7 +214,7 @@ defmodule Charge do
       if status != :ok do
         {status, response}
       else
-        {status, Helpers.ChargeLog.decode(response["log"])}
+        {status, ChargeHelpers.ChargeLog.decode(response["log"])}
       end
     end
   end
@@ -218,7 +228,7 @@ defmodule Charge do
   end
 
   defp partial_create(credentials, charges) do
-    encoded_charges = for charge <- charges, do: Helpers.Charge.encode(charge)
+    encoded_charges = for charge <- charges, do: ChargeHelpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
     {status, response} = Requests.post(credentials, 'charge', body)
@@ -226,7 +236,7 @@ defmodule Charge do
     if status != :ok do
       {status, response}
     else
-      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
+      {status, for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
     end
   end
 
@@ -331,7 +341,7 @@ defmodule Charge do
         status,
         %{
           cursor: response["cursor"],
-          charges: for(charge <- response["charges"], do: Helpers.Charge.decode(charge))
+          charges: for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))
         }
       }
     end
@@ -355,7 +365,7 @@ defmodule Charge do
     if status != :ok do
       {status, response}
     else
-      {status, for(charge <- response["charges"], do: Helpers.Charge.decode(charge))}
+      {status, for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
     end
   end
 

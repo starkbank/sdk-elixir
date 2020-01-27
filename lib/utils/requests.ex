@@ -1,4 +1,6 @@
-defmodule Requests do
+defmodule StarkBank.Utils.Requests do
+  alias StarkBank.Utils.JSON, as: JSON
+
   def get(credentials, endpoint, parameters \\ nil, decode_json \\ true) do
     send(credentials, endpoint, :get, nil, parameters, decode_json)
   end
@@ -43,7 +45,7 @@ defmodule Requests do
       if is_retry do
         {401, body}
       else
-        Auth.update_access_token(credentials)
+        StarkBank.Auth.update_access_token(credentials)
         make_http_request(method, credentials, url, body, true)
       end
     else
@@ -86,7 +88,7 @@ defmodule Requests do
   end
 
   defp get_headers(credentials) do
-    access_token = Auth.get_access_token(credentials)
+    access_token = StarkBank.Auth.get_access_token(credentials)
 
     cond do
       access_token == nil ->
@@ -121,7 +123,7 @@ defmodule Requests do
   end
 
   defp get_base_url(credentials) do
-    env = Auth.get_env(credentials)
+    env = StarkBank.Auth.get_env(credentials)
 
     cond do
       env == :sandbox -> 'https://sandbox.api.starkbank.com/v1/'

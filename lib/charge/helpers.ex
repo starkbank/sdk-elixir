@@ -1,5 +1,5 @@
-defmodule Helpers do
-  @cursor_limit 100
+defmodule StarkBank.Charge.Helpers do
+  alias StarkBank.Utils.Helpers, as: MainHelpers
 
   defmodule Customer do
     def encode(customer) do
@@ -26,17 +26,17 @@ defmodule Helpers do
       charge_count = customer_map["chargeCount"]
       address = customer_map["address"]
 
-      %CustomerData{
+      %StarkBank.Charge.Structs.CustomerData{
         name: customer_map["name"],
         email: customer_map["email"],
         tax_id: customer_map["taxId"],
         phone: customer_map["phone"],
         id: customer_map["id"],
-        charge_count: %ChargeCountData{
+        charge_count: %StarkBank.Charge.Structs.ChargeCountData{
           overdue: charge_count["overdue"],
           pending: charge_count["pending"]
         },
-        address: %AddressData{
+        address: %StarkBank.Charge.Structs.AddressData{
           street_line_1: address["streetLine1"],
           street_line_2: address["streetLine2"],
           district: address["district"],
@@ -53,8 +53,8 @@ defmodule Helpers do
     def encode(charge) do
       %{
         amount: charge.amount,
-        customerId: Helpers.extract_id(charge.customer),
-        dueDate: Helpers.date_to_string(charge.due_date),
+        customerId: MainHelpers.extract_id(charge.customer),
+        dueDate: MainHelpers.date_to_string(charge.due_date),
         fine: charge.fine,
         interest: charge.interest,
         overdueLimit: charge.overdue_limit,
@@ -64,7 +64,7 @@ defmodule Helpers do
     end
 
     def decode(charge_map) do
-      %ChargeData{
+      %StarkBank.Charge.Structs.ChargeData{
         amount: charge_map["amount"],
         id: charge_map["id"],
         bar_code: charge_map["barCode"],
@@ -75,11 +75,11 @@ defmodule Helpers do
         overdue_limit: charge_map["overdueLimit"],
         tags: charge_map["tags"],
         descriptions: decode_descriptions(charge_map["descriptions"]),
-        customer: %CustomerData{
+        customer: %StarkBank.Charge.Structs.CustomerData{
           name: charge_map["name"],
           tax_id: charge_map["taxId"],
           id: charge_map["customerId"],
-          address: %AddressData{
+          address: %StarkBank.Charge.Structs.AddressData{
             street_line_1: charge_map["streetLine1"],
             street_line_2: charge_map["streetLine2"],
             district: charge_map["district"],
@@ -104,7 +104,7 @@ defmodule Helpers do
     end
 
     defp decode_description(description) do
-      %ChargeDescriptionData{
+      %StarkBank.Charge.Structs.ChargeDescriptionData{
         text: description["text"],
         amount: description["amount"]
       }
@@ -113,75 +113,13 @@ defmodule Helpers do
 
   defmodule ChargeLog do
     def decode(charge_log_map) do
-      %ChargeLogData{
+      %StarkBank.Charge.Structs.ChargeLogData{
         id: charge_log_map["id"],
         event: charge_log_map["event"],
         created: charge_log_map["created"],
         errors: charge_log_map["errors"],
         charge: Charge.decode(charge_log_map["charge"])
       }
-    end
-  end
-
-  def treat_list(list) when list == nil do
-    nil
-  end
-
-  def treat_list(list) do
-    Enum.join(list, ",")
-  end
-
-  def extract_id(id) when is_binary(id) or is_integer(id) do
-    id
-  end
-
-  def extract_id(struct) do
-    struct.id
-  end
-
-  def date_to_string(date) when is_nil(date) do
-    nil
-  end
-
-  def date_to_string(date) when is_binary(date) do
-    date
-  end
-
-  def date_to_string(date) do
-    "#{date.year}-#{date.month}-#{date.day}"
-  end
-
-  def get_recursive_limit(limit) when is_nil(limit) do
-    nil
-  end
-
-  def get_recursive_limit(limit) do
-    limit - @cursor_limit
-  end
-
-  def truncate_limit(limit) when is_nil(limit) or limit > @cursor_limit do
-    @cursor_limit
-  end
-
-  def truncate_limit(limit) do
-    limit
-  end
-
-  def limit_below_maximum?(limit) do
-    !is_nil(limit) and limit <= @cursor_limit
-  end
-
-  def chunk_list_by_max_limit(list) do
-    Stream.chunk_every(list, @cursor_limit)
-  end
-
-  def flatten_responses(response_list) do
-    errors = List.flatten(for {:error, response} <- response_list, do: response)
-
-    if length(errors) > 0 do
-      {:error, errors}
-    else
-      {:ok, List.flatten(for {:ok, response} <- response_list, do: response)}
     end
   end
 end

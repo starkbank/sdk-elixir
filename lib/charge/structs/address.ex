@@ -1,4 +1,4 @@
-defmodule AddressData do
+defmodule StarkBank.Charge.Structs.AddressData do
   defstruct street_line_1: "",
             street_line_2: "",
             district: "",
