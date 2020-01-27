@@ -1,13 +1,28 @@
 defmodule StarkBank.Charge do
+  @moduledoc """
+  used to create and consult charges;
+
+  submodules:
+  - StarkBank.Customer: Used to create and consult charge customers;
+  - StarkBank.Log: Used to consult charge logs;
+  """
+
   alias StarkBank.Utils.Helpers, as: Helpers
   alias StarkBank.Utils.Requests, as: Requests
   alias StarkBank.Charge.Helpers, as: ChargeHelpers
 
   defmodule Customer do
-    @doc """
-    Registers a new customer that can be linked with charge emissions
+    @moduledoc """
+    used to create, update and delete charge customers;
     """
 
+    @doc """
+    registers a new customer that can be linked with charge emissions
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - customers: list of StarkBank.Charge.Structs.CustomerData;
+    """
     def register(credentials, customers) do
       registrations =
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
@@ -30,12 +45,22 @@ defmodule StarkBank.Charge do
       end
     end
 
-    def get(credentials, fields \\ nil, tags \\ nil, taxId \\ nil, limit \\ nil) do
-      recursive_get(credentials, fields, tags, taxId, limit, nil)
+    @doc """
+    gets charge customers data according to informed parameters
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - fields [list of strings]: list of customer fields that should be retrieved from the API;
+    - tags [list of strings]: filters customers by the provided tags;
+    - tax_id [string]: filters customers by tax ID;
+    - limit [int]: maximum results retrieved;
+    """
+    def get(credentials, fields \\ nil, tags \\ nil, tax_id \\ nil, limit \\ nil) do
+      recursive_get(credentials, fields, tags, tax_id, limit, nil)
     end
 
-    defp recursive_get(credentials, fields, tags, taxId, limit, cursor) do
-      {status, response} = partial_get(credentials, fields, tags, taxId, limit, cursor)
+    defp recursive_get(credentials, fields, tags, tax_id, limit, cursor) do
+      {status, response} = partial_get(credentials, fields, tags, tax_id, limit, cursor)
 
       if status != :ok do
         {status, response}
@@ -50,7 +75,7 @@ defmodule StarkBank.Charge do
               credentials,
               fields,
               tags,
-              taxId,
+              tax_id,
               Helpers.get_recursive_limit(limit),
               new_cursor
             )
@@ -68,14 +93,14 @@ defmodule StarkBank.Charge do
            credentials,
            fields,
            tags,
-           taxId,
+           tax_id,
            limit,
            cursor
          ) do
       parameters = [
         fields: Helpers.treat_list(fields),
         tags: Helpers.treat_list(tags),
-        taxId: taxId,
+        taxId: tax_id,
         limit: Helpers.truncate_limit(limit),
         cursor: cursor
       ]
@@ -96,6 +121,13 @@ defmodule StarkBank.Charge do
       end
     end
 
+    @doc """
+    gets the charge customer with the specified ID
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - customer [string]: charge customer ID, e.g.: "6307371336859648";
+    """
     def get_by_id(credentials, customer) do
       id = Helpers.extract_id(customer)
 
@@ -108,6 +140,13 @@ defmodule StarkBank.Charge do
       end
     end
 
+    @doc """
+    deletes the charge customer with the specified ID
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - customers [list of strings or list of StarkBank.Charge.Structs.CustomerData]: charge customer data or IDs, e.g.: ["6307371336859648"];
+    """
     def delete(credentials, customers) do
       deletions =
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
@@ -131,6 +170,13 @@ defmodule StarkBank.Charge do
       end
     end
 
+    @doc """
+    overwrites the charge customer with the specified ID
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data;
+    """
     def overwrite(credentials, customer) do
       encoded_customers = ChargeHelpers.Customer.encode(customer)
       body = %{customer: encoded_customers}
@@ -147,8 +193,18 @@ defmodule StarkBank.Charge do
   end
 
   defmodule Log do
+    @moduledoc """
+    used to consult charge events;
+    """
+
     @doc """
-    allowed events: [register, registered, overdue, updated, canceled, failed, paid, bank]
+    gets the charge logs according to the provided parameters
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - charge_ids [list of strings or list of StarkBank.Charge.Structs.ChargeData]: charge IDs or charge structs, e.g.: ["5618308887871488"];
+    - events [list of string]: filter by log events, namely: "register", "registered", "overdue", "updated", "canceled", "failed", "paid" or "bank";
+    - limit [int]: maximum results retrieved;
     """
     def get(credentials, charge_ids, events \\ nil, limit \\ nil) do
       recursive_get(credentials, charge_ids, events, limit, nil)
@@ -206,6 +262,13 @@ defmodule StarkBank.Charge do
       end
     end
 
+    @doc """
+    gets the charge log specified by the provided ID;
+
+    parameters:
+    - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - charge_log_id [string or StarkBank.Charge.Structs.ChargeLogData]: charge log ID or struct, e.g.: "6743665380687872";
+    """
     def get_by_id(credentials, charge_log_id) do
       id = Helpers.extract_id(charge_log_id)
 
@@ -219,6 +282,13 @@ defmodule StarkBank.Charge do
     end
   end
 
+  @doc """
+  creates a new charge
+
+  parameters:
+  - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+  - charges [list of StarkBank.Charge.Structs.ChargeData]: charge structs;
+  """
   def create(credentials, charges) do
     creations =
       for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
@@ -241,7 +311,17 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  accepted status: created, registered, paid, overdue, canceled, failed
+  gets charges according to the provided parameters
+
+  parameters:
+  - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+  - status [string]: filters specified charge status, namely: "created", "registered", "paid", "overdue", "canceled" or "failed";
+  - tags [list of strings]: filters charges by tags, e.g.: ["client1", "cash-in"];
+  - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be retrieved, e.g.: ["5718322100305920", "5705293853884416"];
+  - fields [list of strings]: selects charge data fields on API response, e.g.: ["id", "amount", "status"];
+  - filter_after [date or "%Y-%m-%d"]: only gets charges created after this date, e.g.: "2019-04-01";
+  - filter_before [date or "%Y-%m-%d"]: only gets charges created before this date, e.g.: "2019-05-01";
+  - limit [int]: maximum results retrieved;
   """
   def get(
         credentials,
@@ -324,7 +404,7 @@ defmodule StarkBank.Charge do
     parameters = [
       status: status,
       tags: Helpers.treat_list(tags),
-      ids: Helpers.treat_list(ids),
+      ids: Helpers.treat_nullable_id_or_struct_list(ids),
       fields: Helpers.treat_list(fields),
       after: Helpers.date_to_string(filter_after),
       before: Helpers.date_to_string(filter_before),
@@ -347,6 +427,13 @@ defmodule StarkBank.Charge do
     end
   end
 
+  @doc """
+  deletes the specified charges
+
+  parameters:
+  - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+  - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be deleted, e.g.: ["5718322100305920", "5705293853884416"];
+  """
   def delete(credentials, ids) do
     deletions =
       for partial_ids <- Helpers.chunk_list_by_max_limit(ids),
@@ -357,7 +444,7 @@ defmodule StarkBank.Charge do
 
   defp partial_delete(credentials, ids) do
     parameters = [
-      ids: Helpers.treat_list(ids)
+      ids: Helpers.treat_list(for id <- ids, do: Helpers.extract_id(id))
     ]
 
     {status, response} = Requests.delete(credentials, 'charge', parameters)
@@ -369,6 +456,13 @@ defmodule StarkBank.Charge do
     end
   end
 
+  @doc """
+  gets the specified charge PDF file content
+
+  parameters:
+  - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+  - id [string or StarkBank.Charge.Structs.ChargeData]: charge ID or data struct, e.g.: "5718322100305920";
+  """
   def get_pdf(credentials, id) do
     Requests.get(
       credentials,

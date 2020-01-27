@@ -1,5 +1,8 @@
 defmodule StarkBank do
   @moduledoc """
   SDK to facilitate Elixir integrations with the Stark Bank API.
+
+  StarkBank.Auth: Used to manage credentials and login;
+  StarkBank.Charge: Used to create and consult charges;
   """
 end

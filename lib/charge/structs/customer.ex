@@ -1,4 +1,16 @@
 defmodule StarkBank.Charge.Structs.CustomerData do
+  @doc """
+  holds a single customer data
+  can be nested in StarkBank.Charge.Structs.Charge
+
+  parameters:
+  - name [string]: customer name, e.g.: "Arya Stark";
+  - email [string]: customer email, e.g.: "arya.stark@westeros.com";
+  - tax_id [string]: customer tax ID (CPF, CNPJ), e.g.: "012.345.678-90";
+  - phone [string] customer phone number, e.g.: "(11) 98300-0000";
+  - tags [list of strings]: customer custom tags, e.g.: ["little girl", "no one", "valar morghulis", "Stark"];
+  - address [StarkBank.Charge.Structs.AddressData]: customer adress data;
+  """
   @enforce_keys [:name]
   defstruct name: "",
             email: "",

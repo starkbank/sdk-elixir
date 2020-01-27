@@ -62,4 +62,12 @@ defmodule StarkBank.Utils.Helpers do
       {:ok, List.flatten(for {:ok, response} <- response_list, do: response)}
     end
   end
+
+  def treat_nullable_id_or_struct_list(id_or_struct_list) when is_nil(id_or_struct_list) do
+    nil
+  end
+
+  def treat_nullable_id_or_struct_list(id_or_struct_list) do
+    treat_list(for id_or_struct <- id_or_struct_list, do: extract_id(id_or_struct))
+  end
 end
