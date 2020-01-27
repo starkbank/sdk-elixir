@@ -10,6 +10,9 @@ defmodule StarkBankTest do
   test "charge" do
     {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
+    # invalidating access token to validate relogin
+    Agent.update(credentials, fn map -> Map.put(map, :access_token, "123") end)
+
     customers = [
       %StarkBank.Charge.Structs.CustomerData{
         name: "Arya Stark",
@@ -21,7 +24,7 @@ defmodule StarkBankTest do
           street_line_1: "Av. Faria Lima, 1844",
           street_line_2: "CJ 13",
           district: "Itaim Bibi",
-          city: "Sao Paulo",
+          city: "São Paulo",
           state_code: "SP",
           zip_code: "01500-000"
         }
@@ -36,7 +39,7 @@ defmodule StarkBankTest do
           street_line_1: "Av. Faria Lima, 1844",
           street_line_2: "CJ 13",
           district: "Itaim Bibi",
-          city: "Sao Paulo",
+          city: "São Paulo",
           state_code: "SP",
           zip_code: "01500-000"
         }

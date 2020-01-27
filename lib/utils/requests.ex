@@ -33,7 +33,7 @@ defmodule StarkBank.Utils.Requests do
   end
 
   defp make_http_request(method, credentials, url, body, is_retry \\ false) do
-    {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, body}} =
+    {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, response_body}} =
       :httpc.request(
         method,
         get_request_params(credentials, url, body),
@@ -41,15 +41,15 @@ defmodule StarkBank.Utils.Requests do
         []
       )
 
-    if authentication_error?(body) do
+    if authentication_error?(response_body) do
       if is_retry do
-        {401, body}
+        {401, response_body}
       else
         StarkBank.Auth.update_access_token(credentials)
         make_http_request(method, credentials, url, body, true)
       end
     else
-      {status_code, body}
+      {status_code, response_body}
     end
   end
 
