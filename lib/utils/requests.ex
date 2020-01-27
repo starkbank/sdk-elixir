@@ -67,7 +67,7 @@ defmodule StarkBank.Utils.Requests do
     end
   end
 
-  defp get_request_params(credentials, url, body) when body == nil do
+  defp get_request_params(credentials, url, body) when is_nil(body) do
     {
       url,
       get_headers(credentials)
@@ -87,7 +87,7 @@ defmodule StarkBank.Utils.Requests do
     access_token = StarkBank.Auth.get_access_token(credentials)
 
     cond do
-      access_token == nil ->
+      is_nil(access_token) ->
         [
           {'Content-Type', 'application/json'}
         ]
@@ -105,7 +105,7 @@ defmodule StarkBank.Utils.Requests do
   end
 
   defp get_url(credentials, endpoint, parameters) do
-    list = for {k, v} <- parameters, v != nil, do: "#{k}=#{v}"
+    list = for {k, v} <- parameters, !is_nil(v), do: "#{k}=#{v}"
 
     if length(list) > 0 do
       get_url(

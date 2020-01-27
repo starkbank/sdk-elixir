@@ -1,7 +1,7 @@
 defmodule StarkBank.Utils.Helpers do
   @cursor_limit 100
 
-  def treat_list(list) when list == nil do
+  def treat_list(list) when is_nil(list) do
     nil
   end
 
