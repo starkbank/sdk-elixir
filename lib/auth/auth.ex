@@ -60,6 +60,22 @@ defmodule StarkBank.Auth do
   end
 
   @doc """
+  deletes current session and invalidates current access-token
+
+  parameters:
+  - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+
+  returns:
+  parsed API response json
+  """
+  def logout(credentials) do
+    Requests.delete(
+      credentials,
+      'auth/access-token/' ++ to_charlist(get_access_token(credentials))
+    )
+  end
+
+  @doc """
   gets the env saved in the credentials agent
 
   parameters:

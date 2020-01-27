@@ -108,7 +108,7 @@ defmodule StarkBankTest do
         hd(all_charges).id
       )
 
-    {:ok, file} = File.open("charge.pdf", [:write])
+    {:ok, file} = File.open("test/charge.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)
 
@@ -126,5 +126,7 @@ defmodule StarkBankTest do
       StarkBank.Charge.Log.get(credentials, [hd(all_charges).id], ["registered", "cancel"], 30)
 
     {:ok, _response} = StarkBank.Charge.Log.get_by_id(credentials, hd(charge_logs).id)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
 end

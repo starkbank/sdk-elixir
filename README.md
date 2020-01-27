@@ -24,6 +24,12 @@ end
 {:ok, credentials} = StarkBank.Auth.login(:sandbox, "username", "email@email.com", "password")
 ```
 
+### Logout
+
+```elixir
+{:ok, response} = StarkBank.Auth.logout(credentials)
+```
+
 ### Register charge customers
 
 ```elixir
