@@ -21,7 +21,7 @@ defmodule StarkBankTest do
             email: "arya.stark@westeros.com",
             tax_id: "416.631.524-20",
             phone: "(11) 98300-0000",
-            tags: ["little girl", "no one", "valar morghulis", "Stark"],
+            tags: ["little girl", "no one", "valar morghulis", "Stark", "test"],
             address: %StarkBank.Charge.Structs.AddressData{
               street_line_1: "Av. Faria Lima, 1844",
               street_line_2: "CJ 13",
@@ -36,7 +36,7 @@ defmodule StarkBankTest do
             email: "jon.snow@westeros.com",
             tax_id: "012.345.678-90",
             phone: "(11) 98300-0001",
-            tags: ["night`s watch", "lord commander", "knows nothing", "Stark"],
+            tags: ["night`s watch", "lord commander", "knows nothing", "Stark", "test"],
             address: %StarkBank.Charge.Structs.AddressData{
               street_line_1: "Av. Faria Lima, 1844",
               street_line_2: "CJ 13",
@@ -53,7 +53,7 @@ defmodule StarkBankTest do
     {:ok, customers} = StarkBank.Charge.Customer.register(credentials, customers)
 
     {:ok, _all_customers} = StarkBank.Charge.Customer.get(credentials)
-    {:ok, _stark_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, nil)
+    {:ok, test_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, nil)
 
     {:ok, _customer} = StarkBank.Charge.Customer.get_by_id(credentials, hd(customers))
     {:ok, customer} = StarkBank.Charge.Customer.get_by_id(credentials, hd(customers).id)
@@ -62,14 +62,16 @@ defmodule StarkBankTest do
 
     {:ok, altered_customer} = StarkBank.Charge.Customer.overwrite(credentials, altered_customer)
 
-    {:ok, customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 100)
+    {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 70)
+    {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 110)
 
     charges =
       Enum.take(
         Stream.cycle([
           %StarkBank.Charge.Structs.ChargeData{
             amount: 10_000,
-            customer: altered_customer.id
+            customer: altered_customer.id,
+            tags: ["test"]
           },
           %StarkBank.Charge.Structs.ChargeData{
             amount: 100_000,
@@ -78,7 +80,7 @@ defmodule StarkBankTest do
             fine: 10,
             interest: 15,
             overdue_limit: 3,
-            tags: ["cash-in"],
+            tags: ["cash-in", "test"],
             descriptions: [
               %StarkBank.Charge.Structs.ChargeDescriptionData{
                 text: "part-1",
@@ -120,13 +122,22 @@ defmodule StarkBankTest do
     IO.binwrite(file, pdf)
     File.close(file)
 
+    {:ok, test_charges} =
+      StarkBank.Charge.get(
+        credentials,
+        "registered",
+        ["test"],
+        nil,
+        ["id", "taxId"]
+      )
+
     {:ok, _deleted_charges} =
       StarkBank.Charge.delete(
         credentials,
-        [hd(all_charges).id]
+        test_charges
       )
 
-    {:ok, _response} = StarkBank.Charge.Customer.delete(credentials, customers)
+    {:ok, _response} = StarkBank.Charge.Customer.delete(credentials, test_customers)
 
     {:ok, _response} = StarkBank.Charge.Log.get(credentials, [hd(all_charges).id])
 
