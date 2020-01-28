@@ -35,12 +35,12 @@ defmodule StarkBank.Charge do
       encoded_customers = for customer <- customers, do: ChargeHelpers.Customer.encode(customer)
       body = %{customers: encoded_customers}
 
-      {status, response} = Requests.post(credentials, 'charge/customer', body)
+      {response_status, response} = Requests.post(credentials, 'charge/customer', body)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
-        {status,
+        {response_status,
          for(customer <- response["customers"], do: ChargeHelpers.Customer.decode(customer))}
       end
     end
@@ -60,17 +60,17 @@ defmodule StarkBank.Charge do
     end
 
     defp recursive_get(credentials, fields, tags, tax_id, limit, cursor) do
-      {status, response} = partial_get(credentials, fields, tags, tax_id, limit, cursor)
+      {response_status, response} = partial_get(credentials, fields, tags, tax_id, limit, cursor)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
         %{cursor: new_cursor, customers: customers} = response
 
-        if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
-          {status, response[:customers]}
+        if is_nil(new_cursor) or Helpers.limit_below_maximum?(limit) do
+          {response_status, response[:customers]}
         else
-          {new_status, new_response} =
+          {new_response_status, new_response} =
             recursive_get(
               credentials,
               fields,
@@ -80,10 +80,10 @@ defmodule StarkBank.Charge do
               new_cursor
             )
 
-          if new_status != :ok do
-            {new_status, new_response}
+          if new_response_status != :ok do
+            {new_response_status, new_response}
           else
-            {new_status, customers ++ new_response[:customers]}
+            {new_response_status, customers ++ new_response}
           end
         end
       end
@@ -105,13 +105,13 @@ defmodule StarkBank.Charge do
         cursor: cursor
       ]
 
-      {status, response} = Requests.get(credentials, 'charge/customer', parameters)
+      {response_status, response} = Requests.get(credentials, 'charge/customer', parameters)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
         {
-          status,
+          response_status,
           %{
             cursor: response["cursor"],
             customers:
@@ -131,12 +131,13 @@ defmodule StarkBank.Charge do
     def get_by_id(credentials, customer) do
       id = Helpers.extract_id(customer)
 
-      {status, response} = Requests.get(credentials, 'charge/customer/' ++ to_charlist(id))
+      {response_status, response} =
+        Requests.get(credentials, 'charge/customer/' ++ to_charlist(id))
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
-        {status, ChargeHelpers.Customer.decode(response["customer"])}
+        {response_status, ChargeHelpers.Customer.decode(response["customer"])}
       end
     end
 
@@ -160,12 +161,12 @@ defmodule StarkBank.Charge do
         ids: Helpers.treat_list(for customer <- customers, do: Helpers.extract_id(customer))
       ]
 
-      {status, response} = Requests.delete(credentials, 'charge/customer', parameters)
+      {response_status, response} = Requests.delete(credentials, 'charge/customer', parameters)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
-        {status,
+        {response_status,
          for(customer <- response["customers"], do: ChargeHelpers.Customer.decode(customer))}
       end
     end
@@ -181,13 +182,13 @@ defmodule StarkBank.Charge do
       encoded_customers = ChargeHelpers.Customer.encode(customer)
       body = %{customer: encoded_customers}
 
-      {status, response} =
+      {response_status, response} =
         Requests.put(credentials, 'charge/customer/' ++ to_charlist(customer.id), body)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
-        {status, ChargeHelpers.Customer.decode(response["customer"])}
+        {response_status, ChargeHelpers.Customer.decode(response["customer"])}
       end
     end
   end
@@ -211,17 +212,17 @@ defmodule StarkBank.Charge do
     end
 
     defp recursive_get(credentials, charge_ids, events, limit, cursor) do
-      {status, response} = partial_get(credentials, charge_ids, events, limit, cursor)
+      {response_status, response} = partial_get(credentials, charge_ids, events, limit, cursor)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
         %{cursor: new_cursor, logs: logs} = response
 
-        if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
-          {status, response[:logs]}
+        if is_nil(new_cursor) or Helpers.limit_below_maximum?(limit) do
+          {response_status, response[:logs]}
         else
-          {new_status, new_response} =
+          {new_response_status, new_response} =
             recursive_get(
               credentials,
               charge_ids,
@@ -230,10 +231,10 @@ defmodule StarkBank.Charge do
               new_cursor
             )
 
-          if new_status != :ok do
-            {new_status, new_response}
+          if new_response_status != :ok do
+            {new_response_status, new_response}
           else
-            {new_status, logs ++ new_response[:logs]}
+            {new_response_status, logs ++ new_response}
           end
         end
       end
@@ -247,13 +248,13 @@ defmodule StarkBank.Charge do
         cursor: cursor
       ]
 
-      {status, response} = Requests.get(credentials, 'charge/log', parameters)
+      {response_status, response} = Requests.get(credentials, 'charge/log', parameters)
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
         {
-          status,
+          response_status,
           %{
             cursor: response["cursor"],
             logs: for(log <- response["logs"], do: ChargeHelpers.ChargeLog.decode(log))
@@ -272,12 +273,12 @@ defmodule StarkBank.Charge do
     def get_by_id(credentials, charge_log_id) do
       id = Helpers.extract_id(charge_log_id)
 
-      {status, response} = Requests.get(credentials, 'charge/log/' ++ to_charlist(id))
+      {response_status, response} = Requests.get(credentials, 'charge/log/' ++ to_charlist(id))
 
-      if status != :ok do
-        {status, response}
+      if response_status != :ok do
+        {response_status, response}
       else
-        {status, ChargeHelpers.ChargeLog.decode(response["log"])}
+        {response_status, ChargeHelpers.ChargeLog.decode(response["log"])}
       end
     end
   end
@@ -301,12 +302,13 @@ defmodule StarkBank.Charge do
     encoded_charges = for charge <- charges, do: ChargeHelpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
-    {status, response} = Requests.post(credentials, 'charge', body)
+    {response_status, response} = Requests.post(credentials, 'charge', body)
 
-    if status != :ok do
-      {status, response}
+    if response_status != :ok do
+      {response_status, response}
     else
-      {status, for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
+      {response_status,
+       for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
     end
   end
 
@@ -347,7 +349,7 @@ defmodule StarkBank.Charge do
          limit,
          cursor
        ) do
-    {status, response} =
+    {response_status, response} =
       partial_get(
         credentials,
         status,
@@ -360,15 +362,15 @@ defmodule StarkBank.Charge do
         cursor
       )
 
-    if status != :ok do
-      {status, response}
+    if response_status != :ok do
+      {response_status, response}
     else
       %{cursor: new_cursor, charges: charges} = response
 
-      if is_nil(cursor) or Helpers.limit_below_maximum?(limit) do
-        {status, response[:charges]}
+      if is_nil(new_cursor) or Helpers.limit_below_maximum?(limit) do
+        {response_status, response[:charges]}
       else
-        {new_status, new_response} =
+        {new_response_status, new_response} =
           recursive_get(
             credentials,
             status,
@@ -381,10 +383,10 @@ defmodule StarkBank.Charge do
             new_cursor
           )
 
-        if new_status != :ok do
-          {new_status, new_response}
+        if new_response_status != :ok do
+          {new_response_status, new_response}
         else
-          {new_status, charges ++ new_response[:charges]}
+          {new_response_status, charges ++ new_response}
         end
       end
     end
@@ -412,13 +414,13 @@ defmodule StarkBank.Charge do
       cursor: cursor
     ]
 
-    {status, response} = Requests.get(credentials, 'charge', parameters)
+    {response_status, response} = Requests.get(credentials, 'charge', parameters)
 
-    if status != :ok do
-      {status, response}
+    if response_status != :ok do
+      {response_status, response}
     else
       {
-        status,
+        response_status,
         %{
           cursor: response["cursor"],
           charges: for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))
@@ -447,12 +449,13 @@ defmodule StarkBank.Charge do
       ids: Helpers.treat_list(for id <- ids, do: Helpers.extract_id(id))
     ]
 
-    {status, response} = Requests.delete(credentials, 'charge', parameters)
+    {response_status, response} = Requests.delete(credentials, 'charge', parameters)
 
-    if status != :ok do
-      {status, response}
+    if response_status != :ok do
+      {response_status, response}
     else
-      {status, for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
+      {response_status,
+       for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
     end
   end
 
