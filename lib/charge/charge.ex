@@ -56,7 +56,14 @@ defmodule StarkBank.Charge do
     - limit [int]: maximum results retrieved;
     """
     def get(credentials, fields \\ nil, tags \\ nil, tax_id \\ nil, limit \\ nil) do
-      recursive_get(credentials, fields, tags, tax_id, limit, nil)
+      recursive_get(
+        credentials,
+        fields,
+        Helpers.lowercase_list_of_strings(tags),
+        tax_id,
+        limit,
+        nil
+      )
     end
 
     defp recursive_get(credentials, fields, tags, tax_id, limit, cursor) do
@@ -299,10 +306,14 @@ defmodule StarkBank.Charge do
   end
 
   defp partial_post(credentials, charges) do
-    encoded_charges = for charge <- charges, do: ChargeHelpers.Charge.encode(charge)
+    {filled_charges, temp_customer_ids} = fill_charges_with_temp_customers(credentials, charges)
+
+    encoded_charges = for charge <- filled_charges, do: ChargeHelpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
     {response_status, response} = Requests.post(credentials, 'charge', body)
+
+    Customer.delete(credentials, temp_customer_ids)
 
     if response_status != :ok do
       {response_status, response}
@@ -310,6 +321,67 @@ defmodule StarkBank.Charge do
       {response_status,
        for(charge <- response["charges"], do: ChargeHelpers.Charge.decode(charge))}
     end
+  rescue
+    e in MatchError -> {:error, e}
+  end
+
+  defp fill_charges_with_temp_customers(credentials, charges) do
+    charges_with_customer_ids =
+      for charge <- charges, !is_nil(Helpers.extract_id(charge.customer)), do: charge
+
+    charges_without_customer_ids =
+      for charge <- charges, is_nil(Helpers.extract_id(charge.customer)), do: charge
+
+    {:ok, temp_customers} =
+      Customer.post(credentials, for(charge <- charges_without_customer_ids, do: charge.customer))
+
+    charges_with_temp_customers =
+      for charge <- charges_without_customer_ids,
+          do: fill_charge_customer_id(charge, temp_customers)
+
+    {
+      charges_with_customer_ids ++ charges_with_temp_customers,
+      for(customer <- temp_customers, do: customer.id)
+    }
+  end
+
+  defp fill_charge_customer_id(charge, temp_customers) do
+    %StarkBank.Charge.Structs.ChargeData{
+      charge
+      | customer: find_matching_customer(charge.customer, temp_customers)
+    }
+  end
+
+  defp find_matching_customer(base_customer, [temp_customer | other_temp_customers]) do
+    if customers_match?(base_customer, temp_customer) do
+      temp_customer
+    else
+      find_matching_customer(base_customer, other_temp_customers)
+    end
+  end
+
+  defp find_matching_customer(_base_customer, []) do
+    throw("SDK logic failed to locate temporary customer, please contact support")
+  end
+
+  defp customers_match?(base_customer, comp_customer) do
+    base_address = base_customer.address
+    comp_address = comp_customer.address
+
+    Helpers.nullable_fields_match?(base_customer.name, comp_customer.name) and
+      Helpers.nullable_fields_match?(base_customer.email, comp_customer.email) and
+      Helpers.nullable_fields_match?(base_customer.tax_id, comp_customer.tax_id) and
+      Helpers.nullable_fields_match?(base_customer.phone, comp_customer.phone) and
+      Helpers.nullable_fields_match?(
+        Helpers.lowercase_list_of_strings(base_customer.tags),
+        comp_customer.tags
+      ) and
+      Helpers.nullable_fields_match?(base_address.street_line_1, comp_address.street_line_1) and
+      Helpers.nullable_fields_match?(base_address.street_line_2, comp_address.street_line_2) and
+      Helpers.nullable_fields_match?(base_address.district, comp_address.district) and
+      Helpers.nullable_fields_match?(base_address.city, comp_address.city) and
+      Helpers.nullable_fields_match?(base_address.state_code, comp_address.state_code) and
+      Helpers.nullable_fields_match?(base_address.zip_code, comp_address.zip_code)
   end
 
   @doc """
@@ -335,7 +407,17 @@ defmodule StarkBank.Charge do
         filter_before \\ nil,
         limit \\ nil
       ) do
-    recursive_get(credentials, status, tags, ids, fields, filter_after, filter_before, limit, nil)
+    recursive_get(
+      credentials,
+      status,
+      Helpers.lowercase_list_of_strings(tags),
+      ids,
+      fields,
+      filter_after,
+      filter_before,
+      limit,
+      nil
+    )
   end
 
   defp recursive_get(

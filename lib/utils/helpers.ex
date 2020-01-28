@@ -71,6 +71,14 @@ defmodule StarkBank.Utils.Helpers do
     treat_list(for id_or_struct <- id_or_struct_list, do: extract_id(id_or_struct))
   end
 
+  def nullable_fields_match?(nullable_field, _other_field) when is_nil(nullable_field) do
+    true
+  end
+
+  def nullable_fields_match?(nullable_field, other_field) do
+    nullable_field == other_field
+  end
+
   def current_microsecond() do
     DateTime.utc_now()
     |> DateTime.to_unix(:microsecond)
@@ -78,5 +86,13 @@ defmodule StarkBank.Utils.Helpers do
 
   def log_elapsed_time(since) do
     IO.puts("time elapsed: " <> to_string((current_microsecond() - since) / 1000_000))
+  end
+
+  def lowercase_list_of_strings(list_of_strings) when is_nil(list_of_strings) do
+    nil
+  end
+
+  def lowercase_list_of_strings(list_of_strings) do
+    for(string <- list_of_strings, do: String.downcase(string))
   end
 end
