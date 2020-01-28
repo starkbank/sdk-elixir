@@ -50,7 +50,7 @@ defmodule StarkBankTest do
         2
       )
 
-    {:ok, customers} = StarkBank.Charge.Customer.register(credentials, customers)
+    {:ok, customers} = StarkBank.Charge.Customer.post(credentials, customers)
 
     {:ok, _all_customers} = StarkBank.Charge.Customer.get(credentials)
     {:ok, test_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, nil)
@@ -60,7 +60,7 @@ defmodule StarkBankTest do
 
     altered_customer = %{customer | name: "No One"}
 
-    {:ok, altered_customer} = StarkBank.Charge.Customer.overwrite(credentials, altered_customer)
+    {:ok, altered_customer} = StarkBank.Charge.Customer.put(credentials, altered_customer)
 
     {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 70)
     {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 110)
@@ -96,7 +96,7 @@ defmodule StarkBankTest do
         2
       )
 
-    {:ok, _charges} = StarkBank.Charge.create(credentials, charges)
+    {:ok, _charges} = StarkBank.Charge.post(credentials, charges)
 
     {:ok, all_charges} = StarkBank.Charge.get(credentials)
 

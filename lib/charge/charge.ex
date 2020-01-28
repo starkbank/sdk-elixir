@@ -23,15 +23,15 @@ defmodule StarkBank.Charge do
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - customers: list of StarkBank.Charge.Structs.CustomerData;
     """
-    def register(credentials, customers) do
+    def post(credentials, customers) do
       registrations =
         for partial_customers <- Helpers.chunk_list_by_max_limit(customers),
-            do: partial_register(credentials, partial_customers)
+            do: partial_post(credentials, partial_customers)
 
       Helpers.flatten_responses(registrations)
     end
 
-    defp partial_register(credentials, customers) do
+    defp partial_post(credentials, customers) do
       encoded_customers = for customer <- customers, do: ChargeHelpers.Customer.encode(customer)
       body = %{customers: encoded_customers}
 
@@ -178,7 +178,7 @@ defmodule StarkBank.Charge do
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data;
     """
-    def overwrite(credentials, customer) do
+    def put(credentials, customer) do
       encoded_customers = ChargeHelpers.Customer.encode(customer)
       body = %{customer: encoded_customers}
 
@@ -290,15 +290,15 @@ defmodule StarkBank.Charge do
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - charges [list of StarkBank.Charge.Structs.ChargeData]: charge structs;
   """
-  def create(credentials, charges) do
+  def post(credentials, charges) do
     creations =
       for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
-          do: partial_create(credentials, partial_charges)
+          do: partial_post(credentials, partial_charges)
 
     Helpers.flatten_responses(creations)
   end
 
-  defp partial_create(credentials, charges) do
+  defp partial_post(credentials, charges) do
     encoded_charges = for charge <- charges, do: ChargeHelpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
