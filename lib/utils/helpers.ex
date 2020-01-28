@@ -9,7 +9,7 @@ defmodule StarkBank.Utils.Helpers do
     Enum.join(list, ",")
   end
 
-  def extract_id(id) when is_binary(id) or is_integer(id) do
+  def extract_id(id) when is_binary(id) or is_integer(id) or is_nil(id) do
     id
   end
 
@@ -69,5 +69,14 @@ defmodule StarkBank.Utils.Helpers do
 
   def treat_nullable_id_or_struct_list(id_or_struct_list) do
     treat_list(for id_or_struct <- id_or_struct_list, do: extract_id(id_or_struct))
+  end
+
+  def current_microsecond() do
+    DateTime.utc_now()
+    |> DateTime.to_unix(:microsecond)
+  end
+
+  def log_elapsed_time(since) do
+    IO.puts("time elapsed: " <> to_string((current_microsecond() - since) / 1000_000))
   end
 end
