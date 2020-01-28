@@ -58,7 +58,7 @@ defmodule StarkBank.Charge do
     def get(credentials, fields \\ nil, tags \\ nil, tax_id \\ nil, limit \\ nil) do
       recursive_get(
         credentials,
-        fields,
+        Helpers.snake_to_camel_list_of_strings(fields),
         Helpers.lowercase_list_of_strings(tags),
         tax_id,
         limit,
@@ -105,8 +105,8 @@ defmodule StarkBank.Charge do
            cursor
          ) do
       parameters = [
-        fields: Helpers.treat_list(fields),
-        tags: Helpers.treat_list(tags),
+        fields: Helpers.list_to_url_arg(fields),
+        tags: Helpers.list_to_url_arg(tags),
         taxId: tax_id,
         limit: Helpers.truncate_limit(limit),
         cursor: cursor
@@ -165,7 +165,7 @@ defmodule StarkBank.Charge do
 
     defp partial_delete(credentials, customers) do
       parameters = [
-        ids: Helpers.treat_list(for customer <- customers, do: Helpers.extract_id(customer))
+        ids: Helpers.treat_nullable_id_or_struct_list(customers)
       ]
 
       {response_status, response} = Requests.delete(credentials, 'charge/customer', parameters)
@@ -215,7 +215,13 @@ defmodule StarkBank.Charge do
     - limit [int]: maximum results retrieved;
     """
     def get(credentials, charge_ids, events \\ nil, limit \\ nil) do
-      recursive_get(credentials, charge_ids, events, limit, nil)
+      recursive_get(
+        credentials,
+        Helpers.treat_nullable_id_or_struct_list(charge_ids),
+        Helpers.list_to_url_arg(events),
+        limit,
+        nil
+      )
     end
 
     defp recursive_get(credentials, charge_ids, events, limit, cursor) do
@@ -249,8 +255,8 @@ defmodule StarkBank.Charge do
 
     defp partial_get(credentials, charge_ids, events, limit, cursor) do
       parameters = [
-        chargeIds: for(charge_id <- charge_ids, do: Helpers.extract_id(charge_id)),
-        events: Helpers.treat_list(events),
+        chargeIds: charge_ids,
+        events: events,
         limit: limit,
         cursor: cursor
       ]
@@ -412,7 +418,7 @@ defmodule StarkBank.Charge do
       status,
       Helpers.lowercase_list_of_strings(tags),
       ids,
-      fields,
+      Helpers.snake_to_camel_list_of_strings(fields),
       filter_after,
       filter_before,
       limit,
@@ -487,9 +493,9 @@ defmodule StarkBank.Charge do
        ) do
     parameters = [
       status: status,
-      tags: Helpers.treat_list(tags),
+      tags: Helpers.list_to_url_arg(tags),
       ids: Helpers.treat_nullable_id_or_struct_list(ids),
-      fields: Helpers.treat_list(fields),
+      fields: Helpers.list_to_url_arg(fields),
       after: Helpers.date_to_string(filter_after),
       before: Helpers.date_to_string(filter_before),
       limit: limit,
@@ -528,7 +534,7 @@ defmodule StarkBank.Charge do
 
   defp partial_delete(credentials, ids) do
     parameters = [
-      ids: Helpers.treat_list(for id <- ids, do: Helpers.extract_id(id))
+      ids: Helpers.treat_nullable_id_or_struct_list(ids)
     ]
 
     {response_status, response} = Requests.delete(credentials, 'charge', parameters)

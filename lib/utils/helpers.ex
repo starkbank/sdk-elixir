@@ -1,11 +1,11 @@
 defmodule StarkBank.Utils.Helpers do
   @cursor_limit 100
 
-  def treat_list(list) when is_nil(list) do
+  def list_to_url_arg(list) when is_nil(list) do
     nil
   end
 
-  def treat_list(list) do
+  def list_to_url_arg(list) do
     Enum.join(list, ",")
   end
 
@@ -68,7 +68,7 @@ defmodule StarkBank.Utils.Helpers do
   end
 
   def treat_nullable_id_or_struct_list(id_or_struct_list) do
-    treat_list(for id_or_struct <- id_or_struct_list, do: extract_id(id_or_struct))
+    list_to_url_arg(for id_or_struct <- id_or_struct_list, do: extract_id(id_or_struct))
   end
 
   def nullable_fields_match?(nullable_field, _other_field) when is_nil(nullable_field) do
@@ -94,5 +94,25 @@ defmodule StarkBank.Utils.Helpers do
 
   def lowercase_list_of_strings(list_of_strings) do
     for(string <- list_of_strings, do: String.downcase(string))
+  end
+
+  def snake_to_camel_list_of_strings(list_of_strings) when is_nil(list_of_strings) do
+    nil
+  end
+
+  def snake_to_camel_list_of_strings(list_of_strings) do
+    for string <- list_of_strings, do: Enum.join(snake_to_camel(String.graphemes(string)))
+  end
+
+  defp snake_to_camel([letter | rest]) when letter == "_" do
+    snake_to_camel([String.upcase(hd(rest)) | tl(rest)])
+  end
+
+  defp snake_to_camel([letter | rest]) do
+    [letter | snake_to_camel(rest)]
+  end
+
+  defp snake_to_camel([]) do
+    []
   end
 end
