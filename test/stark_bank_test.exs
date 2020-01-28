@@ -7,11 +7,27 @@ defmodule StarkBankTest do
   @email "user@email.com"
   @password "password"
 
-  test "charge" do
+  @charge_customer_post_load 2
+  @charge_post_load 3
+
+  test "auth-session" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "auth-relogin" do
     {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
     # invalidating access token to validate relogin
     Agent.update(credentials, fn map -> Map.put(map, :access_token, "123") end)
+
+    {:ok, _response} = StarkBank.Charge.get(credentials, nil, nil, nil, nil, nil, nil, 1)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-customer-post" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
     customers =
       Enum.take(
@@ -47,30 +63,104 @@ defmodule StarkBankTest do
             }
           }
         ]),
-        2
+        @charge_customer_post_load
       )
 
-    {:ok, customers} = StarkBank.Charge.Customer.post(credentials, customers)
+    {:ok, posted_customers} = StarkBank.Charge.Customer.post(credentials, customers)
+
+    assert length(customers) == length(posted_customers)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-customer-get" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
     {:ok, _all_customers} = StarkBank.Charge.Customer.get(credentials)
-    {:ok, test_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, nil)
 
-    {:ok, _customer} = StarkBank.Charge.Customer.get_by_id(credentials, hd(customers))
-    {:ok, customer} = StarkBank.Charge.Customer.get_by_id(credentials, hd(customers).id)
+    {:ok, _70_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 70)
 
-    altered_customer = %{customer | name: "No One"}
+    {:ok, _110_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 110)
 
-    {:ok, altered_customer} = StarkBank.Charge.Customer.put(credentials, altered_customer)
+    {:ok, _test_customers} =
+      StarkBank.Charge.Customer.get(
+        credentials,
+        ["name", "tax_id"],
+        ["test"],
+        "012.345.678-90",
+        nil
+      )
 
-    {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 70)
-    {:ok, _customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 110)
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-customer-get_by_id" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, one_customer} =
+      StarkBank.Charge.Customer.get(
+        credentials,
+        nil,
+        nil,
+        nil,
+        1
+      )
+
+    one_customer = hd(one_customer)
+
+    {:ok, customer_from_struct} = StarkBank.Charge.Customer.get_by_id(credentials, one_customer)
+    {:ok, customer_from_id} = StarkBank.Charge.Customer.get_by_id(credentials, one_customer.id)
+
+    assert one_customer == customer_from_struct
+    assert one_customer == customer_from_id
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-customer-put" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, one_customer} =
+      StarkBank.Charge.Customer.get(
+        credentials,
+        nil,
+        ["test"],
+        nil,
+        1
+      )
+
+    one_customer = hd(one_customer)
+
+    altered_customer = %{one_customer | name: "No One"}
+
+    {:ok, received_altered_customer} =
+      StarkBank.Charge.Customer.put(credentials, altered_customer)
+
+    assert altered_customer == received_altered_customer
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-post" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, one_customer} =
+      StarkBank.Charge.Customer.get(
+        credentials,
+        nil,
+        ["test"],
+        nil,
+        1
+      )
+
+    one_customer = hd(one_customer)
 
     charges =
       Enum.take(
         Stream.cycle([
           %StarkBank.Charge.Structs.ChargeData{
             amount: 10_000,
-            customer: altered_customer.id,
+            customer: one_customer.id,
             tags: ["test"]
           },
           %StarkBank.Charge.Structs.ChargeData{
@@ -112,14 +202,22 @@ defmodule StarkBankTest do
             tags: ["test"]
           }
         ]),
-        3
+        @charge_post_load
       )
 
-    {:ok, _charges} = StarkBank.Charge.post(credentials, charges)
+    {:ok, posted_charges} = StarkBank.Charge.post(credentials, charges)
+
+    assert length(charges) == length(posted_charges)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-get" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
     {:ok, all_charges} = StarkBank.Charge.get(credentials)
 
-    {:ok, _cash_in_charges} =
+    {:ok, _filtered_charges} =
       StarkBank.Charge.get(
         credentials,
         "registered",
@@ -131,23 +229,45 @@ defmodule StarkBankTest do
         50
       )
 
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-get-pdf" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, one_charge} =
+      StarkBank.Charge.get(
+        credentials,
+        "registered",
+        ["test"],
+        nil,
+        ["id"],
+        nil,
+        nil,
+        1
+      )
+
     {:ok, pdf} =
       StarkBank.Charge.get_pdf(
         credentials,
-        hd(all_charges).id
+        hd(one_charge).id
       )
 
     {:ok, file} = File.open("test/charge.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)
 
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-delete" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
     {:ok, test_charges} =
       StarkBank.Charge.get(
         credentials,
         "registered",
-        ["test"],
-        nil,
-        ["id", "taxId"]
+        ["test"]
       )
 
     {:ok, _deleted_charges} =
@@ -156,14 +276,68 @@ defmodule StarkBankTest do
         test_charges
       )
 
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-customer-delete" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, test_customers} =
+      StarkBank.Charge.Customer.get(
+        credentials,
+        ["id"],
+        ["test"]
+      )
+
     {:ok, _response} = StarkBank.Charge.Customer.delete(credentials, test_customers)
 
-    {:ok, _response} = StarkBank.Charge.Log.get(credentials, [hd(all_charges).id])
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
 
-    {:ok, charge_logs} =
-      StarkBank.Charge.Log.get(credentials, [hd(all_charges).id], ["registered", "cancel"], 30)
+  test "charge-log-get" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
-    {:ok, _response} = StarkBank.Charge.Log.get_by_id(credentials, hd(charge_logs).id)
+    {:ok, one_charge} =
+      StarkBank.Charge.get(
+        credentials,
+        nil,
+        ["test"],
+        nil,
+        ["id"],
+        nil,
+        nil,
+        1
+      )
+
+    {:ok, _response} = StarkBank.Charge.Log.get(credentials, [hd(one_charge)])
+
+    {:ok, _charge_logs} =
+      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id], ["registered", "cancel"], 30)
+
+    {:ok, _charge_logs} =
+      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id], ["registered", "cancel"], 130)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
+  test "charge-log-get_by_id" do
+    {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    {:ok, one_charge} =
+      StarkBank.Charge.get(
+        credentials,
+        nil,
+        ["test"],
+        nil,
+        ["id"],
+        nil,
+        nil,
+        1
+      )
+
+    {:ok, charge_logs} = StarkBank.Charge.Log.get(credentials, [hd(one_charge)])
+
+    {:ok, _charge_log} = StarkBank.Charge.Log.get_by_id(credentials, hd(charge_logs).id)
 
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
