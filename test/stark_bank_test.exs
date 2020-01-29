@@ -11,6 +11,16 @@ defmodule StarkBankTest do
 
   test "auth-session" do
     {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
+
+    assert !is_nil(StarkBank.Auth.get_env(credentials))
+    assert !is_nil(StarkBank.Auth.get_workspace(credentials))
+    assert !is_nil(StarkBank.Auth.get_email(credentials))
+    assert !is_nil(StarkBank.Auth.get_access_token(credentials))
+    assert !is_nil(StarkBank.Auth.get_member_id(credentials))
+    assert !is_nil(StarkBank.Auth.get_workspace_id(credentials))
+    assert !is_nil(StarkBank.Auth.get_name(credentials))
+    assert !is_nil(StarkBank.Auth.get_permissions(credentials))
+
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
 
