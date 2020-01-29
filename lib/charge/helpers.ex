@@ -1,4 +1,6 @@
 defmodule StarkBank.Charge.Helpers do
+  @moduledoc false
+
   alias StarkBank.Utils.Helpers, as: MainHelpers
 
   defmodule Customer do

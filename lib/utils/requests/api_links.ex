@@ -1,4 +1,6 @@
 defmodule StarkBank.Utils.Requests.APILinks do
+  @moduledoc false
+
   @sandbox_url 'https://sandbox.api.starkbank.com/v1/'
   @production_url 'https://api.starkbank.com/v1/'
 

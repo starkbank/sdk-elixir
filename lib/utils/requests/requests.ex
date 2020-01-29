@@ -1,4 +1,6 @@
 defmodule StarkBank.Utils.Requests do
+  @moduledoc false
+
   alias StarkBank.Utils.JSON, as: JSON
   alias StarkBank.Utils.Requests.APILinks, as: APILinks
   alias StarkBank.Utils.Requests.HTTPStatus, as: HTTPStatus

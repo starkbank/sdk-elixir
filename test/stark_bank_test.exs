@@ -1,6 +1,5 @@
 defmodule StarkBankTest do
   use ExUnit.Case
-  doctest StarkBank
 
   @env :sandbox
   @username "user"

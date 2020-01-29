@@ -1,4 +1,6 @@
 defmodule StarkBank.Utils.Requests.HTTPStatus do
+  @moduledoc false
+
   @ok 200
   @unauthorized 401
 

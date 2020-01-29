@@ -1,4 +1,6 @@
 defmodule StarkBank.Utils.Helpers do
+  @moduledoc false
+
   @cursor_limit 100
 
   def list_to_url_arg(list) when is_nil(list) do
