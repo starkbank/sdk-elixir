@@ -161,12 +161,12 @@ defmodule StarkBankTest do
       Enum.take(
         Stream.cycle([
           %StarkBank.Charge.Structs.ChargeData{
-            amount: 10_000,
+            amount: 100_00,
             customer: one_customer.id,
             tags: ["test"]
           },
           %StarkBank.Charge.Structs.ChargeData{
-            amount: 100_000,
+            amount: 1_000_00,
             customer: "self",
             due_date: Date.utc_today(),
             fine: 10,
@@ -185,7 +185,7 @@ defmodule StarkBankTest do
             ]
           },
           %StarkBank.Charge.Structs.ChargeData{
-            amount: 10_000,
+            amount: 32_171_32,
             customer: %StarkBank.Charge.Structs.CustomerData{
               name: "Brandon Stark",
               email: "bran.builder@westeros.com",

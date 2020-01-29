@@ -30,7 +30,7 @@ end
 {:ok, response} = StarkBank.Auth.logout(credentials)
 ```
 
-### Register charge customers
+### Create charge customers
 
 ```elixir
 customers = [
@@ -66,7 +66,7 @@ customers = [
   }
 ]
 
-{:ok, customers} = StarkBank.Charge.Customer.register(credentials, customers)
+{:ok, customers} = StarkBank.Charge.Customer.post(credentials, customers)
 ```
 
 ### Get charge customers
@@ -94,7 +94,7 @@ customers = [
 ### Overwrite charge customers information
 
 ```elixir
-{:ok, altered_customer} = StarkBank.Charge.Customer.overwrite(credentials, altered_customer)
+{:ok, altered_customer} = StarkBank.Charge.Customer.put(credentials, altered_customer)
 ```
 
 ### Create charges
@@ -102,11 +102,11 @@ customers = [
 ```elixir
 charges = [
   %StarkBank.Charge.Structs.ChargeData{
-    amount: 10_000,
+    amount: 100_00,
     customer: altered_customer.id
   },
   %StarkBank.Charge.Structs.ChargeData{
-    amount: 100_000,
+    amount: 1_000_00,
     customer: "self",
     due_date: Date.utc_today(),
     fine: 10,
@@ -123,10 +123,29 @@ charges = [
         amount: 70_000
       }
     ]
+  },
+  %StarkBank.Charge.Structs.ChargeData{
+    amount: 32_171_32,
+    customer: %StarkBank.Charge.Structs.CustomerData{
+      name: "Brandon Stark",
+      email: "bran.builder@westeros.com",
+      tax_id: "123.456.789-09",
+      phone: "(11) 98300-0000",
+      tags: ["builder", "raven", "Stark", "test"],
+      address: %StarkBank.Charge.Structs.AddressData{
+        street_line_1: "Av. Faria Lima, 1844",
+        street_line_2: "CJ 13",
+        district: "Itaim Bibi",
+        city: "São Paulo",
+        state_code: "SP",
+        zip_code: "01500-000"
+      }
+    },
+    tags: ["test"]
   }
 ]
 
-{:ok, charges} = StarkBank.Charge.create(credentials, charges)
+{:ok, charges} = StarkBank.Charge.post(credentials, charges)
 ```
 
 ### Get created charges
@@ -172,5 +191,5 @@ Alter @env, @username, @email, @password to your values on test/stark_bank_test.
 
 Afterwards, run:
 ```sh
-mix test
+mix test --trace
 ```
