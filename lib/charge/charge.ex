@@ -319,7 +319,9 @@ defmodule StarkBank.Charge do
 
     {response_status, response} = Requests.post(credentials, 'charge', body)
 
-    Customer.delete(credentials, temp_customer_ids)
+    if length(temp_customer_ids) > 0 do
+      Customer.delete(credentials, temp_customer_ids)
+    end
 
     if response_status != :ok do
       {response_status, response}
@@ -338,8 +340,7 @@ defmodule StarkBank.Charge do
     charges_without_customer_ids =
       for charge <- charges, is_nil(Helpers.extract_id(charge.customer)), do: charge
 
-    {:ok, temp_customers} =
-      Customer.post(credentials, for(charge <- charges_without_customer_ids, do: charge.customer))
+    temp_customers = create_temp_customers(credentials, charges_without_customer_ids)
 
     charges_with_temp_customers =
       for charge <- charges_without_customer_ids,
@@ -349,6 +350,20 @@ defmodule StarkBank.Charge do
       charges_with_customer_ids ++ charges_with_temp_customers,
       for(customer <- temp_customers, do: customer.id)
     }
+  end
+
+  defp create_temp_customers(credentials, charges) when length(charges) > 0 do
+    {:ok, temp_customers} =
+      Customer.post(
+        credentials,
+        for(charge <- charges, do: charge.customer)
+      )
+
+    temp_customers
+  end
+
+  defp create_temp_customers(_credentials, _charges) do
+    []
   end
 
   defp fill_charge_customer_id(charge, temp_customers) do
