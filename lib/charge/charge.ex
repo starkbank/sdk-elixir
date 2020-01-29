@@ -30,7 +30,7 @@ defmodule StarkBank.Charge do
     """
 
     @doc """
-    Registers a new customer that can be linked with charge emissions
+    Registers new customers that can be linked with charge emissions
 
     Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
@@ -192,14 +192,14 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    Deletes the charge customer with the specified ID
+    Deletes the specified charge customers
 
     Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - customers [list of strings or list of StarkBank.Charge.Structs.CustomerData (with valid IDs)]: charge customer data or IDs, e.g.: ["6307371336859648"];
 
-    Returns {:ok, deleted_customer}:
-    - deleted_customer [list of StarkBank.Charge.Structs.CustomerData]: deleted customer;
+    Returns {:ok, deleted_customers}:
+    - deleted_customers [list of StarkBank.Charge.Structs.CustomerData]: deleted customers;
 
     ## Example:
 
@@ -379,7 +379,7 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  Creates a new charge
+  Creates new charges
 
   Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
@@ -394,11 +394,11 @@ defmodule StarkBank.Charge do
     {:ok, [charge_1, charge_2]}
   """
   def post(credentials, charges) do
-    creations =
+    charges =
       for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
           do: partial_post(credentials, partial_charges)
 
-    Helpers.flatten_responses(creations)
+    Helpers.flatten_responses(charges)
   end
 
   defp partial_post(credentials, charges) do
@@ -649,7 +649,7 @@ defmodule StarkBank.Charge do
 
   Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
-  - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be deleted, e.g.: ["5718322100305920", "5705293853884416"];
+  - charges [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be deleted, e.g.: ["5718322100305920", "5705293853884416"];
 
   Returns {:ok, deleted_charges}:
   - deleted_charges [list of StarkBank.Charge.Structs.ChargeData]: deleted charges;
@@ -687,7 +687,7 @@ defmodule StarkBank.Charge do
 
   Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
-  - id [string or StarkBank.Charge.Structs.ChargeData]: charge ID or data struct, e.g.: "5718322100305920";
+  - charge [string or StarkBank.Charge.Structs.ChargeData]: charge ID or data struct, e.g.: "5718322100305920";
 
   Returns {:ok, pdf_content}:
   - pdf_content [string]: pdf file content;

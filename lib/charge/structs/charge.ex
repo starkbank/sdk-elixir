@@ -1,8 +1,8 @@
 defmodule StarkBank.Charge.Structs.ChargeData do
   @doc """
-  holds a single charge data
+  Holds data from a single charge
 
-  parameters:
+  Parameters:
   - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data ;
   - amount [int]: total charged amount in cents, e.g.: 150000 (= R$1.500,00);
   - id [string]: charge unique ID, e.g.: "5730684534521856";

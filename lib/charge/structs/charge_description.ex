@@ -1,9 +1,9 @@
 defmodule StarkBank.Charge.Structs.ChargeDescriptionData do
   @doc """
-  holds a single charge description data
-  usually nested in StarkBank.Charge.Structs.Charge
+  Holds data from a single charge description
+  Is usually nested in StarkBank.Charge.Structs.Charge
 
-  params:
+  Parameters:
   - text [string]: text describing the apointed amount, e.g.: "- Taxes";
   - amount [int]: part of the charge total amount (in cents) that is being described, e.g.: 579;
   """

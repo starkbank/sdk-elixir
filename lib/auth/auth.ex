@@ -47,7 +47,7 @@ defmodule StarkBank.Auth do
   end
 
   @doc """
-  Recicles the access-token present in the credentials agente
+  Recicles the access-token present in the credentials agent
 
   Parameters:
   - credentials: credentials returned by Auth.login [PID]

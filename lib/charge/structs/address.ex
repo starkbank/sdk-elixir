@@ -1,9 +1,9 @@
 defmodule StarkBank.Charge.Structs.AddressData do
   @doc """
-  holds charge customer address data
-  usually nested in StarkBank.Charge.Structs.Customer
+  Holds charge customer address data
+  Is usually nested in StarkBank.Charge.Structs.Customer
 
-  parameters:
+  Parameters:
   - street_line_1 [string]: e.g.: "Av. Faria Lima, 1844";
   - street_line_2 [string]: e.g.: "CJ 13";
   - district [string]: e.g.: "Itaim Bibi";

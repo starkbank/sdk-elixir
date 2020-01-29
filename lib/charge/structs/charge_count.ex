@@ -1,9 +1,9 @@
 defmodule StarkBank.Charge.Structs.ChargeCountData do
   @doc """
-  holds a customer charge counters
-  usually nested in StarkBank.Charge.Structs.Charge
+  Holds customer charge counters
+  Is usually nested in StarkBank.Charge.Structs.Charge
 
-  parameters:
+  Parameters:
   - overdue [int]: counts the customer overdue charges, e.g.: 3;
   - pending [int]: counts the customer pending charges, e.g.: 2;
   """

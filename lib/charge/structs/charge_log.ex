@@ -1,9 +1,9 @@
 defmodule StarkBank.Charge.Structs.ChargeLogData do
   @doc """
-  holds a single charge log data
-  usually nested in StarkBank.Charge.Structs.Charge
+  Holds data from a single charge log
+  Is usually nested in StarkBank.Charge.Structs.Charge
 
-  parameters:
+  Parameters:
   - id [string]: charge log id, e.g.: 312387192837;
   - event [string]: log event, namely: "register", "registered", "overdue", "updated", "canceled", "failed", "paid" or "bank";
   - created [timestamp as string]: log creation timestamp, e.g.: "2019-05-21T23:15:50.567533+00:00";
