@@ -1,22 +1,39 @@
 defmodule StarkBank.Auth do
   @moduledoc """
-  used to manage credentials and to create a new login session with the StarkBank API;
+  Used to manage credentials and to create a new session (login) with the StarkBank API
+
+  Functions:
+    - login
+    - update_access_token
+    - logout
+    - get_env
+    - get_workspace
+    - get_email
+    - get_access_token
+    - get_member_id
+    - get_workspace_id
+    - get_name
+    - get_permissions
   """
 
   alias StarkBank.Utils.Requests, as: Requests
 
   @doc """
-  creates a new access-token and invalidates all others
+  Creates a new access-token and invalidates all others
 
-  parameters:
+  Parameters:
   - env: :sandbox, :production [atom]
   - workspace: workspace name [string]
   - email: email [string]
   - password: password [string]
 
-  returns:
-  PID of agent that holds the credentials information, including the access-token
-  this PID must be passed as parameter to all SDK calls
+  Returns {:ok, credentials}:
+  - credentials: PID of agent that holds the credentials information, including the access-token. This PID must be passed as parameter to all SDK calls
+
+  ## Examples
+
+      iex> StarkBank.Auth.login(:sandbox, "workspace", "user@email.com", "password")
+      {:ok, #PID<0.178.0>}
   """
   def login(env, workspace, email, password) do
     {:ok, credentials} = Agent.start_link(fn -> %{} end)
@@ -30,13 +47,18 @@ defmodule StarkBank.Auth do
   end
 
   @doc """
-  recicles the access-token present in the credentials agente
+  Recicles the access-token present in the credentials agente
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  provided credentials
+  Returns {:ok, credentials}:
+  - credentials: PID of agent that holds the credentials information, including the access-token. This PID must be passed as parameter to all SDK calls
+
+  ## Examples
+
+      iex> StarkBank.Auth.update_access_token(credentials)
+      {:ok, #PID<0.190.0>}
   """
   def update_access_token(credentials) do
     {:ok, body} =
@@ -48,25 +70,35 @@ defmodule StarkBank.Auth do
       })
 
     access_token = body["accessToken"]
-    member_info = body["memberInfo"]
+    member_info = body["member"]
+
     member_id = member_info["id"]
     workspace_id = member_info["workspaceId"]
+    name = member_info["name"]
+    permissions = member_info["permissions"]
 
     Agent.update(credentials, fn map -> Map.put(map, :access_token, access_token) end)
     Agent.update(credentials, fn map -> Map.put(map, :member_id, member_id) end)
     Agent.update(credentials, fn map -> Map.put(map, :workspace_id, workspace_id) end)
+    Agent.update(credentials, fn map -> Map.put(map, :name, name) end)
+    Agent.update(credentials, fn map -> Map.put(map, :permissions, permissions) end)
 
     {:ok, credentials}
   end
 
   @doc """
-  deletes current session and invalidates current access-token
+  Deletes current session and invalidates current access-token
 
-  parameters:
+  Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
 
-  returns:
-  parsed API response json
+  Returns:
+  - parsed API response json
+
+  ## Examples
+
+      iex> StarkBank.Auth.logout(credentials)
+      {:ok, %{"message" => "Your session has been successfully closed"}}
   """
   def logout(credentials) do
     Requests.delete(
@@ -75,94 +107,152 @@ defmodule StarkBank.Auth do
     )
   end
 
-  @doc """
-  gets the env saved in the credentials agent
+  defp get_password(credentials) do
+    Agent.get(credentials, fn map -> Map.get(map, :password) end)
+  end
 
-  parameters:
+  @doc """
+  Gets the environment saved in the credentials agent
+
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  env (:sandbox or :production)
+  Returns:
+  - environment [:sandbox or :production]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_env(credentials)
+      :sandbox
   """
   def get_env(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :env) end)
   end
 
   @doc """
-  gets the workspace saved in the credentials agent
+  Gets the workspace saved in the credentials agent
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  workspace [string]
+  Returns:
+  - workspace [string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_workspace(credentials)
+      "workspace"
   """
   def get_workspace(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :workspace) end)
   end
 
   @doc """
-  gets the email saved in the credentials agent
+  Gets the email saved in the credentials agent
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  email [string]
+  Returns:
+  - email [string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_email(credentials)
+      "user@email.com"
   """
   def get_email(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :email) end)
   end
 
   @doc """
-  gets the password saved in the credentials agent
+  Gets the access_token saved in the credentials agent after login
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  password [string]
-  """
-  def get_password(credentials) do
-    Agent.get(credentials, fn map -> Map.get(map, :password) end)
-  end
+  Returns:
+  - access_token [string]
 
-  @doc """
-  gets the access_token saved in the credentials agent after login
+  ## Examples
 
-  parameters:
-  - credentials: credentials returned by Auth.login [PID]
-
-  returns:
-  access_token [string]
+      iex> StarkBank.Auth.get_access_token(credentials)
+      "507837650305024057114529712046081608a18e96724397ad149ab182785568cddee9381a714acc903d9e0a5d17ef71"
   """
   def get_access_token(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :access_token) end)
   end
 
   @doc """
-  gets the member_id saved in the credentials agent after login
+  Gets the member_id saved in the credentials agent after login
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  password [string]
+  Returns:
+  - password [string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_member_id(credentials)
+      "5711452971204608"
   """
   def get_member_id(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :member_id) end)
   end
 
   @doc """
-  gets the workspace_id saved in the credentials agent after login
+  Gets the workspace_id saved in the credentials agent after login
 
-  parameters:
+  Parameters:
   - credentials: credentials returned by Auth.login [PID]
 
-  returns:
-  workspace_id [string]
+  Returns:
+  - workspace_id [string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_workspace_id(credentials)
+      "5078376503050240"
+      ""
   """
   def get_workspace_id(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :workspace_id) end)
+  end
+
+  @doc """
+  Gets the member name saved in the credentials agent after login
+
+  Parameters:
+  - credentials: credentials returned by Auth.login [PID]
+
+  Returns:
+  - name [string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_name(credentials)
+      "Arya Stark"
+  """
+  def get_name(credentials) do
+    Agent.get(credentials, fn map -> Map.get(map, :name) end)
+  end
+
+  @doc """
+  Gets the user permissions saved in the credentials agent after login
+
+  Parameters:
+  - credentials: credentials returned by Auth.login [PID]
+
+  Returns:
+  - permissions [list of string]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_permissions(credentials)
+      ["admin"]
+  """
+  def get_permissions(credentials) do
+    Agent.get(credentials, fn map -> Map.get(map, :permissions) end)
   end
 end

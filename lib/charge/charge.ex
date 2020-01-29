@@ -1,10 +1,16 @@
 defmodule StarkBank.Charge do
   @moduledoc """
-  used to create and consult charges;
+  Used to create and consult charges
 
-  submodules:
-  - StarkBank.Customer: Used to create and consult charge customers;
-  - StarkBank.Log: Used to consult charge logs;
+  Submodules:
+  - StarkBank.Charge.Customer: Used to create and consult charge customers;
+  - StarkBank.Charge.Log: Used to consult charge logs;
+
+  Functions:
+  - post
+  - get
+  - delete
+  - get_pdf
   """
 
   alias StarkBank.Utils.Helpers, as: Helpers
@@ -13,15 +19,30 @@ defmodule StarkBank.Charge do
 
   defmodule Customer do
     @moduledoc """
-    used to create, update and delete charge customers;
+    Used to create, update and delete charge customers
+
+    Functions:
+    - post
+    - get
+    - get_by_id
+    - delete
+    - put
     """
 
     @doc """
-    registers a new customer that can be linked with charge emissions
+    Registers a new customer that can be linked with charge emissions
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - customers: list of StarkBank.Charge.Structs.CustomerData;
+
+    Returns {:ok, posted_customers}:
+    - posted_customers [list of StarkBank.Charge.Structs.CustomerData]: lists all posted customers;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Customer.post(credentials, [customer_1, customer_2])
+      {:ok, [customer_1, customer_2]}
     """
     def post(credentials, customers) do
       registrations =
@@ -46,17 +67,23 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    gets charge customers data according to informed parameters
+    Gets charge customers data according to informed parameters
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - options [keyword list]: refines request
+      - fields [list of strings]: list of customer fields that should be retrieved from the API;
+      - tags [list of strings]: filters customers by the provided tags;
+      - tax_id [string]: filters customers by tax ID;
+      - limit [int]: maximum results retrieved;
 
-    options:
-    - fields [list of strings]: list of customer fields that should be retrieved from the API;
-    - tags [list of strings]: filters customers by the provided tags;
-    - tax_id [string]: filters customers by tax ID;
-    - limit [int]: maximum results retrieved;
+    Returns {:ok, retrieved_customers}:
+    - retrieved_customers [list of StarkBank.Charge.Structs.CustomerData]: lists all retrieved customers;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Customer.get(credentials, fields: ["tax_id", "name"], limit: 30)
+      {:ok, [customer_1, customer_2, ... customer_30]}
     """
     def get(credentials, options \\ []) do
       %{fields: fields, tags: tags, tax_id: tax_id, limit: limit} =
@@ -135,11 +162,21 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    gets the charge customer with the specified ID
+    Gets the charge customer with the specified ID
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
-    - customer [string]: charge customer ID, e.g.: "6307371336859648";
+    - customer [string or StarkBank.Charge.Structs.CustomerData (with valid ID)]: charge customer ID, e.g.: "6307371336859648";
+
+    Returns {:ok, retrieved_customer}:
+    - retrieved_customer [StarkBank.Charge.Structs.CustomerData]: retrieved customer;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Customer.get_by_id(credentials, "6307371336859648")
+      {:ok, customer_1}
+      iex> StarkBank.Charge.Customer.get_by_id(credentials, customer_1)
+      {:ok, customer_1}
     """
     def get_by_id(credentials, customer) do
       id = Helpers.extract_id(customer)
@@ -155,11 +192,19 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    deletes the charge customer with the specified ID
+    Deletes the charge customer with the specified ID
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
-    - customers [list of strings or list of StarkBank.Charge.Structs.CustomerData]: charge customer data or IDs, e.g.: ["6307371336859648"];
+    - customers [list of strings or list of StarkBank.Charge.Structs.CustomerData (with valid IDs)]: charge customer data or IDs, e.g.: ["6307371336859648"];
+
+    Returns {:ok, deleted_customer}:
+    - deleted_customer [list of StarkBank.Charge.Structs.CustomerData]: deleted customer;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Customer.delete(credentials, ["6307371336859648", "5087311326867881"])
+      {:ok, [deleted_customer_1, deleted_customer_2]}
     """
     def delete(credentials, customers) do
       deletions =
@@ -185,11 +230,19 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    overwrites the charge customer with the specified ID
+    Overwrites the charge customer with the specified ID
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data;
+
+    Returns {:ok, overwritten_customer}:
+    - overwritten_customer [StarkBank.Charge.Structs.CustomerData]: overwritten customer;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Customer.put(credentials, customer_1)
+      {:ok, customer_1}
     """
     def put(credentials, customer) do
       encoded_customers = ChargeHelpers.Customer.encode(customer)
@@ -208,20 +261,30 @@ defmodule StarkBank.Charge do
 
   defmodule Log do
     @moduledoc """
-    used to consult charge events;
+    Used to consult charge events;
+
+    Functions:
+    - get
+    - get_by_id
     """
 
     @doc """
-    gets the charge logs according to the provided parameters
+    Gets the charge logs according to the provided parameters
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - charge_ids [list of strings or list of StarkBank.Charge.Structs.ChargeData]: charge IDs or charge structs, e.g.: ["5618308887871488"];
     - options [keyword list]: refines request
+      - events [list of string]: filter by log events, namely: "register", "registered", "overdue", "updated", "canceled", "failed", "paid" or "bank";
+      - limit [int]: maximum results retrieved;
 
-    options:
-    - events [list of string]: filter by log events, namely: "register", "registered", "overdue", "updated", "canceled", "failed", "paid" or "bank";
-    - limit [int]: maximum results retrieved;
+    Returns {:ok, charge_logs}:
+    - charge_logs [list of StarkBank.Charge.Structs.ChargeLogData]: retrieved charge logs;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Log.get(credentials, ["6307371336859648", charge])
+      {:ok, [charge_log_1, charge_log_2, ..., charge_log_n]}
     """
     def get(credentials, charge_ids, options \\ []) do
       %{events: events, limit: limit} = Enum.into(options, %{events: nil, limit: nil})
@@ -288,11 +351,19 @@ defmodule StarkBank.Charge do
     end
 
     @doc """
-    gets the charge log specified by the provided ID;
+    Gets the charge log specified by the provided ID;
 
-    parameters:
+    Parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - charge_log_id [string or StarkBank.Charge.Structs.ChargeLogData]: charge log ID or struct, e.g.: "6743665380687872";
+
+    Returns {:ok, charge_log}:
+    - charge_log [StarkBank.Charge.Structs.ChargeLogData]: retrieved charge log;
+
+    ## Example:
+
+      iex> StarkBank.Charge.Log.get_by_id(credentials, "6307371336859648")
+      {:ok, charge_log}
     """
     def get_by_id(credentials, charge_log_id) do
       id = Helpers.extract_id(charge_log_id)
@@ -308,11 +379,19 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  creates a new charge
+  Creates a new charge
 
-  parameters:
+  Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - charges [list of StarkBank.Charge.Structs.ChargeData]: charge structs;
+
+  Returns {:ok, posted_charges}:
+  - posted_charges [list of StarkBank.Charge.Structs.ChargeData]: posted charges;
+
+  ## Example:
+
+    iex> StarkBank.Charge.post(credentials, [charge_1, charge_2])
+    {:ok, [charge_1, charge_2]}
   """
   def post(credentials, charges) do
     creations =
@@ -417,20 +496,26 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  gets charges according to the provided parameters
+  Gets charges according to the provided parameters
 
-  parameters:
+  Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - options [keyword list]: refines request
+    - status [string]: filters specified charge status, namely: "created", "registered", "paid", "overdue", "canceled" or "failed";
+    - tags [list of strings]: filters charges by tags, e.g.: ["client1", "cash-in"];
+    - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be retrieved, e.g.: ["5718322100305920", "5705293853884416"];
+    - fields [list of strings]: selects charge data fields on API response, e.g.: ["id", "amount", "status"];
+    - filter_after [date or string ("%Y-%m-%d")]: only gets charges created after this date, e.g.: "2019-04-01";
+    - filter_before [date or string ("%Y-%m-%d")]: only gets charges created before this date, e.g.: "2019-05-01";
+    - limit [int]: maximum results retrieved;
 
-  options:
-  - status [string]: filters specified charge status, namely: "created", "registered", "paid", "overdue", "canceled" or "failed";
-  - tags [list of strings]: filters charges by tags, e.g.: ["client1", "cash-in"];
-  - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be retrieved, e.g.: ["5718322100305920", "5705293853884416"];
-  - fields [list of strings]: selects charge data fields on API response, e.g.: ["id", "amount", "status"];
-  - filter_after [date or "%Y-%m-%d"]: only gets charges created after this date, e.g.: "2019-04-01";
-  - filter_before [date or "%Y-%m-%d"]: only gets charges created before this date, e.g.: "2019-05-01";
-  - limit [int]: maximum results retrieved;
+  Returns {:ok, retrieved_charges}:
+  - retrieved_charges [list of StarkBank.Charge.Structs.ChargeData]: retrieved charges;
+
+  ## Example:
+
+    iex> StarkBank.Charge.get(credentials, tags: ["test", "stark"], filter_after: Date.add(Date.utc_today(), -7))
+    {:ok, [charge_1, charge_2, ..., charge_n]}
   """
   def get(
         credentials,
@@ -560,11 +645,19 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  deletes the specified charges
+  Deletes the specified charges
 
-  parameters:
+  Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be deleted, e.g.: ["5718322100305920", "5705293853884416"];
+
+  Returns {:ok, deleted_charges}:
+  - deleted_charges [list of StarkBank.Charge.Structs.ChargeData]: deleted charges;
+
+  ## Example:
+
+    iex> StarkBank.Charge.delete(credentials, ["1872563178531872", charge_2, "1092381029381092", charge_4])
+    {:ok, [charge_1, charge_2, charge_3, charge_4]}
   """
   def delete(credentials, charges) do
     deletions =
@@ -590,11 +683,21 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  gets the specified charge PDF file content
+  Gets the specified charge PDF file content
 
-  parameters:
+  Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - id [string or StarkBank.Charge.Structs.ChargeData]: charge ID or data struct, e.g.: "5718322100305920";
+
+  Returns {:ok, pdf_content}:
+  - pdf_content [string]: pdf file content;
+
+  ## Example:
+
+    iex> StarkBank.Charge.get_pdf(credentials, "1872563178531872")
+    {:ok, pdf_content}
+    iex> StarkBank.Charge.get_pdf(credentials, charge)
+    {:ok, pdf_content}
   """
   def get_pdf(credentials, charge) do
     Requests.get(
