@@ -21,7 +21,7 @@ defmodule StarkBankTest do
     # invalidating access token to validate relogin
     Agent.update(credentials, fn map -> Map.put(map, :access_token, "123") end)
 
-    {:ok, _response} = StarkBank.Charge.get(credentials, nil, nil, nil, nil, nil, nil, 1)
+    {:ok, _response} = StarkBank.Charge.get(credentials, limit: 1)
 
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
@@ -78,17 +78,17 @@ defmodule StarkBankTest do
 
     {:ok, _all_customers} = StarkBank.Charge.Customer.get(credentials)
 
-    {:ok, _70_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 70)
+    {:ok, _70_customers} = StarkBank.Charge.Customer.get(credentials, tags: ["Stark"], limit: 70)
 
-    {:ok, _110_customers} = StarkBank.Charge.Customer.get(credentials, nil, ["Stark"], nil, 110)
+    {:ok, _110_customers} =
+      StarkBank.Charge.Customer.get(credentials, tags: ["Stark"], limit: 110)
 
     {:ok, _test_customers} =
       StarkBank.Charge.Customer.get(
         credentials,
-        ["name", "tax_id"],
-        ["test"],
-        "012.345.678-90",
-        nil
+        fields: ["name", "tax_id"],
+        tags: ["test"],
+        tax_id: "012.345.678-90"
       )
 
     {:ok, _response} = StarkBank.Auth.logout(credentials)
@@ -100,10 +100,7 @@ defmodule StarkBankTest do
     {:ok, one_customer} =
       StarkBank.Charge.Customer.get(
         credentials,
-        nil,
-        nil,
-        nil,
-        1
+        limit: 1
       )
 
     one_customer = hd(one_customer)
@@ -123,10 +120,8 @@ defmodule StarkBankTest do
     {:ok, one_customer} =
       StarkBank.Charge.Customer.get(
         credentials,
-        nil,
-        ["test"],
-        nil,
-        1
+        tags: ["test"],
+        limit: 1
       )
 
     one_customer = hd(one_customer)
@@ -147,10 +142,8 @@ defmodule StarkBankTest do
     {:ok, one_customer} =
       StarkBank.Charge.Customer.get(
         credentials,
-        nil,
-        ["test"],
-        nil,
-        1
+        tags: ["test"],
+        limit: 1
       )
 
     one_customer = hd(one_customer)
@@ -220,13 +213,13 @@ defmodule StarkBankTest do
     {:ok, _filtered_charges} =
       StarkBank.Charge.get(
         credentials,
-        "registered",
-        ["cash-in"],
-        [hd(all_charges).id],
-        ["id", "taxId"],
-        Date.add(Date.utc_today(), -1),
-        Date.add(Date.utc_today(), 1),
-        50
+        status: "registered",
+        tags: ["cash-in"],
+        ids: [hd(all_charges).id],
+        fields: ["id", "tax_id"],
+        filter_after: Date.add(Date.utc_today(), -1),
+        filter_before: Date.add(Date.utc_today(), 1),
+        limit: 50
       )
 
     {:ok, _response} = StarkBank.Auth.logout(credentials)
@@ -238,13 +231,10 @@ defmodule StarkBankTest do
     {:ok, one_charge} =
       StarkBank.Charge.get(
         credentials,
-        "registered",
-        ["test"],
-        nil,
-        ["id"],
-        nil,
-        nil,
-        1
+        status: "registered",
+        tags: ["test"],
+        fields: ["id"],
+        limit: 1
       )
 
     {:ok, pdf} =
@@ -266,8 +256,8 @@ defmodule StarkBankTest do
     {:ok, test_charges} =
       StarkBank.Charge.get(
         credentials,
-        "registered",
-        ["test"]
+        status: "registered",
+        tags: ["test"]
       )
 
     {:ok, _deleted_charges} =
@@ -285,8 +275,8 @@ defmodule StarkBankTest do
     {:ok, test_customers} =
       StarkBank.Charge.Customer.get(
         credentials,
-        ["id"],
-        ["test"]
+        fields: ["id"],
+        tags: ["test"]
       )
 
     {:ok, _response} = StarkBank.Charge.Customer.delete(credentials, test_customers)
@@ -300,22 +290,24 @@ defmodule StarkBankTest do
     {:ok, one_charge} =
       StarkBank.Charge.get(
         credentials,
-        nil,
-        ["test"],
-        nil,
-        ["id"],
-        nil,
-        nil,
-        1
+        tags: ["test"],
+        fields: ["id"],
+        limit: 1
       )
 
     {:ok, _response} = StarkBank.Charge.Log.get(credentials, [hd(one_charge)])
 
     {:ok, _charge_logs} =
-      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id], ["registered", "cancel"], 30)
+      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id],
+        events: ["registered", "cancel"],
+        limit: 30
+      )
 
     {:ok, _charge_logs} =
-      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id], ["registered", "cancel"], 130)
+      StarkBank.Charge.Log.get(credentials, [hd(one_charge).id],
+        events: ["registered", "cancel"],
+        limit: 130
+      )
 
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
@@ -326,13 +318,9 @@ defmodule StarkBankTest do
     {:ok, one_charge} =
       StarkBank.Charge.get(
         credentials,
-        nil,
-        ["test"],
-        nil,
-        ["id"],
-        nil,
-        nil,
-        1
+        tags: ["test"],
+        fields: ["id"],
+        limit: 1
       )
 
     {:ok, charge_logs} = StarkBank.Charge.Log.get(credentials, [hd(one_charge)])

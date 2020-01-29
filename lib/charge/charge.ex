@@ -50,12 +50,18 @@ defmodule StarkBank.Charge do
 
     parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+    - options [keyword list]: refines request
+
+    options:
     - fields [list of strings]: list of customer fields that should be retrieved from the API;
     - tags [list of strings]: filters customers by the provided tags;
     - tax_id [string]: filters customers by tax ID;
     - limit [int]: maximum results retrieved;
     """
-    def get(credentials, fields \\ nil, tags \\ nil, tax_id \\ nil, limit \\ nil) do
+    def get(credentials, options \\ []) do
+      %{fields: fields, tags: tags, tax_id: tax_id, limit: limit} =
+        Enum.into(options, %{fields: nil, tags: nil, tax_id: nil, limit: nil})
+
       recursive_get(
         credentials,
         Helpers.snake_to_camel_list_of_strings(fields),
@@ -211,10 +217,15 @@ defmodule StarkBank.Charge do
     parameters:
     - credentials [PID]: agent PID returned by StarkBank.Auth.login;
     - charge_ids [list of strings or list of StarkBank.Charge.Structs.ChargeData]: charge IDs or charge structs, e.g.: ["5618308887871488"];
+    - options [keyword list]: refines request
+
+    options:
     - events [list of string]: filter by log events, namely: "register", "registered", "overdue", "updated", "canceled", "failed", "paid" or "bank";
     - limit [int]: maximum results retrieved;
     """
-    def get(credentials, charge_ids, events \\ nil, limit \\ nil) do
+    def get(credentials, charge_ids, options \\ []) do
+      %{events: events, limit: limit} = Enum.into(options, %{events: nil, limit: nil})
+
       recursive_get(
         credentials,
         Helpers.treat_nullable_id_or_struct_list(charge_ids),
@@ -410,6 +421,9 @@ defmodule StarkBank.Charge do
 
   parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
+  - options [keyword list]: refines request
+
+  options:
   - status [string]: filters specified charge status, namely: "created", "registered", "paid", "overdue", "canceled" or "failed";
   - tags [list of strings]: filters charges by tags, e.g.: ["client1", "cash-in"];
   - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be retrieved, e.g.: ["5718322100305920", "5705293853884416"];
@@ -420,14 +434,27 @@ defmodule StarkBank.Charge do
   """
   def get(
         credentials,
-        status \\ nil,
-        tags \\ nil,
-        ids \\ nil,
-        fields \\ nil,
-        filter_after \\ nil,
-        filter_before \\ nil,
-        limit \\ nil
+        options \\ []
       ) do
+    %{
+      status: status,
+      tags: tags,
+      ids: ids,
+      fields: fields,
+      filter_after: filter_after,
+      filter_before: filter_before,
+      limit: limit
+    } =
+      Enum.into(options, %{
+        status: nil,
+        tags: nil,
+        ids: nil,
+        fields: nil,
+        filter_after: nil,
+        filter_before: nil,
+        limit: nil
+      })
+
     recursive_get(
       credentials,
       status,
@@ -539,17 +566,17 @@ defmodule StarkBank.Charge do
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - ids [list of strings or StarkBank.Charge.Structs.ChargeData]: charge IDs or data structs to be deleted, e.g.: ["5718322100305920", "5705293853884416"];
   """
-  def delete(credentials, ids) do
+  def delete(credentials, charges) do
     deletions =
-      for partial_ids <- Helpers.chunk_list_by_max_limit(ids),
-          do: partial_delete(credentials, partial_ids)
+      for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
+          do: partial_delete(credentials, partial_charges)
 
     Helpers.flatten_responses(deletions)
   end
 
-  defp partial_delete(credentials, ids) do
+  defp partial_delete(credentials, charges) do
     parameters = [
-      ids: Helpers.treat_nullable_id_or_struct_list(ids)
+      ids: Helpers.treat_nullable_id_or_struct_list(charges)
     ]
 
     {response_status, response} = Requests.delete(credentials, 'charge', parameters)
@@ -569,10 +596,10 @@ defmodule StarkBank.Charge do
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - id [string or StarkBank.Charge.Structs.ChargeData]: charge ID or data struct, e.g.: "5718322100305920";
   """
-  def get_pdf(credentials, id) do
+  def get_pdf(credentials, charge) do
     Requests.get(
       credentials,
-      'charge/' ++ to_charlist(Helpers.extract_id(id)) ++ '/pdf',
+      'charge/' ++ to_charlist(Helpers.extract_id(charge)) ++ '/pdf',
       nil,
       false
     )
