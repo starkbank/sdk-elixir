@@ -31,6 +31,15 @@ defmodule StarkBank.Utils.Helpers do
     "#{date.year}-#{date.month}-#{date.day}"
   end
 
+  def string_to_datetime(string) when is_nil(string) do
+    nil
+  end
+
+  def string_to_datetime(string) do
+    {:ok, datetime, _} = DateTime.from_iso8601(string)
+    datetime
+  end
+
   def get_recursive_limit(limit) when is_nil(limit) do
     nil
   end
