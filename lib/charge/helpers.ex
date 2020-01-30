@@ -4,6 +4,7 @@ defmodule StarkBank.Charge.Helpers do
   alias StarkBank.Utils.Helpers, as: MainHelpers
 
   defmodule Customer do
+    @moduledoc false
     def encode(customer) do
       address = customer.address
 
@@ -52,6 +53,7 @@ defmodule StarkBank.Charge.Helpers do
   end
 
   defmodule Charge do
+    @moduledoc false
     def encode(charge) do
       %{
         amount: charge.amount,
@@ -118,6 +120,7 @@ defmodule StarkBank.Charge.Helpers do
   end
 
   defmodule ChargeLog do
+    @moduledoc false
     def decode(charge_log_map) do
       %StarkBank.Charge.Structs.ChargeLogData{
         id: charge_log_map["id"],

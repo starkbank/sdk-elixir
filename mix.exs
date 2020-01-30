@@ -5,15 +5,25 @@ defmodule StarkBank.MixProject do
     [
       app: :stark_bank,
       name: :stark_bank,
-      organization: :stark_bank,
-      licenses: [:MIT],
       version: "1.0.0",
       homepage_url: "https://starkbank.com",
       source_url: "https://github.com/starkbank/sdk-elixir",
       description: description(),
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package()
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Stark Bank"],
+      licenses: [:MIT],
+      links: %{
+        "StarkBank" => "https://starkbank.com",
+        "GitHub" => "https://github.com/starkbank/sdk-elixir"
+      }
     ]
   end
 
@@ -27,7 +37,8 @@ defmodule StarkBank.MixProject do
 
   defp deps do
     [
-      {:jason, "~> 1.1"}
+      {:jason, "~> 1.1"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 end

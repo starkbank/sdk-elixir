@@ -1,6 +1,7 @@
 _build
 deps
 .idea
+doc
 
 *.dump
 *.lock
