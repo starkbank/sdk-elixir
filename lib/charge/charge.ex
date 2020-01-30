@@ -380,7 +380,12 @@ defmodule StarkBank.Charge do
 
   @doc """
   Creates new charges.
-  If any customer ID is not specified, the SDK will first get customers by the informed tax_id. Then, if no customers match the informed customer data or if the 'overwrite_customer_on_mismatch' is false (default), a new customer will be created and associated with the charge. Else, the first retrieved customer will be overwritten with the provided customer data.
+  For each charge customer that is specified without an ID,
+  the SDK will first get customers by its tax_id and,
+  if no customers are a full match or if the 'overwrite_customer_on_mismatch' is false (default),
+  a new customer will be created and associated with the charge.
+  If 'overwrite_customer_on_mismatch' is true, the first retrieved customer will be overwritten with the provided customer data.
+  Therefore, providing ID-less customers may slow the function down significantly, due to the possibly great number of subcalls to the API.
 
   Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
