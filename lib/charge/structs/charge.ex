@@ -13,6 +13,8 @@ defmodule StarkBank.Charge.Structs.ChargeData do
   - overdue_limit [int]: number of days after due date when the charge will expire, 0<= n <= 59, e.g.: 5;
   - fine [float]: percentage of the charge amount to be charged if paid after due date, e.g.: 2.00 (= 2%);
   - interest [float]: monthly interest, in percentage, charged if paid after due date, e.g.: 1.50 (= 1.5%);
+  - discount [float]: defines the discount percentage applicable if charge is paid before discount_date (if discount is defined, discountDate must also be defined)
+  - discount_date [date or string ("%Y-%m-%d")]: defines limit date until when the defined discount will be valid (if discount is defined, discountDate must also be defined)
   - tags [list of strings]: custom tags used when searching charges, e.g.: ["client1", "cash-in"];
   - descriptions [list of StarkBank.Charge.Structs.ChargeDescriptionData]: list of charge descriptions;
   """
@@ -27,6 +29,8 @@ defmodule StarkBank.Charge.Structs.ChargeData do
     overdue_limit: nil,
     fine: nil,
     interest: nil,
+    discount: nil,
+    discount_date: nil,
     tags: [],
     descriptions: []
   ]
