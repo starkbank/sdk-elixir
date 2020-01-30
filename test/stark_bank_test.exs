@@ -211,6 +211,29 @@ defmodule StarkBankTest do
 
     assert length(charges) == length(posted_charges)
 
+    put_test_customer = %StarkBank.Charge.Structs.ChargeData{
+      amount: 32_171_32,
+      customer: %StarkBank.Charge.Structs.CustomerData{
+        name: "Brandon Stark 2",
+        email: "bran.builder@westeros.com",
+        tax_id: "123.456.789-09",
+        phone: "(11) 98300-0000",
+        tags: ["builder", "raven", "Stark", "test"],
+        address: %StarkBank.Charge.Structs.AddressData{
+          street_line_1: "Av. Faria Lima, 1844",
+          street_line_2: "CJ 13",
+          district: "Itaim Bibi",
+          city: "São Paulo",
+          state_code: "SP",
+          zip_code: "01500-000"
+        }
+      },
+      tags: ["test"]
+    }
+
+    {:ok, _posted_charges} =
+      StarkBank.Charge.post(credentials, [put_test_customer], overwrite_customer_on_mismatch: true)
+
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
 

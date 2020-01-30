@@ -379,11 +379,14 @@ defmodule StarkBank.Charge do
   end
 
   @doc """
-  Creates new charges
+  Creates new charges.
+  If any customer ID is not specified, the SDK will first get customers by the informed tax_id. Then, if no customers match the informed customer data or if the 'overwrite_customer_on_mismatch' is false (default), a new customer will be created and associated with the charge. Else, the first retrieved customer will be overwritten with the provided customer data.
 
   Parameters:
   - credentials [PID]: agent PID returned by StarkBank.Auth.login;
   - charges [list of StarkBank.Charge.Structs.ChargeData]: charge structs;
+  - options [keyword list]: refines request
+    - overwrite_customer_on_mismatch [bool, default false]: if true, first mismatching customer will be overwritten, if any; if false, new customer will be created (only active if no matching customers are located)
 
   Returns {:ok, posted_charges}:
   - posted_charges [list of StarkBank.Charge.Structs.ChargeData]: posted charges;
@@ -393,25 +396,25 @@ defmodule StarkBank.Charge do
     iex> StarkBank.Charge.post(credentials, [charge_1, charge_2])
     {:ok, [charge_1, charge_2]}
   """
-  def post(credentials, charges) do
+  def post(credentials, charges, options \\ []) do
+    %{overwrite_customer_on_mismatch: overwrite_customer_on_mismatch} =
+      Enum.into(options, %{overwrite_customer_on_mismatch: false})
+
     charges =
       for partial_charges <- Helpers.chunk_list_by_max_limit(charges),
-          do: partial_post(credentials, partial_charges)
+          do: partial_post(credentials, partial_charges, overwrite_customer_on_mismatch)
 
     Helpers.flatten_responses(charges)
   end
 
-  defp partial_post(credentials, charges) do
-    {filled_charges, temp_customer_ids} = fill_charges_with_temp_customers(credentials, charges)
+  defp partial_post(credentials, charges, overwrite_customer_on_mismatch) do
+    filled_charges =
+      fill_charges_with_customer_ids(credentials, charges, overwrite_customer_on_mismatch)
 
     encoded_charges = for charge <- filled_charges, do: ChargeHelpers.Charge.encode(charge)
     body = %{charges: encoded_charges}
 
     {response_status, response} = Requests.post(credentials, 'charge', body)
-
-    if length(temp_customer_ids) > 0 do
-      Customer.delete(credentials, temp_customer_ids)
-    end
 
     if response_status != :ok do
       {response_status, response}
@@ -423,37 +426,75 @@ defmodule StarkBank.Charge do
     e in MatchError -> {:error, e}
   end
 
-  defp fill_charges_with_temp_customers(credentials, charges) do
+  defp fill_charges_with_customer_ids(credentials, charges, overwrite_customer_on_mismatch) do
     charges_with_customer_ids =
       for charge <- charges, !is_nil(Helpers.extract_id(charge.customer)), do: charge
 
     charges_without_customer_ids =
       for charge <- charges, is_nil(Helpers.extract_id(charge.customer)), do: charge
 
-    temp_customers = create_temp_customers(credentials, charges_without_customer_ids)
-
-    charges_with_temp_customers =
+    located_customers =
       for charge <- charges_without_customer_ids,
-          do: fill_charge_customer_id(charge, temp_customers)
+          do: locate_or_make_customer(credentials, charge, overwrite_customer_on_mismatch)
 
-    {
-      charges_with_customer_ids ++ charges_with_temp_customers,
-      for(customer <- temp_customers, do: customer.id)
-    }
+    charges_with_located_customers =
+      for charge <- charges_without_customer_ids,
+          do: fill_charge_customer_id(charge, located_customers)
+
+    charges_with_customer_ids ++ charges_with_located_customers
   end
 
-  defp create_temp_customers(credentials, charges) when length(charges) > 0 do
-    {:ok, temp_customers} =
-      Customer.post(
+  defp locate_or_make_customer(credentials, charge, overwrite_customer_on_mismatch) do
+    customer = charge.customer
+
+    {:ok, customer_candidates} =
+      Customer.get(
         credentials,
-        for(charge <- charges, do: charge.customer)
+        tags: customer.tags,
+        tax_id: customer.tax_id
       )
 
-    temp_customers
+    matching_customer = find_matching_customer(customer, customer_candidates)
+
+    if !is_nil(matching_customer) do
+      matching_customer
+    else
+      post_or_put_customer(
+        credentials,
+        customer,
+        customer_candidates,
+        overwrite_customer_on_mismatch
+      )
+    end
   end
 
-  defp create_temp_customers(_credentials, _charges) do
-    []
+  defp post_or_put_customer(
+         credentials,
+         customer,
+         customer_candidates,
+         overwrite_customer_on_mismatch
+       )
+       when overwrite_customer_on_mismatch and length(customer_candidates) > 0 do
+    {:ok, put_customer} =
+      Customer.put(
+        credentials,
+        %StarkBank.Charge.Structs.CustomerData{
+          customer
+          | id: hd(customer_candidates).id
+        }
+      )
+
+    put_customer
+  end
+
+  defp post_or_put_customer(
+         credentials,
+         customer,
+         _customer_candidates,
+         _overwrite_customer_on_mismatch
+       ) do
+    {:ok, post_customers} = Customer.post(credentials, [customer])
+    hd(post_customers)
   end
 
   defp fill_charge_customer_id(charge, temp_customers) do
@@ -463,16 +504,16 @@ defmodule StarkBank.Charge do
     }
   end
 
-  defp find_matching_customer(base_customer, [temp_customer | other_temp_customers]) do
-    if customers_match?(base_customer, temp_customer) do
-      temp_customer
+  defp find_matching_customer(base_customer, [comp_customer | other_comp_customers]) do
+    if customers_match?(base_customer, comp_customer) do
+      comp_customer
     else
-      find_matching_customer(base_customer, other_temp_customers)
+      find_matching_customer(base_customer, other_comp_customers)
     end
   end
 
   defp find_matching_customer(_base_customer, []) do
-    throw("SDK logic failed to locate temporary customer, please contact support")
+    nil
   end
 
   defp customers_match?(base_customer, comp_customer) do
