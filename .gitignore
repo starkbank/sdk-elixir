@@ -1,0 +1,7 @@
+_build
+deps
+.idea
+
+*.dump
+*.lock
+*.pdf
