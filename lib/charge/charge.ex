@@ -392,6 +392,8 @@ defmodule StarkBank.Charge do
   - charges [list of StarkBank.Charge.Structs.ChargeData]: charge structs;
   - options [keyword list]: refines request
     - overwrite_customer_on_mismatch [bool, default false]: if true, first mismatching customer will be overwritten, if any; if false, new customer will be created (only active if no matching customers are located)
+    - discount [int]: defines discount in cents if charge is paid before discountDate (if discount is defined, discountDate must also be defined)
+    - discount_date [date or string ("%Y-%m-%d")]: defines up to when the defined discount will be valid (if discount is defined, discountDate must also be defined)
 
   Returns {:ok, posted_charges}:
   - posted_charges [list of StarkBank.Charge.Structs.ChargeData]: posted charges;

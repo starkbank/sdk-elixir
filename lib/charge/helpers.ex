@@ -60,6 +60,8 @@ defmodule StarkBank.Charge.Helpers do
         fine: charge.fine,
         interest: charge.interest,
         overdueLimit: charge.overdue_limit,
+        discount: charge.discount,
+        discountDate: MainHelpers.date_to_string(charge.discount_date),
         tags: charge.tags,
         descriptions: for(description <- charge.descriptions, do: encode_description(description))
       }
@@ -75,6 +77,8 @@ defmodule StarkBank.Charge.Helpers do
         fine: charge_map["fine"],
         interest: charge_map["interest"],
         overdue_limit: charge_map["overdueLimit"],
+        discount: charge_map["discount"],
+        discount_date: charge_map["discountDate"],
         tags: charge_map["tags"],
         descriptions: decode_descriptions(charge_map["descriptions"]),
         customer: %StarkBank.Charge.Structs.CustomerData{

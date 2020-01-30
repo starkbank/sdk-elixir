@@ -201,6 +201,9 @@ defmodule StarkBankTest do
                 zip_code: "01500-000"
               }
             },
+            discount: 5,
+            discount_date: Date.add(Date.utc_today(), 2),
+            due_date: Date.add(Date.utc_today(), 3),
             tags: ["test"]
           }
         ]),
