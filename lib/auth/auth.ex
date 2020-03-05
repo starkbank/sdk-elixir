@@ -22,10 +22,13 @@ defmodule StarkBank.Auth do
   Creates a new access-token and invalidates all others
 
   Parameters:
-  - env: :sandbox, :production [atom]
-  - workspace: workspace name [string]
-  - email: email [string]
-  - password: password [string]
+  - env [atom]: :sandbox, :production
+  - workspace [string]: workspace name
+  - email [string]: email
+  - password [string]: password
+  - options [keyword list]: refines request
+    - access_token [string, default nil]: if nil, a new access_token will be requested from the API, else, it will be saved for further use without making any requests
+    - auto_refresh [bool, default true]: if true, any credentials errors returned by the API will be responded with one attempt to retrieve a new access_token and remake the request;
 
   Returns {:ok, credentials}:
   - credentials: PID of agent that holds the credentials information, including the access-token. This PID must be passed as parameter to all SDK calls
@@ -35,22 +38,32 @@ defmodule StarkBank.Auth do
       iex> StarkBank.Auth.login(:sandbox, "workspace", "user@email.com", "password")
       {:ok, #PID<0.178.0>}
   """
-  def login(env, workspace, email, password) do
+  def login(env, workspace, email, password, options \\ []) do
+    %{auto_refresh: auto_refresh, access_token: access_token} =
+      Enum.into(options, %{auto_refresh: true, access_token: nil})
+
     {:ok, credentials} = Agent.start_link(fn -> %{} end)
 
     Agent.update(credentials, fn map -> Map.put(map, :env, env) end)
     Agent.update(credentials, fn map -> Map.put(map, :workspace, workspace) end)
     Agent.update(credentials, fn map -> Map.put(map, :email, email) end)
     Agent.update(credentials, fn map -> Map.put(map, :password, password) end)
+    Agent.update(credentials, fn map -> Map.put(map, :auto_refresh, auto_refresh) end)
 
-    update_access_token(credentials)
+    if is_nil(access_token) do
+      update_access_token(credentials)
+    else
+      Agent.update(credentials, fn map -> Map.put(map, :access_token, access_token) end)
+    end
+
+    {:ok, credentials}
   end
 
   @doc """
   Recicles the access-token present in the credentials agent
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns {:ok, credentials}:
   - credentials: PID of agent that holds the credentials information, including the access-token. This PID must be passed as parameter to all SDK calls
@@ -87,6 +100,21 @@ defmodule StarkBank.Auth do
   end
 
   @doc """
+  Inserts an external access-token into the current credentials agent. This is used mostly along with {auto_refresh: false} when managing multiple workers that are using the same session.
+
+  Parameters:
+  - credentials [PID]: credentials returned by Auth.login
+  - access_token [string]: access_token that should be used by this worker
+
+  ## Examples
+
+      iex> StarkBank.Auth.update_access_token(credentials, "50783765030502405711452971204608ac4d4a86e5934c858afb3e493bd3424457566319ae5244629854d36e76649f13")
+  """
+  def insert_external_access_token(credentials, access_token) do
+    Agent.update(credentials, fn map -> Map.put(map, :access_token, access_token) end)
+  end
+
+  @doc """
   Deletes current session and invalidates current access-token
 
   Parameters:
@@ -115,7 +143,7 @@ defmodule StarkBank.Auth do
   Gets the environment saved in the credentials agent
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - environment [:sandbox or :production]
@@ -133,7 +161,7 @@ defmodule StarkBank.Auth do
   Gets the workspace saved in the credentials agent
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - workspace [string]
@@ -151,7 +179,7 @@ defmodule StarkBank.Auth do
   Gets the email saved in the credentials agent
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - email [string]
@@ -169,7 +197,7 @@ defmodule StarkBank.Auth do
   Gets the access_token saved in the credentials agent after login
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - access_token [string]
@@ -187,7 +215,7 @@ defmodule StarkBank.Auth do
   Gets the member_id saved in the credentials agent after login
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - password [string]
@@ -205,7 +233,7 @@ defmodule StarkBank.Auth do
   Gets the workspace_id saved in the credentials agent after login
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - workspace_id [string]
@@ -224,7 +252,7 @@ defmodule StarkBank.Auth do
   Gets the member name saved in the credentials agent after login
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - name [string]
@@ -242,7 +270,7 @@ defmodule StarkBank.Auth do
   Gets the user permissions saved in the credentials agent after login
 
   Parameters:
-  - credentials: credentials returned by Auth.login [PID]
+  - credentials [PID]: credentials returned by Auth.login
 
   Returns:
   - permissions [list of string]
@@ -254,5 +282,23 @@ defmodule StarkBank.Auth do
   """
   def get_permissions(credentials) do
     Agent.get(credentials, fn map -> Map.get(map, :permissions) end)
+  end
+
+  @doc """
+  Gets the auto_refresh setting saved in the credentials agent after login
+
+  Parameters:
+  - credentials: credentials returned by Auth.login [PID]
+
+  Returns:
+  - auto_refresh [boolean]
+
+  ## Examples
+
+      iex> StarkBank.Auth.get_permissions(credentials)
+      ["admin"]
+  """
+  def get_auto_refresh(credentials) do
+    Agent.get(credentials, fn map -> Map.get(map, :auto_refresh) end)
   end
 end

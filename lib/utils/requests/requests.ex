@@ -46,7 +46,7 @@ defmodule StarkBank.Utils.Requests do
       )
 
     if authentication_error?(response_body) do
-      if is_retry do
+      if is_retry or not StarkBank.Auth.get_auto_refresh(credentials) do
         {HTTPStatus.unauthorized(), response_body}
       else
         StarkBank.Auth.update_access_token(credentials)

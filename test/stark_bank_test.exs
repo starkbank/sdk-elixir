@@ -24,11 +24,40 @@ defmodule StarkBankTest do
     {:ok, _response} = StarkBank.Auth.logout(credentials)
   end
 
+  test "external-auth-session" do
+    {:ok, credentials} =
+      StarkBank.Auth.login(@env, @username, @email, @password, auto_refresh: false)
+
+    auto_refresh = StarkBank.Auth.get_auto_refresh(credentials)
+    assert !auto_refresh
+
+    access_token = StarkBank.Auth.get_access_token(credentials)
+
+    {:ok, credentials} =
+      StarkBank.Auth.login(@env, @username, @email, @password,
+        access_token: access_token,
+        auto_refresh: false
+      )
+
+    {:ok, _response} = StarkBank.Charge.get(credentials, limit: 1)
+
+    # invalidating access token to validate lack of relogin
+    StarkBank.Auth.insert_external_access_token(credentials, "123")
+
+    {:error, _response} = StarkBank.Charge.get(credentials, limit: 1)
+
+    StarkBank.Auth.insert_external_access_token(credentials, access_token)
+
+    {:ok, _response} = StarkBank.Charge.get(credentials, limit: 1)
+
+    {:ok, _response} = StarkBank.Auth.logout(credentials)
+  end
+
   test "auth-relogin" do
     {:ok, credentials} = StarkBank.Auth.login(@env, @username, @email, @password)
 
     # invalidating access token to validate relogin
-    Agent.update(credentials, fn map -> Map.put(map, :access_token, "123") end)
+    StarkBank.Auth.insert_external_access_token(credentials, "123")
 
     {:ok, _response} = StarkBank.Charge.get(credentials, limit: 1)
 
