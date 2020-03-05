@@ -11,7 +11,7 @@ The package can be installed by adding `stark_bank` to your list of dependencies
 ```elixir
 def deps do
   [
-    {:stark_bank, "~> 1.0.0"}
+    {:stark_bank, "~> 1.1.0"}
   ]
 end
 ```
