@@ -62,20 +62,6 @@ defmodule StarkBank.Charge.Helpers do
       |> to_string()
       |> normalize_tax_id()
     end
-
-    def normalize_phone(phone) when is_binary(phone) do
-      phone
-      |> String.replace("(", "")
-      |> String.replace(")", "")
-      |> String.replace("-", "")
-      |> String.replace(" ", "")
-    end
-
-    def normalize_phone(phone) do
-      phone
-      |> to_string()
-      |> normalize_phone()
-    end
   end
 
   defmodule Charge do
