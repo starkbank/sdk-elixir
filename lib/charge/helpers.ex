@@ -56,6 +56,14 @@ defmodule StarkBank.Charge.Helpers do
       |> String.replace(".", "")
       |> String.replace("-", "")
     end
+
+    def normalize_phone(phone) do
+      phone
+      |> String.replace("(", "")
+      |> String.replace(")", "")
+      |> String.replace("-", "")
+      |> String.replace(" ", "")
+    end
   end
 
   defmodule Charge do
