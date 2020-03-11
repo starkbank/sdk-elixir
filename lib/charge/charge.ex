@@ -527,10 +527,12 @@ defmodule StarkBank.Charge do
     base_address = base_customer.address
     comp_address = comp_customer.address
 
+    customer_tax_id = base_customer.tax_id |> ChargeHelpers.Customer.normalize_tax_id()
+    comp_customer_tax_id = comp_customer.tax_id |> ChargeHelpers.Customer.normalize_tax_id()
+
     Helpers.nullable_fields_match?(base_customer.name, comp_customer.name) and
       Helpers.nullable_fields_match?(base_customer.email, comp_customer.email) and
-      Helpers.nullable_fields_match?(base_customer.tax_id, comp_customer.tax_id) and
-      Helpers.nullable_fields_match?(base_customer.phone, comp_customer.phone) and
+      Helpers.nullable_fields_match?(customer_tax_id, comp_customer_tax_id) and
       Helpers.nullable_fields_match?(
         Helpers.lowercase_list_of_strings(base_customer.tags),
         comp_customer.tags

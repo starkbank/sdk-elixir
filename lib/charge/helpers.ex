@@ -50,6 +50,18 @@ defmodule StarkBank.Charge.Helpers do
         tags: customer_map["tags"]
       }
     end
+
+    def normalize_tax_id(tax_id) when is_binary(tax_id) do
+      tax_id
+      |> String.replace(".", "")
+      |> String.replace("-", "")
+    end
+
+    def normalize_tax_id(tax_id) do
+      tax_id
+      |> to_string()
+      |> normalize_tax_id()
+    end
   end
 
   defmodule Charge do
