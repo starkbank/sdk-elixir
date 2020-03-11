@@ -50,6 +50,12 @@ defmodule StarkBank.Charge.Helpers do
         tags: customer_map["tags"]
       }
     end
+
+    def normalize_tax_id(tax_id) do
+      tax_id
+      |> String.replace(".", "")
+      |> String.replace("-", "")
+    end
   end
 
   defmodule Charge do
