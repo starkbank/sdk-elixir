@@ -5,6 +5,7 @@ defmodule StarkBank.Auth do
   Functions:
     - login
     - update_access_token
+    - insert_external_access_token
     - logout
     - get_env
     - get_workspace
@@ -14,6 +15,7 @@ defmodule StarkBank.Auth do
     - get_workspace_id
     - get_name
     - get_permissions
+    - get_auto_refresh
   """
 
   alias StarkBank.Utils.Requests, as: Requests
