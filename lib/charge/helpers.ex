@@ -86,6 +86,8 @@ defmodule StarkBank.Charge.Helpers do
         amount: charge_map["amount"],
         id: charge_map["id"],
         status: charge_map["status"],
+        issue_date: MainHelpers.string_to_datetime(charge_map["issueDate"]),
+        workspace_id: charge_map["workspaceId"],
         bar_code: charge_map["barCode"],
         line: charge_map["line"],
         due_date: MainHelpers.string_to_datetime(charge_map["dueDate"]),
