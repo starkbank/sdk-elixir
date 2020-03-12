@@ -17,6 +17,7 @@ defmodule StarkBank.Charge.Structs.ChargeData do
   - discount_date [date or string ("%Y-%m-%d")]: defines limit date until when the defined discount will be valid (if discount is defined, discountDate must also be defined)
   - status [string]: charge status, e.g.: created, registered, paid, overdue, canceled, failed;
   - tags [list of strings]: custom tags used when searching charges, e.g.: ["client1", "cash-in"];
+  - workspace_id [strings]: workspace_id that created the charge, e.g.: "5078376503050240";
   - descriptions [list of StarkBank.Charge.Structs.ChargeDescriptionData]: list of charge descriptions;
   """
   defstruct [
@@ -33,6 +34,7 @@ defmodule StarkBank.Charge.Structs.ChargeData do
     discount: nil,
     discount_date: nil,
     status: nil,
+    workspace_id: nil,
     tags: [],
     descriptions: []
   ]
