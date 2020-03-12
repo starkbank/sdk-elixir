@@ -3,7 +3,7 @@ defmodule StarkBank.Charge.Structs.ChargeData do
   Holds data from a single charge
 
   Parameters:
-  - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data ;
+  - customer [StarkBank.Charge.Structs.CustomerData]: charge customer data;
   - amount [int]: total charged amount in cents, e.g.: 150000 (= R$1.500,00);
   - id [string]: charge unique ID, e.g.: "5730684534521856";
   - bar_code [string]: charge bar code, e.g.: "34198777500000500001090000788367307144464000";
@@ -15,6 +15,7 @@ defmodule StarkBank.Charge.Structs.ChargeData do
   - interest [float]: monthly interest, in percentage, charged if paid after due date, e.g.: 1.50 (= 1.5%);
   - discount [float]: defines the discount percentage applicable if charge is paid before discount_date (if discount is defined, discountDate must also be defined)
   - discount_date [date or string ("%Y-%m-%d")]: defines limit date until when the defined discount will be valid (if discount is defined, discountDate must also be defined)
+  - status [string]: charge status, e.g.: created, registered, paid, overdue, canceled, failed;
   - tags [list of strings]: custom tags used when searching charges, e.g.: ["client1", "cash-in"];
   - descriptions [list of StarkBank.Charge.Structs.ChargeDescriptionData]: list of charge descriptions;
   """
@@ -31,6 +32,7 @@ defmodule StarkBank.Charge.Structs.ChargeData do
     interest: nil,
     discount: nil,
     discount_date: nil,
+    status: nil,
     tags: [],
     descriptions: []
   ]
