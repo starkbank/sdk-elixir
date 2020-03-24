@@ -23,11 +23,11 @@ defmodule StarkBank.Utils.API do
     data
   end
 
-  def from_api_json(resource, json) do
+  def from_api_json(json, resource) do
     json
-     |> Enum.each(fn({field, value}) -> {Case.camel_to_snake(field), value} end)
+     |> Enum.each(fn({field, value}) -> {field |> Case.camel_to_snake() |> String.to_atom(), value} end)
      |> Enum.filter(fn x -> Enum.member?(Map.keys(resource), x) end)
-     |> Enum.into(resource)
+     |> (fn snakes -> struct(resource, snakes) end).()
   end
 
   def endpoint(resource) do
@@ -39,7 +39,7 @@ defmodule StarkBank.Utils.API do
   def last_name_plural(resource) do
     resource
      |> last_name()
-     |> fn x -> x <> "s" end
+     |> (fn x -> x <> "s" end).()
   end
 
   def last_name(resource) do
@@ -49,7 +49,7 @@ defmodule StarkBank.Utils.API do
      |> List.last
   end
 
-  defp resource_to_kebab() do
+  defp resource_to_kebab(resource) do
     resource.__struct__
      |> to_string()
      |> String.split(".")
