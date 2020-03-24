@@ -23,7 +23,7 @@ defmodule StarkBank.Utils.Rest do
       end,
       fn pid ->
         case send(pid, self()) do
-          :end -> {:halt, pid}
+          :halt -> {:halt, pid}
           {:ok, element} -> {[{:ok, element}], pid}
           {error_kind, error} -> {[{error_kind, error}], pid}
         end

@@ -74,7 +74,7 @@ defmodule StarkBank.Utils.Request do
   end
 
   defp add_path(base_url, path) do
-    base_url ++ path
+    base_url ++ to_charlist(path)
   end
 
   defp add_query(endpoint, query) do

@@ -31,7 +31,7 @@ defmodule StarkBank.Utils.QueryGenerator do
   defp yield([], _function, _cursor, _limit) do
     receive do
       caller ->
-        send caller, :end
+        send caller, :halt
     end
   end
 
