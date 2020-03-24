@@ -36,7 +36,7 @@ defmodule StarkBank.Utils.Rest do
 
   def get_id(user, resource, id) do
     case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}", user) do
-      {:ok, response} -> {:ok, JSON.decode!(response)[API.last_name(resource)] |> API.from_api_json(resource)}
+      {:ok, response} -> {:ok, process_single_response(response, resource)}
       {error_kind, error} -> {error_kind, error}
     end
   end
@@ -49,25 +49,37 @@ defmodule StarkBank.Utils.Rest do
   end
 
   def post(user, resource, entities) do
-    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: payload(resource, entities)) do
+    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: prepare_payload(resource, entities)) do
       {:ok, response} -> {:ok, process_response(resource, response)}
       {error_kind, error} -> {error_kind, error}
     end
   end
 
-  defp payload(resource, entities) do
+  def post_single(user, resource, entity) do
+    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: API.api_json(entity)) do
+      {:ok, response} -> {:ok, process_single_response(response, resource)}
+      {error_kind, error} -> {error_kind, error}
+    end
+  end
+
+  def delete_id(user, resource, id) do
+    case Request.fetch(:delete, "#{API.endpoint(resource)}/#{id}", user) do
+      {:ok, response} -> {:ok, process_single_response(response, resource)}
+      {error_kind, error} -> {error_kind, error}
+    end
+  end
+
+  defp process_single_response(response, resource) do
+    JSON.decode!(response)[API.last_name(resource)]
+     |> API.from_api_json(resource)
+  end
+
+  defp prepare_payload(resource, entities) do
     Map.put(%{}, API.last_name_plural(resource), Enum.each(entities, fn entity -> API.api_json(entity) end))
   end
 
   defp process_response(resource, response) do
     JSON.decode!(response)[API.last_name_plural(resource)]
      |> Enum.each(fn json -> API.from_api_json(json, resource) end)
-  end
-
-  def post_single(user, resource, entity) do
-    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: API.api_json(entity)) do
-      {:ok, response} -> {:ok, JSON.decode!(response)[API.last_name(resource)] |> API.from_api_json(resource)}
-      {error_kind, error} -> {error_kind, error}
-    end
   end
 end
