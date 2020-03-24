@@ -3,9 +3,9 @@ defmodule StarkBank.Utils.Request do
 
   alias StarkBank.Utils.JSON, as: JSON
 
-  def fetch(path \\ '/', payload \\ nil, method \\ :get, query \\ nil, user \\ nil, version \\ 'v2') do
-    Application.ensure_all_started(:inets)
-    Application.ensure_all_started(:ssl)
+  def fetch(method, path, user, options \\ []) do
+    %{payload: payload, query: query, version: version} =
+      Enum.into(options, %{payload: nil, query: nil, version: 'v2'})
 
     url = get_url(user.environment, version, path, query)
 
@@ -15,6 +15,9 @@ defmodule StarkBank.Utils.Request do
   end
 
   defp request(method, user, url, payload) do
+    Application.ensure_all_started(:inets)
+    Application.ensure_all_started(:ssl)
+
     {:ok, {{'HTTP/1.1', status_code, _status_message}, _headers, response_body}} =
       :httpc.request(
         method,
@@ -67,7 +70,6 @@ defmodule StarkBank.Utils.Request do
     case environment do
       :production -> 'https://api.starkbank.com/'
       :sandbox -> 'https://sandbox.api.starkbank.com/'
-      :development -> 'https://development.api.starkbank.com/'
     end
   end
 

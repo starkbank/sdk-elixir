@@ -1,6 +1,8 @@
 defmodule StarkBank.User do
-  @moduledoc false
+  alias StarkBank.Utils.Checks, as: Checks
+  alias EllipticCurve.PrivateKey, as: PrivateKey
 
+  @spec project(any, :production | :sandbox, any, any, any) :: StarkBank.User.Project.t()
   def project(id, environment, private_key, name \\ "", allowed_ips \\ nil) do
     {environment, access_id, private_key} = user("project", id, private_key, environment)
     %StarkBank.User.Project{
@@ -14,7 +16,7 @@ defmodule StarkBank.User do
 
   defp user(kind, id, private_key, environment) do
     {
-      StarkBank.Utils.Checks.check_environment(environment),
+      Checks.check_environment(environment),
       "#{kind}/#{id}",
       EllipticCurve.PrivateKey.fromPem(private_key)
     }
