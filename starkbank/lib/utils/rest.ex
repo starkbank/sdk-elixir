@@ -3,7 +3,6 @@ defmodule StarkBank.Utils.Rest do
 
   alias StarkBank.Utils.Request, as: Request
   alias StarkBank.Utils.QueryGenerator, as: QueryGenerator
-  alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Utils.JSON, as: JSON
 

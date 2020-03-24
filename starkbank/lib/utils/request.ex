@@ -47,13 +47,13 @@ defmodule StarkBank.Utils.Request do
 
   defp get_headers(user, body) do
     access_time = DateTime.utc_now() |> DateTime.to_unix(:second)
-    signature = '#{user.access_id}:#{access_time}:#{body}'
-     |> EllipticCurve.Ecdsa.sign(user.private_key())
+    signature = "#{user.access_id}:#{access_time}:#{body}"
+     |> EllipticCurve.Ecdsa.sign(user.private_key)
      |> EllipticCurve.Signature.toBase64()
 
     [
       {'Access-Id', to_charlist(user.access_id)},
-      {'Access-Time', access_time},
+      {'Access-Time', to_charlist(access_time)},
       {'Access-Signature', to_charlist(signature)},
       {'Content-Type', 'application/json'},
       {'User-Agent', 'Elixir-#{System.version}-SDK-#{:application.get_key(:my_app, :vsn)}'}
