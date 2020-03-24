@@ -53,7 +53,7 @@ defmodule StarkBank.Utils.API do
     resource.__struct__
      |> to_string()
      |> String.split(".")
-     |> List.last
+     |> (fn list -> Enum.at(list, length(list) - 2) end).()
      |> Case.camel_to_kebab
   end
 end

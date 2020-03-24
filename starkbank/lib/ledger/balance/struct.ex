@@ -1,4 +1,4 @@
-defmodule StarkBank.Struct.Balance do
+defmodule StarkBank.Balance.Data do
   @moduledoc """
   Balance struct
 
@@ -8,10 +8,10 @@ defmodule StarkBank.Struct.Balance do
   can be retrieved to see the information available.
 
   Attributes (return-only):
-      id [string, default None]: unique id returned when Boleto is created. ex: "5656565656565656"
-      amount [integer, default None]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
-      status [string, default None]: currency of the current workspace. Expect others to be added eventually. ex: "BRL"
-      updated [datetime.datetime, default None]: update datetime for the balance. ex: datetime.datetime(2020, 3, 10, 10, 30, 0, 0)
+    id [string, default None]: unique id returned when Boleto is created. ex: "5656565656565656"
+    amount [integer, default None]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
+    status [string, default None]: currency of the current workspace. Expect others to be added eventually. ex: "BRL"
+    updated [datetime.datetime, default None]: update datetime for the balance. ex: datetime.datetime(2020, 3, 10, 10, 30, 0, 0)
   """
   defstruct [:id, :amount, :currency, :updated]
 end

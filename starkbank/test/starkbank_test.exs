@@ -7,9 +7,7 @@ defmodule StarkbankTest do
 
   test "get balance" do
     user = StarkBank.User.project(:sandbox, @project_id, @private_key)
-
-    {:ok, balance} = StarkBank.Balance.get(user)
-
+    balance = StarkBank.Balance.get!(user)
     assert !is_nil(balance.amount)
   end
 end
