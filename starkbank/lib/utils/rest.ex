@@ -7,7 +7,7 @@ defmodule StarkBank.Utils.Rest do
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Utils.JSON, as: JSON
 
-  def get_list(user, resource, limit \\ 100, query \\ %{}) do
+  def get_list(user, resource, limit \\ nil, query \\ %{}) do
     query_params = query |> Map.put(:limit, limit) |> Map.put(:cursor, nil)
 
     getter = fn cursor, limit -> Request.fetch(
@@ -44,6 +44,29 @@ defmodule StarkBank.Utils.Rest do
   def get_pdf(user, resource, id) do
     case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}/pdf", user) do
       {:ok, response} -> {:ok, response}
+      {error_kind, error} -> {error_kind, error}
+    end
+  end
+
+  def post(user, resource, entities) do
+    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: payload(resource, entities)) do
+      {:ok, response} -> {:ok, process_response(resource, response)}
+      {error_kind, error} -> {error_kind, error}
+    end
+  end
+
+  defp payload(resource, entities) do
+    Map.put(%{}, API.last_name_plural(resource), Enum.each(entities, fn entity -> API.api_json(entity) end))
+  end
+
+  defp process_response(resource, response) do
+    JSON.decode!(response)[API.last_name_plural(resource)]
+     |> Enum.each(fn json -> API.from_api_json(json, resource) end)
+  end
+
+  def post_single(user, resource, entity) do
+    case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: API.api_json(entity)) do
+      {:ok, response} -> {:ok, JSON.decode!(response)[API.last_name(resource)] |> API.from_api_json(resource)}
       {error_kind, error} -> {error_kind, error}
     end
   end
