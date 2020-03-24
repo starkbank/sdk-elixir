@@ -56,7 +56,7 @@ defmodule StarkBank.Utils.Request do
       {'Access-Time', to_charlist(access_time)},
       {'Access-Signature', to_charlist(signature)},
       {'Content-Type', 'application/json'},
-      {'User-Agent', 'Elixir-#{System.version}-SDK-#{:application.get_key(:my_app, :vsn)}'}
+      {'User-Agent', 'Elixir-#{System.version}-SDK-#{Mix.Project.config[:version]}'}
     ]
   end
 
