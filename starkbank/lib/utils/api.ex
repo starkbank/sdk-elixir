@@ -25,8 +25,8 @@ defmodule StarkBank.Utils.API do
 
   def from_api_json(json, resource) do
     json
-     |> Enum.each(fn({field, value}) -> {field |> Case.camel_to_snake() |> String.to_atom(), value} end)
-     |> Enum.filter(fn x -> Enum.member?(Map.keys(resource), x) end)
+     |> Enum.map(fn({field, value}) -> {field |> Case.camel_to_snake() |> String.to_atom(), value} end)
+     |> Enum.filter(fn {field, _value} -> Enum.member?(Map.keys(resource), field) end)
      |> (fn snakes -> struct(resource, snakes) end).()
   end
 

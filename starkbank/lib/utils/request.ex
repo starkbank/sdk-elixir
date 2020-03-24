@@ -89,9 +89,9 @@ defmodule StarkBank.Utils.Request do
 
   defp process_response(status_code, body) do
     cond do
-      status_code == 500 -> {:internal_error, ["Houston, we have a problem."]}
+      status_code == 500 -> {:internal_error, "Houston, we have a problem."}
       status_code == 400 -> {:error, JSON.decode!(body)["errors"]}
-      status_code != 200 -> {:unknown_error, ["Unknown exception encountered: " <> to_string(body)]}
+      status_code != 200 -> {:unknown_error, "Unknown exception encountered: " <> to_string(body)}
       true -> {:ok, body}
     end
   end

@@ -19,13 +19,13 @@ defmodule StarkBank.Utils.Rest do
 
     Stream.resource(
       fn ->
-        {:ok, pid} = QueryGenerator.start_link(getter, limit)
+        {:ok, pid} = QueryGenerator.start_query(getter, limit, API.last_name_plural(resource))
         pid
       end,
       fn pid ->
-        case send(pid, self()) do
+        case QueryGenerator.get(pid) do
           :halt -> {:halt, pid}
-          {:ok, element} -> {[{:ok, element}], pid}
+          {:ok, element} -> {[{:ok, API.from_api_json(element, resource)}], pid}
           {error_kind, error} -> {[{error_kind, error}], pid}
         end
       end,
