@@ -69,6 +69,13 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
+  def patch_id(user, resource, id) do
+    case Request.fetch(:patch, "#{API.endpoint(resource)}/#{id}", user) do
+      {:ok, response} -> {:ok, process_single_response(response, resource)}
+      {error_kind, error} -> {error_kind, error}
+    end
+  end
+
   defp process_single_response(response, resource) do
     JSON.decode!(response)[API.last_name(resource)]
      |> API.from_api_json(resource)
