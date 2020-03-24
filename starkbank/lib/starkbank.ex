@@ -1,18 +1,5 @@
-defmodule Starkbank do
+defmodule StarkBank do
   @moduledoc """
-  Documentation for Starkbank.
+  SDK to facilitate Elixir integrations with the Stark Bank v2 API.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Starkbank.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end
