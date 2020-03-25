@@ -1,9 +1,9 @@
-defmodule StarkbankTest.Transaction do
+defmodule StarkBankTest.Transaction do
   use ExUnit.Case
 
-  @tag :skip
+  @tag :exclude
   test "create transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     {:ok, transactions} = StarkBank.Transaction.create(user, [
       %StarkBank.Transaction.Data{
         amount: 1,
@@ -16,9 +16,9 @@ defmodule StarkbankTest.Transaction do
     assert transaction.amount < 0
   end
 
-  @tag :skip
+  @tag :exclude
   test "create! transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.create!(user, [
       %StarkBank.Transaction.Data{
         amount: 1,
@@ -34,34 +34,34 @@ defmodule StarkbankTest.Transaction do
     :crypto.strong_rand_bytes(30) |> Base.url_encode64 |> binary_part(0, 30)
   end
 
-  @tag :skip
+  @tag :exclude
   test "query transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     StarkBank.Transaction.query(user, limit: 150)
      |> Enum.take(150)
      |> (fn list -> assert length(list) == 150 end).()
   end
 
-  @tag :skip
+  @tag :exclude
   test "query! transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     StarkBank.Transaction.query!(user, limit: 150)
      |> Enum.take(150)
      |> (fn list -> assert length(list) == 150 end).()
   end
 
-  @tag :skip
+  @tag :exclude
   test "get transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.query!(user)
      |> Enum.take(1)
      |> hd()
     {:ok, _transaction} = StarkBank.Transaction.get(user, transaction.id)
   end
 
-  @tag :skip
+  @tag :exclude
   test "get! transaction" do
-    user = StarkbankTest.Credentials.project()
+    user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.query!(user)
      |> Enum.take(1)
      |> hd()
