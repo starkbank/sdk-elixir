@@ -6,7 +6,8 @@ defmodule StarkBank.Balance do
 
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Balance.Data, as: Balance
-  alias StarkBank.Struct.Project, as: Project
+  alias StarkBank.Project.Data, as: Project
+  alias StarkBank.Error, as: Error
 
   @doc """
   Retrieve the Balance entity
@@ -18,7 +19,7 @@ defmodule StarkBank.Balance do
   Return:
       Balance entity with updated attributes
   """
-  @spec get(Project) :: {:ok, Balance} | {:error, [map]} | {:internal_error, binary} | {:unknown_error, binary}
+  @spec get(Project) :: {:ok, Balance} | {:error, [Error]}
   def get(user) do
     case Rest.get_list(user, %Balance{}) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
