@@ -53,7 +53,9 @@ defmodule StarkBank.Utils.API do
     resource.__struct__
      |> to_string()
      |> String.split(".")
-     |> (fn list -> Enum.at(list, length(list) - 2) end).()
+     |> (fn list -> Enum.drop(list, Enum.find_index(list, fn x -> x == "StarkBank" end) + 1) end).()
+     |> (fn list -> Enum.take(list, length(list) - 1) end).()
+     |> Enum.join("")
      |> Case.camel_to_kebab
   end
 

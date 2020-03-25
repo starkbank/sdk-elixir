@@ -4,14 +4,7 @@ defmodule StarkBankTest.Transaction do
   @tag :exclude
   test "create transaction" do
     user = StarkBankTest.Credentials.project()
-    {:ok, transactions} = StarkBank.Transaction.create(user, [
-      %StarkBank.Transaction.Data{
-        amount: 1,
-        receiver_id: "5768064935133184",
-        external_id: external_id(),
-        description: "Transferencia para Workspace aleatorio"
-      }
-    ])
+    {:ok, transactions} = StarkBank.Transaction.create(user, [example_transaction()])
     transaction = transactions |> hd
     assert transaction.amount < 0
   end
@@ -19,19 +12,8 @@ defmodule StarkBankTest.Transaction do
   @tag :exclude
   test "create! transaction" do
     user = StarkBankTest.Credentials.project()
-    transaction = StarkBank.Transaction.create!(user, [
-      %StarkBank.Transaction.Data{
-        amount: 1,
-        receiver_id: "5768064935133184",
-        external_id: external_id(),
-        description: "Transferencia para Workspace aleatorio"
-      }
-    ]) |> hd
+    transaction = StarkBank.Transaction.create!(user, [example_transaction()]) |> hd
     assert transaction.amount < 0
-  end
-
-  defp external_id() do
-    :crypto.strong_rand_bytes(30) |> Base.url_encode64 |> binary_part(0, 30)
   end
 
   @tag :exclude
@@ -66,5 +48,14 @@ defmodule StarkBankTest.Transaction do
      |> Enum.take(1)
      |> hd()
     _transaction = StarkBank.Transaction.get!(user, transaction.id)
+  end
+
+  defp example_transaction() do
+    %StarkBank.Transaction.Data{
+      amount: 1,
+      receiver_id: "5768064935133184",
+      external_id: :crypto.strong_rand_bytes(30) |> Base.url_encode64 |> binary_part(0, 30),
+      description: "Transferencia para Workspace aleatorio"
+    }
   end
 end
