@@ -4,8 +4,8 @@ defmodule StarkBank.Utils.QueryGenerator do
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Utils.JSON, as: JSON
 
-  def start_query(function, limit, key) do
-    Task.start_link(fn -> yield([], function, nil, limit, key) end)
+  def start_query(function, key, query) do
+    Task.start_link(fn -> yield([], function, key, query) end)
   end
 
   def get(pid) do
@@ -13,37 +13,37 @@ defmodule StarkBank.Utils.QueryGenerator do
     receive do
       :halt -> :halt
       {:ok, element} -> {:ok, element}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
     end
   end
 
-  defp yield([head | tail], function, cursor, limit, key) do
+  defp yield([head | tail], function, key, query) do
     receive do
       caller ->
         send(caller, {:ok, head})
-        yield(tail, function, cursor, limit, key)
+        yield(tail, function, key, query)
     end
   end
 
-  defp yield([], function, cursor, limit, key) when limit > 0 do
-    case function.(cursor, Checks.check_limit(limit)) do
-      {:ok, result} ->
-        decoded = JSON.decode!(result)
-        yield(
-          decoded[key],
-          function,
-          decoded["cursor"],
-          limit |> iterate_limit(),
-          key
-        )
-      {:error, error} -> yield_error(error)
-    end
-  end
-
-  defp yield([], _function, _cursor, _limit, _key) do
-    receive do
-      caller ->
-        send(caller, :halt)
+  defp yield([], function, key, query) do
+    limit = query[:limit]
+    if is_nil(limit) or limit > 0 do
+      case function.(query |> Map.put(:limit, limit |> Checks.check_limit)) do
+        {:ok, result} ->
+          decoded = JSON.decode!(result)
+          yield(
+            decoded[key],
+            function,
+            key,
+            query |> Map.put(:cursor, decoded["cursor"]) |> Map.put(:limit, iterate_limit(limit))
+          )
+        {:error, error} -> yield_error(error)
+      end
+    else
+      receive do
+        caller ->
+          send(caller, :halt)
+      end
     end
   end
 

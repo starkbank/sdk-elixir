@@ -78,6 +78,10 @@ defmodule StarkBank.Utils.Request do
     base_url ++ to_charlist(path)
   end
 
+  defp add_query(endpoint, query) when is_nil(query) do
+    endpoint
+  end
+
   defp add_query(endpoint, query) do
     list = for {k, v} <- query, !is_nil(v), do: "#{k}=#{v}"
 

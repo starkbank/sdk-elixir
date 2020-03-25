@@ -6,83 +6,134 @@ defmodule StarkBank.Utils.Rest do
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Utils.JSON, as: JSON
 
-  def get_list(user, resource, limit \\ nil, query \\ %{}, options \\ []) do
-    %{raise_error: raise_error} =
-      Enum.into(options, %{raise_error: false})
-
-    query_params = query |> Map.put(:limit, limit) |> Map.put(:cursor, nil)
-
-    getter = fn cursor, limit -> Request.fetch(
-        :get,
-        API.endpoint(resource),
-        user,
-        query:
-        query_params |> Map.put(:cursor, cursor) |> Map.put(:limit, limit)
-      ) end
+  def get_list(user, resource, limit \\ nil, query \\ %{}) do
+    getter = make_getter(user, resource)
 
     Stream.resource(
       fn ->
-        {:ok, pid} = QueryGenerator.start_query(getter, limit, API.last_name_plural(resource))
+        {:ok, pid} = QueryGenerator.start_query(getter, API.last_name_plural(resource), query |> Map.put(:limit, limit))
         pid
       end,
       fn pid ->
         case QueryGenerator.get(pid) do
           :halt -> {:halt, pid}
           {:ok, element} -> {[{:ok, API.from_api_json(element, resource)}], pid}
-          {:error, error} -> treat_error(error, pid, raise_error)
+          {:error, error} -> {[{:error, error}], pid}
         end
       end,
       fn _pid -> nil end
     )
   end
 
-  defp treat_error(error, _pid, raise_error) when raise_error do
-    raise to_string(error)
+  def get_list!(user, resource, limit \\ nil, query \\ %{}) do
+    getter = make_getter(user, resource)
+
+    Stream.resource(
+      fn ->
+        {:ok, pid} = QueryGenerator.start_query(getter, API.last_name_plural(resource), query |> Map.put(:limit, limit))
+        pid
+      end,
+      fn pid ->
+        case QueryGenerator.get(pid) do
+          :halt -> {:halt, pid}
+          {:ok, element} -> {[API.from_api_json(element, resource)], pid}
+          {:error, error} -> raise to_string(error)
+        end
+      end,
+      fn _pid -> nil end
+    )
   end
 
-  defp treat_error(error, pid, _raise_error) do
-    {[{:error, error}], pid}
+  defp make_getter(user, resource) do
+    fn query -> Request.fetch(
+        :get,
+        API.endpoint(resource),
+        user,
+        query: query
+      ) end
   end
 
   def get_id(user, resource, id) do
     case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}", user) do
       {:ok, response} -> {:ok, process_single_response(response, resource)}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_id!(user, resource, id) do
+    case get_id(user, resource, id) do
+      {:ok, entity} -> entity
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
   def get_pdf(user, resource, id) do
     case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}/pdf", user) do
-      {:ok, response} -> {:ok, response}
-      {:error, error} -> {:error, error}
+      {:ok, pdf} -> {:ok, pdf}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_pdf!(user, resource, id) do
+    case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}/pdf", user) do
+      {:ok, pdf} -> pdf
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
   def post(user, resource, entities) do
     case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: prepare_payload(resource, entities)) do
       {:ok, response} -> {:ok, process_response(resource, response)}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def post!(user, resource, entities) do
+    case post(user, resource, entities) do
+      {:ok, entities} -> entities
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
   def post_single(user, resource, entity) do
     case Request.fetch(:post, "#{API.endpoint(resource)}", user, payload: API.api_json(entity)) do
       {:ok, response} -> {:ok, process_single_response(response, resource)}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def post_single!(user, resource, entity) do
+    case post_single(user, resource, entity) do
+      {:ok, entity} -> {:ok, entity}
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
   def delete_id(user, resource, id) do
     case Request.fetch(:delete, "#{API.endpoint(resource)}/#{id}", user) do
       {:ok, response} -> {:ok, process_single_response(response, resource)}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def delete_id!(user, resource, id) do
+    case delete_id(user, resource, id) do
+      {:ok, entity} -> {:ok, entity}
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
   def patch_id(user, resource, id) do
     case Request.fetch(:patch, "#{API.endpoint(resource)}/#{id}", user) do
       {:ok, response} -> {:ok, process_single_response(response, resource)}
-      {:error, error} -> {:error, error}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def patch_id!(user, resource, id) do
+    case patch_id(user, resource, id) do
+      {:ok, entity} -> entity
+      {:error, errors} -> raise to_string(errors)
     end
   end
 
