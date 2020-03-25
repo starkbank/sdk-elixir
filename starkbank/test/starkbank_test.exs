@@ -10,4 +10,8 @@ defmodule StarkbankTest do
     balance = StarkBank.Balance.get!(user)
     assert !is_nil(balance.amount)
   end
+
+  test "create keys" do
+    {_private, _public} = StarkBank.Key.create()
+  end
 end
