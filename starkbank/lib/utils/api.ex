@@ -54,9 +54,18 @@ defmodule StarkBank.Utils.API do
      |> to_string()
      |> String.split(".")
      |> (fn list -> Enum.drop(list, Enum.find_index(list, fn x -> x == "StarkBank" end) + 1) end).()
+     |> reverse_payment_order
      |> (fn list -> Enum.take(list, length(list) - 1) end).()
      |> Enum.join("")
      |> Case.camel_to_kebab
+  end
+
+  defp reverse_payment_order(["Payment" | [next | rest]]) do
+    [next | ["Payment" | rest]]
+  end
+
+  defp reverse_payment_order(list) do
+    list
   end
 
   def errors_to_string(errors) do

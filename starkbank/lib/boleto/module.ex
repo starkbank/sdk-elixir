@@ -17,7 +17,7 @@ defmodule StarkBank.Boleto do
   Parameters (required):
       boletos [list of Boleto structs]: list of Boleto structs to be created in the API
   Parameters (optional):
-      user [Project entity, default nil]: Project struct returned from StarkBank.User.project().
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
       list of Boleto structs with updated attributes
   """
@@ -51,7 +51,7 @@ defmodule StarkBank.Boleto do
   Parameters (required):
       id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-      user [Project entity, default nil]: Project struct returned from StarkBank.User.project().
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
       Boleto struct with updated attributes
   """
@@ -76,7 +76,7 @@ defmodule StarkBank.Boleto do
   Parameters (required):
       id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-      user [Project entity, default nil]: Project struct returned from StarkBank.User.project().
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
       Boleto pdf file
   """
@@ -96,7 +96,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Retrieve Boletos
 
-  Receive a generator of Boleto structs previously created in the Stark Bank API
+  Receive a stream of Boleto structs previously created in the Stark Bank API
 
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -105,7 +105,7 @@ defmodule StarkBank.Boleto do
     ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
-    user [Project struct, default nil]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     stream of Boleto structs with updated attributes
   """
@@ -136,9 +136,9 @@ defmodule StarkBank.Boleto do
   Parameters (required):
     id [string]: Boleto unique id. ex: "5656565656565656"
   Parameters (optional):
-    user [Project entity, default nil]: Project struct returned from StarkBank.User.project().
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
-    list of deleted Boletos with updated attributes
+    deleted Boleto with updated attributes
   """
   @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(user, id) do

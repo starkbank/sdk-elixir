@@ -17,7 +17,7 @@ defmodule StarkBank.Transfer do
   Parameters (required):
     transfers [list of Transfer structs]: list of Transfer structs to be created in the API
   Parameters (optional):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     list of Transfer structs with updated attributes
   """
@@ -51,7 +51,7 @@ defmodule StarkBank.Transfer do
   Parameters (required):
     id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     Transfer struct with updated attributes
   """
@@ -79,7 +79,7 @@ defmodule StarkBank.Transfer do
   Parameters (required):
     id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     Transfer pdf file
   """
@@ -99,7 +99,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Retrieve Transfers
 
-  Receive a generator of Transfer structs previously created in the Stark Bank API
+  Receive a stream of Transfer structs previously created in the Stark Bank API
 
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -109,9 +109,9 @@ defmodule StarkBank.Transfer do
     after [Date, default nil]: date filter for structs created only after specified date. ex: %Date{}
     before [Date, default nil]: date filter for structs only before specified date. ex: %Date{}
     sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
-    user [Project struct, default nil]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
-    generator of Transfer structs with updated attributes
+    stream of Transfer structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

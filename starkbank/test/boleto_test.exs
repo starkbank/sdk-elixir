@@ -87,7 +87,7 @@ defmodule StarkBankTest.Boleto do
     assert !is_nil(deleted_boleto)
   end
 
-  defp example_boleto() do
+  def example_boleto() do
     %StarkBank.Boleto.Data{
         amount: 10,
         due: "2020-03-29",

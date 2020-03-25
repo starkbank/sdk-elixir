@@ -17,7 +17,7 @@ defmodule StarkBank.Boleto.Log do
   Parameters (required):
       id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-      user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
       BoletoLog struct with updated attributes
   """
@@ -37,15 +37,15 @@ defmodule StarkBank.Boleto.Log do
   @doc """
   Retrieve BoletoLogs
 
-  Receive a generator of BoletoLog structs previously created in the Stark Bank API
+  Receive a stream of BoletoLog structs previously created in the Stark Bank API
 
   Parameters (optional):
       limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
       boleto_ids [list of strings, default nil]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
       types [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
-      user [Project struct, default nil]: Project struct. Not necessary if starkbank.user was set before function call
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
-      list of BoletoLog structs with updated attributes
+      stream of BoletoLog structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

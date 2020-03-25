@@ -17,7 +17,7 @@ defmodule StarkBank.Transfer.Log do
   Parameters (required):
     id [string]: struct unique id. ex: "5656565656565656"
   Parameters (optional):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     TransferLog struct with updated attributes
   """
@@ -37,15 +37,15 @@ defmodule StarkBank.Transfer.Log do
   @doc """
   Retrieve TransferLogs
 
-  Receive a generator of TransferLog structs previously created in the Stark Bank API
+  Receive a stream of TransferLog structs previously created in the Stark Bank API
 
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     transfer_ids [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     types [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
-    user [Project object, default nil]: Project object. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
-    list of TransferLog structs with updated attributes
+    stream of TransferLog structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [TransferLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

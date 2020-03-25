@@ -15,7 +15,7 @@ defmodule StarkBank.Balance do
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
   Parameters (optional):
-      user [Project entity]: Project entity. Not necessary if starkbank.user was set before function call
+      user [Project]: Project struct returned from StarkBank.User.project().
   Return:
       Balance entity with updated attributes
   """

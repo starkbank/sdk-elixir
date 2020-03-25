@@ -17,7 +17,7 @@ defmodule StarkBank.Transaction do
   Parameters (required):
     transactions [list of Transaction entities]: list of Transaction entities to be created in the API
   Parameters (optional):
-    user [Project entity]: Project entity. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     list of Transaction entities with updated attributes
   """
@@ -51,7 +51,7 @@ defmodule StarkBank.Transaction do
   Parameters (required):
     id [string]: entity unique id. ex: "5656565656565656"
   Parameters (optional):
-    user [Project entity]: Project entity. Not necessary if starkbank.user was set before function call
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     Transaction entity with updated attributes
   """
@@ -78,7 +78,7 @@ defmodule StarkBank.Transaction do
     external_ids [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     created_after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
     created_before [Date, default nil] date filter for entities created only before specified date. ex: Date(2020, 3, 10)
-    user [Project entity, default nil]: Project struct returned from StarkBank.User.project().
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     stream of Transaction entities with updated attributes
   """
