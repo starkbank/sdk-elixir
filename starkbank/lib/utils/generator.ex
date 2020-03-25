@@ -13,7 +13,7 @@ defmodule StarkBank.Utils.QueryGenerator do
     receive do
       :halt -> :halt
       {:ok, element} -> {:ok, element}
-      {error_kind, error} -> {error_kind, error}
+      {:error, error} -> {:error, error}
     end
   end
 
@@ -36,7 +36,7 @@ defmodule StarkBank.Utils.QueryGenerator do
           limit |> iterate_limit(),
           key
         )
-      {error_kind, error} -> yield_error(error_kind, error)
+      {:error, error} -> yield_error(error)
     end
   end
 
@@ -47,10 +47,10 @@ defmodule StarkBank.Utils.QueryGenerator do
     end
   end
 
-  defp yield_error(error_kind, error) do
+  defp yield_error(error) do
     receive do
       caller ->
-        send(caller, {error_kind, error})
+        send(caller, {:error, error})
     end
   end
 

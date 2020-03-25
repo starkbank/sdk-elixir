@@ -23,7 +23,7 @@ defmodule StarkBank.Balance do
   def get(user) do
     case Rest.get_list(user, %Balance{}) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
-      [{error_kind, error}] -> {error_kind, error}
+      [{:error, error}] -> {:error, error}
     end
   end
 
