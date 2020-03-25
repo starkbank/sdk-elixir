@@ -31,8 +31,9 @@ defmodule StarkBank.Key do
   end
 
   defp save_file(pem, path, suffix) do
-    {:ok, file} = File.open(path <>  suffix, [:write])
-    IO.binwrite(file, pem)
+    File.mkdir_p!(path)
+    file = File.open!(Path.join(path,  suffix), [:write])
+    IO.binwrite(file, pem) |> IO.inspect()
     File.close(file)
   end
 end
