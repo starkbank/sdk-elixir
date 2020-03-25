@@ -19,17 +19,17 @@ defmodule StarkBankTest.Boleto do
   @tag :exclude
   test "query boleto" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Boleto.query(user, limit: 150)
-     |> Enum.take(150)
-     |> (fn list -> assert length(list) == 150 end).()
+    StarkBank.Boleto.query(user, limit: 101)
+     |> Enum.take(101)
+     |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude
   test "query! boleto" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Boleto.query!(user, limit: 150)
-     |> Enum.take(150)
-     |> (fn list -> assert length(list) == 150 end).()
+    StarkBank.Boleto.query!(user, limit: 101)
+     |> Enum.take(101)
+     |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude

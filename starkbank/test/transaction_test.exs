@@ -19,17 +19,17 @@ defmodule StarkBankTest.Transaction do
   @tag :exclude
   test "query transaction" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Transaction.query(user, limit: 150)
-     |> Enum.take(150)
-     |> (fn list -> assert length(list) == 150 end).()
+    StarkBank.Transaction.query(user, limit: 101)
+     |> Enum.take(101)
+     |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude
   test "query! transaction" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Transaction.query!(user, limit: 150)
-     |> Enum.take(150)
-     |> (fn list -> assert length(list) == 150 end).()
+    StarkBank.Transaction.query!(user, limit: 101)
+     |> Enum.take(101)
+     |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude

@@ -1,4 +1,4 @@
-ExUnit.start(exclude: [:exclude])
+ExUnit.start(exclude: [:exclude])  # remove argument to run all tests or comment tag to run specific tags
 
 
 defmodule StarkBankTest.Credentials do

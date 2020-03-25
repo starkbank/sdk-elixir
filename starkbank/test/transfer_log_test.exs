@@ -1,50 +1,50 @@
-defmodule StarkBankTest.BoletoLog do
+defmodule StarkBankTest.TransferLog do
   use ExUnit.Case
 
   @tag :exclude
-  test "query boleto log" do
+  test "query transfer log" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Boleto.Log.query(user, limit: 101)
+    StarkBank.Transfer.Log.query(user, limit: 101)
      |> Enum.take(101)
      |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude
-  test "query! boleto log" do
+  test "query! transfer log" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Boleto.Log.query!(user, limit: 101)
+    StarkBank.Transfer.Log.query!(user, limit: 101)
      |> Enum.take(101)
      |> (fn list -> assert length(list) == 101 end).()
   end
 
   @tag :exclude
-  test "query! boleto log with filters" do
+  test "query! transfer log with filters" do
     user = StarkBankTest.Credentials.project()
 
-    boleto = StarkBank.Boleto.query!(user, status: "paid")
+    transfer = StarkBank.Transfer.query!(user, status: "success")
      |> Enum.take(1)
      |> hd()
 
-    StarkBank.Boleto.Log.query!(user, limit: 1, boleto_ids: [boleto.id], types: "paid")
+    StarkBank.Transfer.Log.query!(user, limit: 1, transfer_ids: [transfer.id], types: "success")
      |> Enum.take(5)
      |> (fn list -> assert length(list) == 1 end).()
   end
 
   @tag :exclude
-  test "get boleto log" do
+  test "get transfer log" do
     user = StarkBankTest.Credentials.project()
-    log = StarkBank.Boleto.Log.query!(user)
+    log = StarkBank.Transfer.Log.query!(user)
      |> Enum.take(1)
      |> hd()
-    {:ok, _log} = StarkBank.Boleto.Log.get(user, log.id)
+    {:ok, _log} = StarkBank.Transfer.Log.get(user, log.id)
   end
 
   @tag :exclude
-  test "get! boleto log" do
+  test "get! transfer log" do
     user = StarkBankTest.Credentials.project()
-    log = StarkBank.Boleto.Log.query!(user)
+    log = StarkBank.Transfer.Log.query!(user)
      |> Enum.take(1)
      |> hd()
-    _log = StarkBank.Boleto.Log.get!(user, log.id)
+    _log = StarkBank.Transfer.Log.get!(user, log.id)
   end
 end

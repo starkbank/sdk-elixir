@@ -8,11 +8,11 @@ defmodule StarkBank.Boleto.Log.Data do
   on the Boleto.
 
   Attributes:
-    id [string, default None]: unique id returned when the log is created. ex: "5656565656565656"
+    id [string, default nil]: unique id returned when the log is created. ex: "5656565656565656"
     boleto [Boleto]: Boleto entity to which the log refers to.
     errors [list of strings]: list of errors linked to this Boleto event
-    type [string, default None]: type of the Boleto event which triggered the log creation. ex: "registered" or "paid"
-    created [DateTime, default None]: creation datetime for the boleto. ex: %DateTime{}
+    type [string, default nil]: type of the Boleto event which triggered the log creation. ex: "registered" or "paid"
+    created [DateTime, default nil]: creation datetime for the boleto. ex: %DateTime{}
   """
   @enforce_keys [:id, :boleto, :errors, :type, :created]
   defstruct [:id, :boleto, :errors, :type, :created]

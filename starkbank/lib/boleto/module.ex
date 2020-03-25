@@ -99,13 +99,13 @@ defmodule StarkBank.Boleto do
   Receive a generator of Boleto structs previously created in the Stark Bank API
 
   Parameters (optional):
-    limit [integer, default None]: maximum number of structs to be retrieved. Unlimited if None. ex: 35
-    status [string, default None]: filter for status of retrieved structs. ex: "paid" or "registered"
-    tags [list of strings, default None]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    ids [list of strings, default None]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    after [Date, default None] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    before [Date, default None] date filter for structs only before specified date. ex: Date(2020, 3, 10)
-    user [Project struct, default None]: Project struct. Not necessary if starkbank.user was set before function call
+    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
+    tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
+    user [Project struct, default nil]: Project struct. Not necessary if starkbank.user was set before function call
   Return:
     stream of Boleto structs with updated attributes
   """

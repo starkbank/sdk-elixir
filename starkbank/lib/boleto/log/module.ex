@@ -40,10 +40,10 @@ defmodule StarkBank.Boleto.Log do
   Receive a generator of BoletoLog structs previously created in the Stark Bank API
 
   Parameters (optional):
-      limit [integer, default None]: maximum number of structs to be retrieved. Unlimited if None. ex: 35
-      boleto_ids [list of strings, default None]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
-      types [list of strings, default None]: filter for log event types. ex: "paid" or "registered"
-      user [Project struct, default None]: Project struct. Not necessary if starkbank.user was set before function call
+      limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+      boleto_ids [list of strings, default nil]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
+      types [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
+      user [Project struct, default nil]: Project struct. Not necessary if starkbank.user was set before function call
   Return:
       list of BoletoLog structs with updated attributes
   """

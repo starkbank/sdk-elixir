@@ -19,10 +19,10 @@ defmodule StarkBank.Transaction.Data do
     sender_id [string]: unique id of the sending workspace. ex: "8656565656565656"
     tags [list of strings]: list of strings for reference when searching transactions (may be empty). ex: ["abc", "test"]
   Attributes (return-only):
-    id [string, default None]: unique id returned when Transaction is created. ex: "7656565656565656"
-    fee [integer, default None]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
-    status [string, default None]: current boleto status. ex: "registered" or "paid"
-    created [DateTime, default None]: creation datetime for the boleto. ex: %DateTime{}
+    id [string, default nil]: unique id returned when Transaction is created. ex: "7656565656565656"
+    fee [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
+    status [string, default nil]: current boleto status. ex: "registered" or "paid"
+    created [DateTime, default nil]: creation datetime for the boleto. ex: %DateTime{}
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
   defstruct [:amount, :description, :external_id, :receiver_id, :sender_id, :tags, :id, :fee, :created, :source]
