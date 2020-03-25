@@ -1,4 +1,4 @@
-ExUnit.start()
+ExUnit.start(exclude: [:skip])
 
 defmodule StarkbankTest.Credentials do
   @project_id "9999999999999999"

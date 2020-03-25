@@ -37,7 +37,7 @@ defmodule StarkBank.Utils.Rest do
         case QueryGenerator.get(pid) do
           :halt -> {:halt, pid}
           {:ok, element} -> {[API.from_api_json(element, resource)], pid}
-          {:error, error} -> raise to_string(error)
+          {:error, errors} -> raise API.errors_to_string(errors)
         end
       end,
       fn _pid -> nil end
@@ -63,7 +63,7 @@ defmodule StarkBank.Utils.Rest do
   def get_id!(user, resource, id) do
     case get_id(user, resource, id) do
       {:ok, entity} -> entity
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -77,7 +77,7 @@ defmodule StarkBank.Utils.Rest do
   def get_pdf!(user, resource, id) do
     case Request.fetch(:get, "#{API.endpoint(resource)}/#{id}/pdf", user) do
       {:ok, pdf} -> pdf
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -91,7 +91,7 @@ defmodule StarkBank.Utils.Rest do
   def post!(user, resource, entities) do
     case post(user, resource, entities) do
       {:ok, entities} -> entities
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -105,7 +105,7 @@ defmodule StarkBank.Utils.Rest do
   def post_single!(user, resource, entity) do
     case post_single(user, resource, entity) do
       {:ok, entity} -> {:ok, entity}
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -119,7 +119,7 @@ defmodule StarkBank.Utils.Rest do
   def delete_id!(user, resource, id) do
     case delete_id(user, resource, id) do
       {:ok, entity} -> {:ok, entity}
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -133,7 +133,7 @@ defmodule StarkBank.Utils.Rest do
   def patch_id!(user, resource, id) do
     case patch_id(user, resource, id) do
       {:ok, entity} -> entity
-      {:error, errors} -> raise to_string(errors)
+      {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
 
@@ -143,11 +143,15 @@ defmodule StarkBank.Utils.Rest do
   end
 
   defp prepare_payload(resource, entities) do
-    Map.put(%{}, API.last_name_plural(resource), Enum.each(entities, fn entity -> API.api_json(entity) end))
+    Map.put(
+      %{},
+      API.last_name_plural(resource),
+      Enum.map(entities, &API.api_json/1)
+    )
   end
 
   defp process_response(resource, response) do
     JSON.decode!(response)[API.last_name_plural(resource)]
-     |> Enum.each(fn json -> API.from_api_json(json, resource) end)
+     |> Enum.map(fn json -> API.from_api_json(json, resource) end)
   end
 end

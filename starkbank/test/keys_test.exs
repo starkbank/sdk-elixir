@@ -1,6 +1,7 @@
 defmodule StarkbankTest.Keys do
   use ExUnit.Case
 
+  @tag :skip
   test "create keys" do
     {private_no_path, public_no_path} = StarkBank.Key.create()
 

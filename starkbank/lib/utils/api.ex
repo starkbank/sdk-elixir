@@ -6,8 +6,8 @@ defmodule StarkBank.Utils.API do
   def api_json(struct) do
     struct
      |> Map.from_struct()
-     |> Enum.filter(fn x -> !is_nil(x) end)
-     |> Enum.each(fn({field, value}) -> {Case.snake_to_camel(field), date_to_string(value)} end)
+     |> Enum.filter(fn {_field, value} -> !is_nil(value) end)
+     |> Enum.map(fn {field, value} -> {Case.snake_to_camel(to_string(field)), date_to_string(value)} end)
      |> Enum.into(%{})
   end
 
@@ -55,5 +55,20 @@ defmodule StarkBank.Utils.API do
      |> String.split(".")
      |> (fn list -> Enum.at(list, length(list) - 2) end).()
      |> Case.camel_to_kebab
+  end
+
+  def errors_to_string(errors) do
+    errors
+     |> Enum.map(&Map.from_struct/1)
+     |> Enum.map(&map_to_string/1)
+     |> to_string
+  end
+
+  defp map_to_string(map) do
+    map
+     |> Map.keys
+     |> Enum.map(fn key -> "#{key}: #{map[key]}" end)
+     |> Enum.join(", ")
+     |> (fn s -> "{#{s}}" end).()
   end
 end
