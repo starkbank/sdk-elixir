@@ -2,61 +2,22 @@ defmodule StarkBank.Utils.Request do
   @moduledoc false
 
   alias StarkBank.Utils.JSON, as: JSON
+  alias StarkBank.Utils.URL, as: URL
   alias StarkBank.Error, as: Error
 
-  def fetch(method, path, user, options \\ []) do
+  def fetch(user, method, path, options \\ []) do
     %{payload: payload, query: query, version: version} =
       Enum.into(options, %{payload: nil, query: nil, version: 'v2'})
 
-    url = get_url(user.environment, version, path, query)
-
-    {status_code, response_body} = request(method, user, url, payload)
-
-    process_response(status_code, response_body)
+    request(
+      user,
+      method,
+      URL.get_url(user.environment, version, path, query),
+      payload
+    ) |> process_response
   end
 
-  defp get_url(environment, version, path, query) do
-    base_url(environment) ++ version ++ '/'
-     |> add_path(path)
-     |> add_query(query)
-  end
-
-  defp base_url(environment) do
-    case environment do
-      :production -> 'https://api.starkbank.com/'
-      :sandbox -> 'https://sandbox.api.starkbank.com/'
-    end
-  end
-
-  defp add_path(base_url, path) do
-    base_url ++ to_charlist(path)
-  end
-
-  defp add_query(endpoint, query) when is_nil(query) do
-    endpoint
-  end
-
-  defp add_query(endpoint, query) do
-    list = for {k, v} <- query, !is_nil(v), do: "#{k}=#{to_query_string(v)}"
-
-    if length(list) > 0 do
-      endpoint ++ to_charlist("?" <> String.replace(Enum.join(list, "&"), " ", "%20"))
-    else
-      endpoint
-    end
-  end
-
-  defp to_query_string(value) when is_list(value) or is_tuple(value) do
-    value
-     |> Enum.map(fn v -> to_string(v) end)
-     |> Enum.join(",")
-  end
-
-  defp to_query_string(value) do
-    value
-  end
-
-  defp request(method, user, url, payload) do
+  defp request(user, method, url, payload) do
     Application.ensure_all_started(:inets)
     Application.ensure_all_started(:ssl)
 
@@ -102,7 +63,7 @@ defmodule StarkBank.Utils.Request do
     ]
   end
 
-  defp process_response(status_code, body) do
+  defp process_response({status_code, body}) do
     cond do
       status_code == 500 -> {:error, [%Error{code: "internalServerError", message: "Houston, we have a problem."}]}
       status_code == 400 -> {:error, JSON.decode!(body)["errors"] |> Enum.map(fn error -> %Error{code: error["code"], message: error["message"]} end)}

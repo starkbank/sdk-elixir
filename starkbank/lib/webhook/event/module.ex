@@ -202,7 +202,7 @@ defmodule StarkBank.Webhook.Event do
   end
 
   defp get_starkbank_public_key(user, starkbank_public_key) when is_nil(starkbank_public_key) do
-    case Request.fetch(:get, "public-key", user, query: %{limit: 1}) do
+    case Request.fetch(user, :get, "public-key", query: %{limit: 1}) do
       {:ok, response} -> {:ok, JSON.decode!(response)["publicKeys"]
                                 |> hd
                                 |> (fn x -> x["content"] end).()
