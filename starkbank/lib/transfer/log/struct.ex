@@ -11,7 +11,7 @@ defmodule StarkBank.Transfer.Log.Data do
     transfer [Transfer]: Transfer entity to which the log refers to.
     errors [list of strings]: list of errors linked to this BoletoPayment event.
     type [string]: type of the Transfer event which triggered the log creation. ex: "processing" or "success"
-    created [DateTime]: creation datetime for the transfer. ex: %DateTime{}
+    created [DateTime]: creation datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :transfer, :errors, :type, :created]
   defstruct [:id, :transfer, :errors, :type, :created]

@@ -11,7 +11,7 @@ defmodule StarkBank.Payment.Utility.Log.Data do
     payment [UtilityPayment]: UtilityPayment entity to which the log refers to.
     errors [list of strings]: list of errors linked to this BoletoPayment event.
     type [string]: type of the UtilityPayment event which triggered the log creation. ex: "registered" or "paid"
-    created [DateTime]: creation datetime for the payment. ex: %DateTime{}
+    created [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :payment, :errors, :type, :created]
   defstruct [:id, :payment, :errors, :type, :created]

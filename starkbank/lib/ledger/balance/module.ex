@@ -5,7 +5,8 @@ defmodule StarkBank.Balance do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Balance.Data, as: Balance
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Balance.Data, as: BalanceData
   alias StarkBank.Project.Data, as: Project
   alias StarkBank.Error, as: Error
 
@@ -19,9 +20,9 @@ defmodule StarkBank.Balance do
   Return:
     Balance entity with updated attributes
   """
-  @spec get(Project) :: {:ok, Balance} | {:error, [Error]}
+  @spec get(Project) :: {:ok, BalanceData.t()} | {:error, [Error]}
   def get(user) do
-    case Rest.get_list(user, %Balance{}) |> Enum.take(1) do
+    case Rest.get_list(user, resource()) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
       [{:error, error}] -> {:error, error}
     end
@@ -34,5 +35,23 @@ defmodule StarkBank.Balance do
   def get!(user) do
     {:ok, balance} = get(user)
     balance
+  end
+
+  @doc false
+  def resource() do
+    {
+      "Balance",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %BalanceData{
+      id: json[:id],
+      amount: json[:amount],
+      currency: json[:currency],
+      updated: json[:updated] |> Checks.check_datetime
+    }
   end
 end

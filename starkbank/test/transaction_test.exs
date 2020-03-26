@@ -1,7 +1,7 @@
 defmodule StarkBankTest.Transaction do
   use ExUnit.Case
 
-  @tag :exclude
+  @tag :transaction
   test "create transaction" do
     user = StarkBankTest.Credentials.project()
     {:ok, transactions} = StarkBank.Transaction.create(user, [example_transaction()])
@@ -9,30 +9,30 @@ defmodule StarkBankTest.Transaction do
     assert transaction.amount < 0
   end
 
-  @tag :exclude
+  @tag :transaction
   test "create! transaction" do
     user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.create!(user, [example_transaction()]) |> hd
     assert transaction.amount < 0
   end
 
-  @tag :exclude
+  @tag :transaction
   test "query transaction" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transaction.query(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transaction
   test "query! transaction" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transaction.query!(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transaction
   test "get transaction" do
     user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.query!(user)
@@ -41,7 +41,7 @@ defmodule StarkBankTest.Transaction do
     {:ok, _transaction} = StarkBank.Transaction.get(user, transaction.id)
   end
 
-  @tag :exclude
+  @tag :transaction
   test "get! transaction" do
     user = StarkBankTest.Credentials.project()
     transaction = StarkBank.Transaction.query!(user)

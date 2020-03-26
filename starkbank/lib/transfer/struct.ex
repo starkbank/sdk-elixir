@@ -20,8 +20,8 @@ defmodule StarkBank.Transfer.Data do
     fee [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
     status [string, default nil]: current boleto status. ex: "registered" or "paid"
     transaction_ids [list of strings, default nil]: ledger transaction ids linked to this transfer (if there are two, second is the chargeback). ex: ["19827356981273"]
-    created [datetime.datetime, default nil]: creation datetime for the transfer. ex: datetime.datetime(2020, 3, 10, 10, 30, 0, 0)
-    updated [datetime.datetime, default nil]: latest update datetime for the transfer. ex: datetime.datetime(2020, 3, 10, 10, 30, 0, 0)
+    created [DateTime, default nil]: creation datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
+    updated [DateTime, default nil]: latest update datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number]
   defstruct [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number, :transaction_ids, :fee, :tags, :status, :id, :created, :updated]

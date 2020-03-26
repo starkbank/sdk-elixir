@@ -1,23 +1,23 @@
 defmodule StarkBankTest.TransferLog do
   use ExUnit.Case
 
-  @tag :exclude
+  @tag :transfer_log
   test "query transfer log" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transfer.Log.query(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transfer_log
   test "query! transfer log" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transfer.Log.query!(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transfer_log
   test "query! transfer log with filters" do
     user = StarkBankTest.Credentials.project()
 
@@ -30,7 +30,7 @@ defmodule StarkBankTest.TransferLog do
      |> (fn list -> assert length(list) == 1 end).()
   end
 
-  @tag :exclude
+  @tag :transfer_log
   test "get transfer log" do
     user = StarkBankTest.Credentials.project()
     log = StarkBank.Transfer.Log.query!(user)
@@ -39,7 +39,7 @@ defmodule StarkBankTest.TransferLog do
     {:ok, _log} = StarkBank.Transfer.Log.get(user, log.id)
   end
 
-  @tag :exclude
+  @tag :transfer_log
   test "get! transfer log" do
     user = StarkBankTest.Credentials.project()
     log = StarkBank.Transfer.Log.query!(user)

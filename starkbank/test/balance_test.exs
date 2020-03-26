@@ -1,7 +1,7 @@
 defmodule StarkBankTest.Balance do
   use ExUnit.Case
 
-  @tag :exclude
+  @tag :balance
   test "get balance" do
     user = StarkBankTest.Credentials.project()
     balance = StarkBank.Balance.get!(user)

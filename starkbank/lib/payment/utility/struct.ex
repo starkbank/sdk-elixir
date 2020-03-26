@@ -12,13 +12,14 @@ defmodule StarkBank.Payment.Utility.Data do
   Parameters (required):
     description [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
   Parameters (optional):
-    scheduled [Date, default today]: payment scheduled date. ex: %Date{}
+    scheduled [Date, default today]: payment scheduled date. ex: ~D[2020-03-25]
     tags [list of strings]: list of strings for tagging
   Attributes (return-only):
     id [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
     status [string, default nil]: current payment status. ex: "registered" or "paid"
-    created [DateTime, default nil]: creation datetime for the payment. ex: %DateTime{}
+    amount [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    created [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:description]
-  defstruct [:line, :bar_code, :description, :scheduled, :tags, :id, :status, :created]
+  defstruct [:line, :bar_code, :description, :scheduled, :tags, :id, :status, :amount, :created]
 end

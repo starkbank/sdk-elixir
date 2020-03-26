@@ -5,7 +5,7 @@ defmodule StarkBank.Transaction do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Transaction.Data, as: Transaction
+  alias StarkBank.Transaction.Data, as: TransactionData
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -20,8 +20,8 @@ defmodule StarkBank.Transaction do
   Return:
     list of Transaction entities with updated attributes
   """
-  @spec create(Project.t(), [Transaction.t()]) ::
-    {:ok, [Transaction.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [TransactionData.t()]) ::
+    {:ok, [TransactionData.t()]} | {:error, [Error.t()]}
   def create(user, transactions) do
     Rest.post(
       user,
@@ -33,7 +33,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Transaction.t()]) :: any
+  @spec create!(Project.t(), [TransactionData.t()]) :: any
   def create!(user, transactions) do
     Rest.post!(
       user,
@@ -53,7 +53,7 @@ defmodule StarkBank.Transaction do
   Return:
     Transaction entity with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, TransactionData.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -61,7 +61,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Transaction.t()
+  @spec get!(Project, binary) :: TransactionData.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -82,7 +82,7 @@ defmodule StarkBank.Transaction do
     stream of Transaction entities with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Transaction.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [TransactionData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, external_ids: external_ids, created_after: created_after, created_before: created_before} =
       Enum.into(options, %{limit: nil, external_ids: nil, created_after: nil, created_before: nil})
@@ -93,14 +93,34 @@ defmodule StarkBank.Transaction do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [Transaction.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [TransactionData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, external_ids: external_ids, created_after: created_after, created_before: created_before} =
       Enum.into(options, %{limit: nil, external_ids: nil, created_after: nil, created_before: nil})
     Rest.get_list!(user, resource(), limit, %{external_ids: external_ids, after: created_after, before: created_before})
   end
 
-  defp resource() do
-    %Transaction{amount: nil, description: nil, external_id: nil, receiver_id: nil}
+  @doc false
+  def resource() do
+    {
+      "Transaction",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %TransactionData{
+      amount: json[:amount],
+      description: json[:description],
+      external_id: json[:external_id],
+      receiver_id: json[:receiver_id],
+      sender_id: json[:sender_id],
+      tags: json[:tags],
+      id: json[:id],
+      fee: json[:fee],
+      created: json[:created],
+      source: json[:source]
+    }
   end
 end

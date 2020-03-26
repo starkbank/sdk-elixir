@@ -5,7 +5,8 @@ defmodule StarkBank.Boleto do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Boleto.Data, as: Boleto
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Boleto.Data, as: BoletoData
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -20,8 +21,8 @@ defmodule StarkBank.Boleto do
   Return:
     list of Boleto structs with updated attributes
   """
-  @spec create(Project.t(), [Boleto.t()]) ::
-    {:ok, [Boleto.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [BoletoData.t()]) ::
+    {:ok, [BoletoData.t()]} | {:error, [Error.t()]}
   def create(user, boletos) do
     Rest.post(
       user,
@@ -33,7 +34,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Boleto.t()]) :: any
+  @spec create!(Project.t(), [BoletoData.t()]) :: any
   def create!(user, boletos) do
     Rest.post!(
       user,
@@ -53,7 +54,7 @@ defmodule StarkBank.Boleto do
   Return:
     Boleto struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, BoletoData.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -61,7 +62,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Boleto.t()
+  @spec get!(Project, binary) :: BoletoData.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -108,7 +109,7 @@ defmodule StarkBank.Boleto do
     stream of Boleto structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-        ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+        ({:cont, {:ok, [BoletoData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, created_after: created_after, created_before: created_before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, created_after: nil, created_before: nil})
@@ -119,7 +120,7 @@ defmodule StarkBank.Boleto do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [Boleto.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [BoletoData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, created_after: created_after, created_before: created_before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, created_after: nil, created_before: nil})
@@ -137,7 +138,7 @@ defmodule StarkBank.Boleto do
   Return:
     deleted Boleto with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec delete(Project, binary) :: {:ok, BoletoData.t()} | {:error, [%Error{}]}
   def delete(user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -145,12 +146,43 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: Boleto.t()
+  @spec delete!(Project, binary) :: BoletoData.t()
   def delete!(user, id) do
     Rest.delete_id!(user, resource(), id)
   end
 
-  defp resource() do
-    %Boleto{amount: nil, name: nil, tax_id: nil, street_line_1: nil, street_line_2: nil, district: nil, city: nil, state_code: nil, zip_code: nil}
+  @doc false
+  def resource() do
+    {
+      "Boleto",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %BoletoData{
+      amount: json[:amount],
+      name: json[:name],
+      tax_id: json[:tax_id],
+      street_line_1: json[:street_line_1],
+      street_line_2: json[:street_line_2],
+      district: json[:district],
+      city: json[:city],
+      state_code: json[:state_code],
+      zip_code: json[:zip_code],
+      due: json[:due] |> Checks.check_datetime,
+      fine: json[:fine],
+      interest: json[:interest],
+      overdue_limit: json[:overdue_limit],
+      tags: json[:tags],
+      descriptions: json[:descriptions],
+      id: json[:id],
+      fee: json[:fee],
+      line: json[:line],
+      bar_code: json[:bar_code],
+      status: json[:status],
+      created: json[:created] |> Checks.check_datetime
+    }
   end
 end

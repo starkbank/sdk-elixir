@@ -5,7 +5,8 @@ defmodule StarkBank.Payment.Boleto do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Payment.Boleto.Data, as: BoletoPayment
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Payment.Boleto.Data, as: BoletoPaymentData
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -20,8 +21,8 @@ defmodule StarkBank.Payment.Boleto do
   Return:
     list of BoletoPayment structs with updated attributes
   """
-  @spec create(Project.t(), [BoletoPayment.t()]) ::
-    {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [BoletoPaymentData.t()]) ::
+    {:ok, [BoletoPaymentData.t()]} | {:error, [Error.t()]}
   def create(user, payments) do
     Rest.post(
       user,
@@ -33,7 +34,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [BoletoPayment.t()]) :: any
+  @spec create!(Project.t(), [BoletoPaymentData.t()]) :: any
   def create!(user, payments) do
     Rest.post!(
       user,
@@ -53,7 +54,7 @@ defmodule StarkBank.Payment.Boleto do
   Return:
     BoletoPayment struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -61,7 +62,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoPayment.t()
+  @spec get!(Project, binary) :: BoletoPaymentData.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -107,7 +108,7 @@ defmodule StarkBank.Payment.Boleto do
     stream of BoletoPayment structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [BoletoPaymentData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -118,7 +119,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [BoletoPaymentData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -136,7 +137,7 @@ defmodule StarkBank.Payment.Boleto do
   Return:
     deleted BoletoPayment with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec delete(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
   def delete(user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -144,12 +145,32 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: BoletoPayment.t()
+  @spec delete!(Project, binary) :: BoletoPaymentData.t()
   def delete!(user, id) do
     Rest.delete_id!(user, resource(), id)
   end
 
-  defp resource() do
-    %BoletoPayment{tax_id: nil, description: nil}
+  @doc false
+  def resource() do
+    {
+      "BoletoPayment",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %BoletoPaymentData{
+      line: json[:line],
+      bar_code: json[:bar_code],
+      tax_id: json[:tax_id],
+      description: json[:description],
+      scheduled: json[:scheduled] |> Checks.check_datetime,
+      tags: json[:tags],
+      id: json[:id],
+      status: json[:status],
+      amount: json[:amount],
+      created: json[:created] |> Checks.check_datetime
+    }
   end
 end

@@ -5,7 +5,10 @@ defmodule StarkBank.Payment.Boleto.Log do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Payment.Boleto.Log.Data, as: BoletoPaymentLog
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Utils.API, as: API
+  alias StarkBank.Payment.Boleto.Log.Data, as: BoletoPaymentLogData
+  alias StarkBank.Payment.Boleto, as: BoletoPayment
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -20,7 +23,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   Return:
     BoletoPaymentLog struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoPaymentLog.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, BoletoPaymentLogData.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -28,7 +31,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoPaymentLog.t()
+  @spec get!(Project, binary) :: BoletoPaymentLogData.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -48,7 +51,7 @@ defmodule StarkBank.Payment.Boleto.Log do
     stream of BoletoPaymentLog structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [BoletoPaymentLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [BoletoPaymentLogData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, payment_ids: payment_ids, types: types} =
       Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
@@ -59,14 +62,29 @@ defmodule StarkBank.Payment.Boleto.Log do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [BoletoPaymentLog.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [BoletoPaymentLogData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, payment_ids: payment_ids, types: types} =
       Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
     Rest.get_list!(user, resource(), limit, %{payment_ids: payment_ids, types: types})
   end
 
-  defp resource() do
-    %BoletoPaymentLog{id: nil, payment: nil, errors: nil, type: nil, created: nil}
+  @doc false
+  def resource() do
+    {
+      "BoletoPaymentLog",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %BoletoPaymentLogData{
+      id: json[:id],
+      payment: json[:payment] |> API.from_api_json(&BoletoPayment.resource_maker/1),
+      created: json[:created] |> Checks.check_datetime,
+      type: json[:type],
+      errors: json[:errors]
+    }
   end
 end

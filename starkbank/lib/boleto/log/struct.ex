@@ -12,7 +12,7 @@ defmodule StarkBank.Boleto.Log.Data do
     boleto [Boleto]: Boleto entity to which the log refers to.
     errors [list of strings]: list of errors linked to this Boleto event
     type [string]: type of the Boleto event which triggered the log creation. ex: "registered" or "paid"
-    created [DateTime]: creation datetime for the boleto. ex: %DateTime{}
+    created [DateTime]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :boleto, :errors, :type, :created]
   defstruct [:id, :boleto, :errors, :type, :created]

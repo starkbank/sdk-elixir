@@ -5,7 +5,10 @@ defmodule StarkBank.Transfer.Log do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Utils.API, as: API
   alias StarkBank.Transfer.Log.Data, as: TransferLog
+  alias StarkBank.Transfer, as: Transfer
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -66,7 +69,22 @@ defmodule StarkBank.Transfer.Log do
     Rest.get_list!(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: created_after, before: created_before})
   end
 
-  defp resource() do
-    %TransferLog{id: nil, transfer: nil, errors: nil, type: nil, created: nil}
+  @doc false
+  def resource() do
+    {
+      "TransferLog",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %TransferLog{
+      id: json[:id],
+      transfer: json[:transfer] |> API.from_api_json(&Transfer.resource_maker/1),
+      created: json[:created] |> Checks.check_datetime,
+      type: json[:type],
+      errors: json[:errors]
+    }
   end
 end

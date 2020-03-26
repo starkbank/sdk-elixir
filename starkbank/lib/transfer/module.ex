@@ -5,7 +5,8 @@ defmodule StarkBank.Transfer do
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Transfer.Data, as: Transfer
+  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Transfer.Data, as: TransferData
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -20,8 +21,8 @@ defmodule StarkBank.Transfer do
   Return:
     list of Transfer structs with updated attributes
   """
-  @spec create(Project.t(), [Transfer.t()]) ::
-    {:ok, [Transfer.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [TransferData.t()]) ::
+    {:ok, [TransferData.t()]} | {:error, [Error.t()]}
   def create(user, transfers) do
     Rest.post(
       user,
@@ -33,7 +34,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Transfer.t()]) :: any
+  @spec create!(Project.t(), [TransferData.t()]) :: any
   def create!(user, transfers) do
     Rest.post!(
       user,
@@ -53,7 +54,7 @@ defmodule StarkBank.Transfer do
   Return:
     Transfer struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, TransferData.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -61,7 +62,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Transfer.t()
+  @spec get!(Project, binary) :: TransferData.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -105,14 +106,14 @@ defmodule StarkBank.Transfer do
     status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     transaction_ids [list of strings, default nil]: list of Transaction ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    after [Date, default nil]: date filter for structs created only after specified date. ex: %Date{}
-    before [Date, default nil]: date filter for structs only before specified date. ex: %Date{}
+    after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
     sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
   Return:
     stream of Transfer structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [TransferData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, created_after: created_after, created_before: created_before, sort: sort} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, created_after: nil, created_before: nil, sort: nil})
@@ -130,7 +131,30 @@ defmodule StarkBank.Transfer do
     Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: created_after, before: created_before, sort: sort})
   end
 
-  defp resource() do
-    %Transfer{amount: nil, name: nil, tax_id: nil, bank_code: nil, branch_code: nil, account_number: nil}
+  @doc false
+  def resource() do
+    {
+      "Transfer",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %TransferData{
+      amount: json[:amount],
+      name: json[:name],
+      tax_id: json[:tax_id],
+      bank_code: json[:bank_code],
+      branch_code: json[:branch_code],
+      account_number: json[:account_number],
+      transaction_ids: json[:transaction_ids],
+      fee: json[:fee],
+      tags: json[:tags],
+      status: json[:status],
+      id: json[:id],
+      created: json[:created] |> Checks.check_datetime,
+      updated: json[:updated] |> Checks.check_datetime
+    }
   end
 end

@@ -23,49 +23,29 @@ defmodule StarkBank.Utils.API do
     data
   end
 
-  def from_api_json(json, resource) do
+  def from_api_json(json, resource_maker) do
     json
      |> Enum.map(fn({field, value}) -> {field |> Case.camel_to_snake() |> String.to_atom(), value} end)
-     |> Enum.filter(fn {field, _value} -> Enum.member?(Map.keys(resource), field) end)
-     |> (fn snakes -> struct(resource, snakes) end).()
+     |> resource_maker.()
   end
 
-  def endpoint(resource) do
-    resource
-     |> resource_to_kebab()
+  def endpoint(resource_name) do
+    resource_name
+     |> Case.camel_to_kebab
      |> String.replace("-log", "/log")
   end
 
-  def last_name_plural(resource) do
-    resource
-     |> last_name()
+  def last_name_plural(resource_name) do
+    resource_name
+     |> last_name
      |> (fn x -> x <> "s" end).()
   end
 
-  def last_name(resource) do
-    resource
-     |> resource_to_kebab()
+  def last_name(resource_name) do
+    resource_name
+     |> Case.camel_to_kebab
      |> String.split("-")
      |> List.last
-  end
-
-  defp resource_to_kebab(resource) do
-    resource.__struct__
-     |> to_string()
-     |> String.split(".")
-     |> (fn list -> Enum.drop(list, Enum.find_index(list, fn x -> x == "StarkBank" end) + 1) end).()
-     |> reverse_payment_order
-     |> (fn list -> Enum.take(list, length(list) - 1) end).()
-     |> Enum.join("")
-     |> Case.camel_to_kebab
-  end
-
-  defp reverse_payment_order(["Payment" | [next | rest]]) do
-    [next | ["Payment" | rest]]
-  end
-
-  defp reverse_payment_order(list) do
-    list
   end
 
   def errors_to_string(errors) do

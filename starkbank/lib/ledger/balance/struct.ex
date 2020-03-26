@@ -11,7 +11,7 @@ defmodule StarkBank.Balance.Data do
     id [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
     amount [integer, default nil]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
     status [string, default nil]: currency of the current workspace. Expect others to be added eventually. ex: "BRL"
-    updated [DateTime, default nil]: update datetime for the balance. ex: %DateTime{}
+    updated [DateTime, default nil]: update datetime for the balance. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   defstruct [:id, :amount, :currency, :updated]
 end

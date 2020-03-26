@@ -1,23 +1,23 @@
 defmodule StarkBankTest.BoletoPaymentLog do
   use ExUnit.Case
 
-  @tag :exclude
+  @tag :boleto_payment_log
   test "query boleto payment log" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Payment.Boleto.Log.query(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :boleto_payment_log
   test "query! boleto payment log" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Payment.Boleto.Log.query!(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :boleto_payment_log
   test "query! boleto payment log with filters" do
     user = StarkBankTest.Credentials.project()
 
@@ -30,7 +30,7 @@ defmodule StarkBankTest.BoletoPaymentLog do
      |> (fn list -> assert length(list) == 1 end).()
   end
 
-  @tag :exclude
+  @tag :boleto_payment_log
   test "get boleto payment log" do
     user = StarkBankTest.Credentials.project()
     log = StarkBank.Payment.Boleto.Log.query!(user)
@@ -39,7 +39,7 @@ defmodule StarkBankTest.BoletoPaymentLog do
     {:ok, _log} = StarkBank.Payment.Boleto.Log.get(user, log.id)
   end
 
-  @tag :exclude
+  @tag :boleto_payment_log
   test "get! boleto payment log" do
     user = StarkBankTest.Credentials.project()
     log = StarkBank.Payment.Boleto.Log.query!(user)

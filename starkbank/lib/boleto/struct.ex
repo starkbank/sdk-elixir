@@ -21,7 +21,7 @@ defmodule StarkBank.Boleto.Data do
     fine [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     interest [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
     overdue_limit [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
-    descriptions [list of dictionaries, default nil]: list of dictionaries with "text":string and (optional) "amount":int pairs
+    descriptions [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
     tags [list of strings]: list of strings for tagging
   Attributes (return-only):
     id [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
@@ -29,7 +29,7 @@ defmodule StarkBank.Boleto.Data do
     line [string, default nil]: generated Boleto line for payment. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
     bar_code [string, default nil]: generated Boleto bar-code for payment. ex: "34195819600000000621090063571277307144464000"
     status [string, default nil]: current Boleto status. ex: "registered" or "paid"
-    created [DateTime, default nil]: creation datetime for the Boleto. ex: %DateTime{}
+    created [DateTime, default nil]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code]
   defstruct [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :due, :fine, :interest, :overdue_limit, :tags, :descriptions, :id, :fee, :line, :bar_code, :status, :created]

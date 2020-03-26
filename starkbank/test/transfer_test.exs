@@ -1,7 +1,7 @@
 defmodule StarkBankTest.Transfer do
   use ExUnit.Case
 
-  @tag :exclude
+  @tag :transfer
   test "create transfer" do
     user = StarkBankTest.Credentials.project()
     {:ok, transfers} = StarkBank.Transfer.create(user, [example_transfer()])
@@ -9,30 +9,30 @@ defmodule StarkBankTest.Transfer do
     assert !is_nil(transfer)
   end
 
-  @tag :exclude
+  @tag :transfer
   test "create! transfer" do
     user = StarkBankTest.Credentials.project()
     transfer = StarkBank.Transfer.create!(user, [example_transfer()]) |> hd
     assert !is_nil(transfer)
   end
 
-  @tag :exclude
+  @tag :transfer
   test "query transfer" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transfer.query(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transfer
   test "query! transfer" do
     user = StarkBankTest.Credentials.project()
     StarkBank.Transfer.query!(user, limit: 101)
-     |> Enum.take(101)
-     |> (fn list -> assert length(list) == 101 end).()
+     |> Enum.take(200)
+     |> (fn list -> assert length(list) <= 101 end).()
   end
 
-  @tag :exclude
+  @tag :transfer
   test "get transfer" do
     user = StarkBankTest.Credentials.project()
     transfer = StarkBank.Transfer.query!(user)
@@ -41,7 +41,7 @@ defmodule StarkBankTest.Transfer do
     {:ok, _transfer} = StarkBank.Transfer.get(user, transfer.id)
   end
 
-  @tag :exclude
+  @tag :transfer
   test "get! transfer" do
     user = StarkBankTest.Credentials.project()
     transfer = StarkBank.Transfer.query!(user)
@@ -50,7 +50,7 @@ defmodule StarkBankTest.Transfer do
     _transfer = StarkBank.Transfer.get!(user, transfer.id)
   end
 
-  @tag :exclude
+  @tag :transfer
   test "pdf transfer" do
     user = StarkBankTest.Credentials.project()
     transfer = StarkBank.Transfer.query!(user)
@@ -59,7 +59,7 @@ defmodule StarkBankTest.Transfer do
     {:ok, _pdf} = StarkBank.Transfer.pdf(user, transfer.id)
   end
 
-  @tag :exclude
+  @tag :transfer
   test "pdf! transfer" do
     user = StarkBankTest.Credentials.project()
     transfer = StarkBank.Transfer.query!(user)
