@@ -53,7 +53,7 @@ defmodule StarkBankTest.UtilityPayment do
   @tag :utility_payment
   test "pdf utility payment" do
     user = StarkBankTest.Credentials.project()
-    payment = StarkBank.Payment.Utility.query!(user, status: "success")
+    payment = StarkBank.Payment.Utility.query!(user, status: "created")
      |> Enum.take(1)
      |> hd()
     {:ok, _pdf} = StarkBank.Payment.Utility.pdf(user, payment.id)
@@ -62,7 +62,7 @@ defmodule StarkBankTest.UtilityPayment do
   @tag :utility_payment
   test "pdf! utility payment" do
     user = StarkBankTest.Credentials.project()
-    payment = StarkBank.Payment.Utility.query!(user, status: "success")
+    payment = StarkBank.Payment.Utility.query!(user, status: "created")
      |> Enum.take(1)
      |> hd()
     pdf = StarkBank.Payment.Utility.pdf!(user, payment.id)
