@@ -1,5 +1,5 @@
 defmodule StarkBank do
   @moduledoc """
-  SDK to facilitate Elixir integrations with the Stark Bank v2 API.
+  SDK to facilitate Elixir integrations with the Stark Bank API v2.
   """
 end

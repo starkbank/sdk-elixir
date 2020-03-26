@@ -11,14 +11,15 @@ defmodule StarkBank.Balance do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Retrieve the Balance entity
+  # Retrieve the Balance entity
 
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Return:
-    Balance entity with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Return:
+    - Balance struct with updated attributes
   """
   @spec get(Project) :: {:ok, BalanceData.t()} | {:error, [Error]}
   def get(user) do

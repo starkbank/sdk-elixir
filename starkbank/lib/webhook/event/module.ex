@@ -21,15 +21,16 @@ defmodule StarkBank.Webhook.Event do
   alias EllipticCurve.Ecdsa, as: Ecdsa
 
   @doc """
-  Retrieve a specific notification Event
+  # Retrieve a specific notification Event
 
   Receive a single notification Event struct previously created in the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    Event struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - Event struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -45,19 +46,21 @@ defmodule StarkBank.Webhook.Event do
   end
 
   @doc """
-  Retrieve notification Events
+  # Retrieve notification Events
 
   Receive a stream of notification Event structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    is_delivered [bool, default nil]: bool to filter successfully delivered events. ex: True or False
-    after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
-  Return:
-    stream of Event structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - is_delivered [bool, default nil]: bool to filter successfully delivered events. ex: True or False
+    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
+
+  ## Return:
+    - stream of Event structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Webhook.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
@@ -79,15 +82,16 @@ defmodule StarkBank.Webhook.Event do
   end
 
   @doc """
-  Delete notification Events
+  # Delete notification Events
 
   Delete a list of notification Event entities previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: Event unique id. ex: "5656565656565656"
-  Return:
-    deleted Event with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: Event unique id. ex: "5656565656565656"
+
+  ## Return:
+    - deleted Event struct with updated attributes
   """
   @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(user, id) do
@@ -103,16 +107,17 @@ defmodule StarkBank.Webhook.Event do
   end
 
   @doc """
-  Set notification Event entity as delivered
+  # Set notification Event entity as delivered
 
   Set notification Event as delivered at the current timestamp (if it was not yet delivered) by passing id.
   After this is set, the event will no longer be returned on queries with is_delivered=False.
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [list of strings]: Event unique ids. ex: "5656565656565656"
-  Return:
-    target Event with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [list of strings]: Event unique ids. ex: "5656565656565656"
+
+  ## Return:
+    - target Event with updated attributes
   """
   @spec set_delivered(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def set_delivered(user, id) do
@@ -128,18 +133,19 @@ defmodule StarkBank.Webhook.Event do
   end
 
   @doc """
-  Create single notification Event from a content string
+  # Create single notification Event from a content string
 
   Create a single Event struct received from event listening at subscribed user endpoint.
   If the provided digital signature does not check out with the StarkBank public key, an "invalidSignature"
   error will be returned.
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    content [string]: response content from request received at user endpoint (not parsed)
-    signature [string]: base-64 digital signature received at response header "Digital-Signature"
-  Return:
-    Event struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - content [string]: response content from request received at user endpoint (not parsed)
+    - signature [string]: base-64 digital signature received at response header "Digital-Signature"
+
+  ## Return:
+    - Event struct with updated attributes
   """
   @spec parse(Project.t(), binary, binary, binary | nil) ::
           {:ok, {Event.t(), binary}} | {:error, [Error.t()]}

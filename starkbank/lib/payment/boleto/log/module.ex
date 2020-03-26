@@ -13,15 +13,16 @@ defmodule StarkBank.Payment.Boleto.Log do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Retrieve a specific BoletoPaymentLog
+  # Retrieve a specific BoletoPaymentLog
 
   Receive a single BoletoPaymentLog struct previously created by the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    BoletoPaymentLog struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - BoletoPaymentLog struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, BoletoPaymentLogData.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -37,18 +38,20 @@ defmodule StarkBank.Payment.Boleto.Log do
   end
 
   @doc """
-  Retrieve BoletoPaymentLogs
+  # Retrieve BoletoPaymentLogs
 
   Receive a stream of BoletoPaymentLog structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    payment_ids [list of strings, default nil]: list of BoletoPayment ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    types [list of strings, default nil]: filter retrieved structs by event types. ex: "paid" or "registered"
-  Return:
-    stream of BoletoPaymentLog structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - payment_ids [list of strings, default nil]: list of BoletoPayment ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - types [list of strings, default nil]: filter retrieved structs by event types. ex: "paid" or "registered"
+
+  ## Return:
+    - stream of BoletoPaymentLog structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPaymentLogData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

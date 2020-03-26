@@ -11,15 +11,16 @@ defmodule StarkBank.Payment.Utility do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Create UtilityPayments
+  # Create UtilityPayments
 
   Send a list of UtilityPayment structs for creation in the Stark Bank API
 
-  Parameters (required):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
-    payments [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
-  Return:
-    list of UtilityPayment structs with updated attributes
+  ## Parameters (required):
+    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    - payments [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
+
+  ## Return:
+    - list of UtilityPayment structs with updated attributes
   """
   @spec create(Project.t(), [UtilityPaymentData.t()]) ::
     {:ok, [UtilityPaymentData.t()]} | {:error, [Error.t()]}
@@ -44,13 +45,13 @@ defmodule StarkBank.Payment.Utility do
   end
 
   @doc """
-  Retrieve a specific UtilityPayment
+  # Retrieve a specific UtilityPayment
 
   Receive a single UtilityPayment struct previously created by the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
-    id [string]: struct unique id. ex: "5656565656565656"
+  ## Parameters (required):
+    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    - id [string]: struct unique id. ex: "5656565656565656"
   """
   @spec get(Project, binary) :: {:ok, UtilityPaymentData.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -66,17 +67,17 @@ defmodule StarkBank.Payment.Utility do
   end
 
   @doc """
-  Retrieve a specific UtilityPayment pdf file
+  # Retrieve a specific UtilityPayment pdf file
 
-  Receive a single UtilityPayment pdf file generated in the Stark Bank API by passing its id
+  Receive a single UtilityPayment pdf file generated in the Stark Bank API by passing its id.
+  Only valid for utility payments with "success" status.
 
-  Send a list of UtilityPayment structs for creation in the Stark Bank API
+  ## Parameters (required):
+    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    - id [string]: struct unique id. ex: "5656565656565656"
 
-  Parameters (required):
-    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    UtilityPayment pdf file
+  ## Return:
+    - UtilityPayment pdf file content
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(user, id) do
@@ -92,19 +93,21 @@ defmodule StarkBank.Payment.Utility do
   end
 
   @doc """
-  Retrieve UtilityPayments
+  # Retrieve UtilityPayments
 
   Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    status [string, default nil]: filter for status of retrieved structs. ex: "paid"
-    tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-  Return:
-    stream of UtilityPayment structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+
+  ## Return:
+    - stream of UtilityPayment structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [UtilityPaymentData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
@@ -126,15 +129,16 @@ defmodule StarkBank.Payment.Utility do
   end
 
   @doc """
-  Delete a UtilityPayment entity
+  # Delete a UtilityPayment entity
 
   Delete a UtilityPayment entity previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: UtilityPayment unique id. ex: "5656565656565656"
-  Return:
-    deleted UtilityPayment with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: UtilityPayment unique id. ex: "5656565656565656"
+
+  ## Return:
+    - deleted UtilityPayment with updated attributes
   """
   @spec delete(Project, binary) :: {:ok, UtilityPaymentData.t()} | {:error, [%Error{}]}
   def delete(user, id) do

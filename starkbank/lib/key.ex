@@ -8,10 +8,12 @@ defmodule StarkBank.Key do
   alias EllipticCurve.PublicKey, as: PublicKey
 
   @doc """
+  # Generate a key pair
+
   Generates a secp256k1 ECDSA private/public key pair to be used in the API authentications
 
-  Parameters (optional):
-      path [string]: path to save the keys .pem files. No files will be saved if this parameter isn't provided
+  ## Parameters (optional):
+    - path [string, default nil]: path to save the keys .pem files. No files will be saved if this parameter isn't provided.
   """
   @spec create(any) :: {binary, binary}
   def create(path \\ nil) do

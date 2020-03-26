@@ -13,15 +13,16 @@ defmodule StarkBank.Transfer.Log do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Retrieve a specific TransferLog
+  # Retrieve a specific TransferLog
 
   Receive a single TransferLog struct previously created by the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    TransferLog struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - TransferLog struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, TransferLog.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -37,18 +38,20 @@ defmodule StarkBank.Transfer.Log do
   end
 
   @doc """
-  Retrieve TransferLogs
+  # Retrieve TransferLogs
 
   Receive a stream of TransferLog structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    transfer_ids [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    types [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
-  Return:
-    stream of TransferLog structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - transfer_ids [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - types [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
+
+  ## Return:
+    - stream of TransferLog structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [TransferLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

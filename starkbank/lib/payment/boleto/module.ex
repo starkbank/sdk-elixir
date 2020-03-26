@@ -11,15 +11,16 @@ defmodule StarkBank.Payment.Boleto do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Create BoletoPayments
+  # Create BoletoPayments
 
   Send a list of BoletoPayment structs for creation in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    payments [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
-  Return:
-    list of BoletoPayment structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - payments [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
+
+  ## Return:
+    - list of BoletoPayment structs with updated attributes
   """
   @spec create(Project.t(), [BoletoPaymentData.t()]) ::
     {:ok, [BoletoPaymentData.t()]} | {:error, [Error.t()]}
@@ -44,15 +45,16 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Retrieve a specific BoletoPayment
+  # Retrieve a specific BoletoPayment
 
   Receive a single BoletoPayment struct previously created by the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    BoletoPayment struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - BoletoPayment struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -68,17 +70,17 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Retrieve a specific BoletoPayment pdf file
+  # Retrieve a specific BoletoPayment pdf file
 
-  Receive a single BoletoPayment pdf file generated in the Stark Bank API by passing its id
+  Receive a single BoletoPayment pdf file generated in the Stark Bank API by passing its id.
+  Only valid for boleto payments with "success" status.
 
-  Send a list of BoletoPayment structs for creation in the Stark Bank API
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    BoletoPayment pdf file
+  ## Return:
+    - BoletoPayment pdf file content
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(user, id) do
@@ -94,18 +96,20 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Retrieve BoletoPayments
+  # Retrieve BoletoPayments
 
   Receive a stream of BoletoPayment structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    status [string, default nil]: filter for status of retrieved structs. ex: "paid"
-    tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-  Return:
-    stream of BoletoPayment structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+
+  ## Return:
+    - stream of BoletoPayment structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPaymentData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
@@ -127,15 +131,16 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Delete a BoletoPayment entity
+  # Delete a BoletoPayment entity
 
   Delete a BoletoPayment entity previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: BoletoPayment unique id. ex: "5656565656565656"
-  Return:
-    deleted BoletoPayment with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: BoletoPayment unique id. ex: "5656565656565656"
+
+  ## Return:
+    - deleted BoletoPayment struct with updated attributes
   """
   @spec delete(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
   def delete(user, id) do

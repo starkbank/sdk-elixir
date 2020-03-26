@@ -10,15 +10,16 @@ defmodule StarkBank.Transaction do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Create Transactions
+  # Create Transactions
 
   Send a list of Transaction entities for creation in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    transactions [list of Transaction entities]: list of Transaction entities to be created in the API
-  Return:
-    list of Transaction entities with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - transactions [list of Transaction entities]: list of Transaction entities to be created in the API
+
+  ## Return:
+    - list of Transaction structs with updated attributes
   """
   @spec create(Project.t(), [TransactionData.t()]) ::
     {:ok, [TransactionData.t()]} | {:error, [Error.t()]}
@@ -43,15 +44,16 @@ defmodule StarkBank.Transaction do
   end
 
   @doc """
-  Retrieve a specific Transaction
+  # Retrieve a specific Transaction
 
   Receive a single Transaction entity previously created in the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: entity unique id. ex: "5656565656565656"
-  Return:
-    Transaction entity with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: entity unique id. ex: "5656565656565656"
+
+  ## Return:
+    - Transaction struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, TransactionData.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -67,19 +69,21 @@ defmodule StarkBank.Transaction do
   end
 
   @doc """
-  Retrieve Transactions
+  # Retrieve Transactions
 
   Receive a stream of Transaction entities previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    external_ids [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
-    created_after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    created_before [Date, default nil] date filter for entities created only before specified date. ex: Date(2020, 3, 10)
-  Return:
-    stream of Transaction entities with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
+    - external_ids [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
+    - created_after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
+    - created_before [Date, default nil] date filter for entities created only before specified date. ex: Date(2020, 3, 10)
+
+  ## Return:
+    - stream of Transaction structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [TransactionData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)

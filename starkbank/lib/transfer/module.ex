@@ -11,15 +11,16 @@ defmodule StarkBank.Transfer do
   alias StarkBank.Error, as: Error
 
   @doc """
-  Create Transfers
+  # Create Transfers
 
   Send a list of Transfer structs for creation in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    transfers [list of Transfer structs]: list of Transfer structs to be created in the API
-  Return:
-    list of Transfer structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - transfers [list of Transfer structs]: list of Transfer structs to be created in the API
+
+  ## Return:
+    - list of Transfer structs with updated attributes
   """
   @spec create(Project.t(), [TransferData.t()]) ::
     {:ok, [TransferData.t()]} | {:error, [Error.t()]}
@@ -44,15 +45,16 @@ defmodule StarkBank.Transfer do
   end
 
   @doc """
-  Retrieve a specific Transfer
+  # Retrieve a specific Transfer
 
   Receive a single Transfer struct previously created in the Stark Bank API by passing its id
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    Transfer struct with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - Transfer struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, TransferData.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -68,18 +70,17 @@ defmodule StarkBank.Transfer do
   end
 
   @doc """
-  Retrieve a specific Transfer pdf file
+  # Retrieve a specific Transfer pdf file
 
   Receive a single Transfer pdf receipt file generated in the Stark Bank API by passing its id.
-  Only valid for transfers with "success" status
+  Only valid for transfers with "success" status.
 
-  Send a list of Transfer structs for creation in the Stark Bank API
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+    - id [string]: struct unique id. ex: "5656565656565656"
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    Transfer pdf file
+  ## Return:
+    - Transfer pdf file content
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(user, id) do
@@ -95,22 +96,24 @@ defmodule StarkBank.Transfer do
   end
 
   @doc """
-  Retrieve Transfers
+  # Retrieve Transfers
 
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
-  Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Parameters (optional):
-    limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
-    tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    transaction_ids [list of strings, default nil]: list of Transaction ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
-    sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
-  Return:
-    stream of Transfer structs with updated attributes
+  ## Parameters (required):
+    - user [Project]: Project struct returned from StarkBank.User.project().
+
+  ## Parameters (optional):
+    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
+    - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - transaction_ids [list of strings, default nil]: list of Transaction ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
+    - sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
+
+  ## Return:
+    - stream of Transfer structs with updated attributes
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [TransferData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
