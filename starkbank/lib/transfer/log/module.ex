@@ -15,9 +15,8 @@ defmodule StarkBank.Transfer.Log do
   Receive a single TransferLog struct previously created by the Stark Bank API by passing its id
 
   Parameters (required):
-    id [string]: struct unique id. ex: "5656565656565656"
-  Parameters (optional):
     user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: struct unique id. ex: "5656565656565656"
   Return:
     TransferLog struct with updated attributes
   """
@@ -39,11 +38,12 @@ defmodule StarkBank.Transfer.Log do
 
   Receive a stream of TransferLog structs previously created in the Stark Bank API
 
+  Parameters (required):
+    user [Project]: Project struct returned from StarkBank.User.project().
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     transfer_ids [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     types [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
-    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     stream of TransferLog structs with updated attributes
   """

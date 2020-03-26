@@ -4,16 +4,16 @@ defmodule StarkBankTest.BoletoPayment do
   @tag :exclude
   test "create boleto payment" do
     user = StarkBankTest.Credentials.project()
-    {:ok, boletos} = StarkBank.Payment.Boleto.create(user, [example_payment()])
-    boleto = boletos |> hd
-    assert !is_nil(boleto)
+    {:ok, payments} = StarkBank.Payment.Boleto.create(user, [example_payment()])
+    payment = payments |> hd
+    assert !is_nil(payment)
   end
 
   @tag :exclude
   test "create! boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
-    assert !is_nil(boleto)
+    payment = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
+    assert !is_nil(payment)
   end
 
   @tag :exclude
@@ -35,37 +35,37 @@ defmodule StarkBankTest.BoletoPayment do
   @tag :exclude
   test "get boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.query!(user)
+    payment = StarkBank.Payment.Boleto.query!(user)
      |> Enum.take(1)
      |> hd()
-    {:ok, _boleto} = StarkBank.Payment.Boleto.get(user, boleto.id)
+    {:ok, _payment} = StarkBank.Payment.Boleto.get(user, payment.id)
   end
 
   @tag :exclude
   test "get! boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.query!(user)
+    payment = StarkBank.Payment.Boleto.query!(user)
      |> Enum.take(1)
      |> hd()
-    _boleto = StarkBank.Payment.Boleto.get!(user, boleto.id)
+    _payment = StarkBank.Payment.Boleto.get!(user, payment.id)
   end
 
   @tag :exclude
   test "pdf boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.query!(user, status: "success")
+    payment = StarkBank.Payment.Boleto.query!(user, status: "success")
      |> Enum.take(1)
      |> hd()
-    {:ok, _pdf} = StarkBank.Payment.Boleto.pdf(user, boleto.id)
+    {:ok, _pdf} = StarkBank.Payment.Boleto.pdf(user, payment.id)
   end
 
   @tag :exclude
   test "pdf! boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.query!(user, status: "success")
+    payment = StarkBank.Payment.Boleto.query!(user, status: "success")
      |> Enum.take(1)
      |> hd()
-    pdf = StarkBank.Payment.Boleto.pdf!(user, boleto.id)
+    pdf = StarkBank.Payment.Boleto.pdf!(user, payment.id)
     file = File.open!("boleto-payment.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)
@@ -74,17 +74,17 @@ defmodule StarkBankTest.BoletoPayment do
   @tag :exclude
   test "delete boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
-    {:ok, deleted_boleto} = StarkBank.Payment.Boleto.delete(user, boleto.id)
-    assert !is_nil(deleted_boleto)
+    payment = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
+    {:ok, deleted_payment} = StarkBank.Payment.Boleto.delete(user, payment.id)
+    assert !is_nil(deleted_payment)
   end
 
   @tag :exclude
   test "delete! boleto payment" do
     user = StarkBankTest.Credentials.project()
-    boleto = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
-    deleted_boleto = StarkBank.Payment.Boleto.delete!(user, boleto.id)
-    assert !is_nil(deleted_boleto)
+    payment = StarkBank.Payment.Boleto.create!(user, [example_payment()]) |> hd
+    deleted_payment = StarkBank.Payment.Boleto.delete!(user, payment.id)
+    assert !is_nil(deleted_payment)
   end
 
   defp example_payment() do

@@ -15,9 +15,8 @@ defmodule StarkBank.Transfer do
   Send a list of Transfer structs for creation in the Stark Bank API
 
   Parameters (required):
-    transfers [list of Transfer structs]: list of Transfer structs to be created in the API
-  Parameters (optional):
     user [Project]: Project struct returned from StarkBank.User.project().
+    transfers [list of Transfer structs]: list of Transfer structs to be created in the API
   Return:
     list of Transfer structs with updated attributes
   """
@@ -49,9 +48,8 @@ defmodule StarkBank.Transfer do
   Receive a single Transfer struct previously created in the Stark Bank API by passing its id
 
   Parameters (required):
-    id [string]: struct unique id. ex: "5656565656565656"
-  Parameters (optional):
     user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: struct unique id. ex: "5656565656565656"
   Return:
     Transfer struct with updated attributes
   """
@@ -77,9 +75,8 @@ defmodule StarkBank.Transfer do
   Send a list of Transfer structs for creation in the Stark Bank API
 
   Parameters (required):
-    id [string]: struct unique id. ex: "5656565656565656"
-  Parameters (optional):
     user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: struct unique id. ex: "5656565656565656"
   Return:
     Transfer pdf file
   """
@@ -101,6 +98,8 @@ defmodule StarkBank.Transfer do
 
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
+  Parameters (required):
+    user [Project]: Project struct returned from StarkBank.User.project().
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
@@ -109,7 +108,6 @@ defmodule StarkBank.Transfer do
     after [Date, default nil]: date filter for structs created only after specified date. ex: %Date{}
     before [Date, default nil]: date filter for structs only before specified date. ex: %Date{}
     sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
-    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
     stream of Transfer structs with updated attributes
   """

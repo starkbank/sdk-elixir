@@ -21,11 +21,11 @@ defmodule StarkBankTest.BoletoPaymentLog do
   test "query! boleto payment log with filters" do
     user = StarkBankTest.Credentials.project()
 
-    payment = StarkBank.Payment.Boleto.query!(user, status: "success")
+    payment = StarkBank.Payment.Boleto.query!(user)
      |> Enum.take(1)
      |> hd()
 
-    StarkBank.Payment.Boleto.Log.query!(user, limit: 1, boleto_ids: [payment.id], types: "success")
+    StarkBank.Payment.Boleto.Log.query!(user, limit: 1, payment_ids: [payment.id])
      |> Enum.take(5)
      |> (fn list -> assert length(list) == 1 end).()
   end

@@ -14,10 +14,10 @@ defmodule StarkBank.Balance do
 
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
-  Parameters (optional):
-      user [Project]: Project struct returned from StarkBank.User.project().
+  Parameters (required):
+    user [Project]: Project struct returned from StarkBank.User.project().
   Return:
-      Balance entity with updated attributes
+    Balance entity with updated attributes
   """
   @spec get(Project) :: {:ok, Balance} | {:error, [Error]}
   def get(user) do

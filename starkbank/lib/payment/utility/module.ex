@@ -1,27 +1,27 @@
-defmodule StarkBank.Payment.Boleto do
+defmodule StarkBank.Payment.Utility do
 
   @moduledoc """
-  Groups BoletoPayment related functions
+  Groups UtilityPayment related functions
   """
 
   alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Payment.Boleto.Data, as: BoletoPayment
+  alias StarkBank.Payment.Utility.Data, as: UtilityPayment
   alias StarkBank.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
-  Create BoletoPayments
+  Create UtilityPayments
 
-  Send a list of BoletoPayment structs for creation in the Stark Bank API
+  Send a list of UtilityPayment structs for creation in the Stark Bank API
 
   Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
-    payments [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
+    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
+    payments [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
   Return:
-    list of BoletoPayment structs with updated attributes
+    list of UtilityPayment structs with updated attributes
   """
-  @spec create(Project.t(), [BoletoPayment.t()]) ::
-    {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [UtilityPayment.t()]) ::
+    {:ok, [UtilityPayment.t()]} | {:error, [Error.t()]}
   def create(user, payments) do
     Rest.post(
       user,
@@ -33,7 +33,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [BoletoPayment.t()]) :: any
+  @spec create!(Project.t(), [UtilityPayment.t()]) :: any
   def create!(user, payments) do
     Rest.post!(
       user,
@@ -43,17 +43,15 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Retrieve a specific BoletoPayment
+  Retrieve a specific UtilityPayment
 
-  Receive a single BoletoPayment struct previously created by the Stark Bank API by passing its id
+  Receive a single UtilityPayment struct previously created by the Stark Bank API by passing its id
 
   Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
+    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     id [string]: struct unique id. ex: "5656565656565656"
-  Return:
-    BoletoPayment struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -61,23 +59,23 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoPayment.t()
+  @spec get!(Project, binary) :: UtilityPayment.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
   @doc """
-  Retrieve a specific BoletoPayment pdf file
+  Retrieve a specific UtilityPayment pdf file
 
-  Receive a single BoletoPayment pdf file generated in the Stark Bank API by passing its id
+  Receive a single UtilityPayment pdf file generated in the Stark Bank API by passing its id
 
-  Send a list of BoletoPayment structs for creation in the Stark Bank API
+  Send a list of UtilityPayment structs for creation in the Stark Bank API
 
   Parameters (required):
-    user [Project]: Project struct returned from StarkBank.User.project().
+    user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     id [string]: struct unique id. ex: "5656565656565656"
   Return:
-    BoletoPayment pdf file
+    UtilityPayment pdf file
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(user, id) do
@@ -93,9 +91,9 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Retrieve BoletoPayments
+  Retrieve UtilityPayments
 
-  Receive a stream of BoletoPayment structs previously created in the Stark Bank API
+  Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
   Parameters (required):
     user [Project]: Project struct returned from StarkBank.User.project().
@@ -103,11 +101,12 @@ defmodule StarkBank.Payment.Boleto do
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     status [string, default nil]: filter for status of retrieved structs. ex: "paid"
     tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
   Return:
-    stream of BoletoPayment structs with updated attributes
+    stream of UtilityPayment structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [UtilityPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -118,7 +117,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [UtilityPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -126,17 +125,17 @@ defmodule StarkBank.Payment.Boleto do
   end
 
   @doc """
-  Delete a BoletoPayment entity
+  Delete a UtilityPayment entity
 
-  Delete a BoletoPayment entity previously created in the Stark Bank API
+  Delete a UtilityPayment entity previously created in the Stark Bank API
 
   Parameters (required):
     user [Project]: Project struct returned from StarkBank.User.project().
-    id [string]: BoletoPayment unique id. ex: "5656565656565656"
+    id [string]: UtilityPayment unique id. ex: "5656565656565656"
   Return:
-    deleted BoletoPayment with updated attributes
+    deleted UtilityPayment with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec delete(Project, binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def delete(user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -144,12 +143,12 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: BoletoPayment.t()
+  @spec delete!(Project, binary) :: UtilityPayment.t()
   def delete!(user, id) do
     Rest.delete_id!(user, resource(), id)
   end
 
   defp resource() do
-    %BoletoPayment{tax_id: nil, description: nil}
+    %UtilityPayment{description: nil}
   end
 end

@@ -5,7 +5,7 @@ defmodule StarkBank.Utils.QueryGenerator do
   alias StarkBank.Utils.JSON, as: JSON
 
   def start_query(function, key, query) do
-    Task.start_link(fn -> yield([], function, key, query) end)
+    Task.start_link(fn -> yield([], function, key, query, true) end)
   end
 
   def get(pid) do
@@ -25,9 +25,10 @@ defmodule StarkBank.Utils.QueryGenerator do
     end
   end
 
-  defp yield([], function, key, query) do
+  defp yield([], function, key, query, first \\ false) do
     limit = query[:limit]
-    if is_nil(limit) or limit > 0 do
+    cursor = query[:cursor]
+    if (first or !is_nil(cursor)) and (is_nil(limit) or limit > 0) do
       case function.(query |> Map.put(:limit, limit |> Checks.check_limit)) do
         {:ok, result} ->
           decoded = JSON.decode!(result)

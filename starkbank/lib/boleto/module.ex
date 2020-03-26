@@ -15,11 +15,10 @@ defmodule StarkBank.Boleto do
   Send a list of Boleto structs for creation in the Stark Bank API
 
   Parameters (required):
-      boletos [list of Boleto structs]: list of Boleto structs to be created in the API
-  Parameters (optional):
-      user [Project]: Project struct returned from StarkBank.User.project().
+    user [Project]: Project struct returned from StarkBank.User.project().
+    boletos [list of Boleto structs]: list of Boleto structs to be created in the API
   Return:
-      list of Boleto structs with updated attributes
+    list of Boleto structs with updated attributes
   """
   @spec create(Project.t(), [Boleto.t()]) ::
     {:ok, [Boleto.t()]} | {:error, [Error.t()]}
@@ -49,11 +48,10 @@ defmodule StarkBank.Boleto do
   Receive a single Boleto struct previously created in the Stark Bank API by passing its id
 
   Parameters (required):
-      id [string]: struct unique id. ex: "5656565656565656"
-  Parameters (optional):
-      user [Project]: Project struct returned from StarkBank.User.project().
+    user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: struct unique id. ex: "5656565656565656"
   Return:
-      Boleto struct with updated attributes
+    Boleto struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def get(user, id) do
@@ -74,11 +72,10 @@ defmodule StarkBank.Boleto do
   Receive a single Boleto pdf file generated in the Stark Bank API by passing its id
 
   Parameters (required):
-      id [string]: struct unique id. ex: "5656565656565656"
-  Parameters (optional):
-      user [Project]: Project struct returned from StarkBank.User.project().
+    user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: struct unique id. ex: "5656565656565656"
   Return:
-      Boleto pdf file
+    Boleto pdf file
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(user, id) do
@@ -98,6 +95,8 @@ defmodule StarkBank.Boleto do
 
   Receive a stream of Boleto structs previously created in the Stark Bank API
 
+  Parameters (required):
+    user [Project]: Project struct returned from StarkBank.User.project().
   Parameters (optional):
     limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
@@ -105,12 +104,11 @@ defmodule StarkBank.Boleto do
     ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
-    user [Project]: Project struct returned from StarkBank.User.project().
-  Return:
+    Return:
     stream of Boleto structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+        ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, created_after: created_after, created_before: created_before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, created_after: nil, created_before: nil})
@@ -134,9 +132,8 @@ defmodule StarkBank.Boleto do
   Delete a list of Boleto entities previously created in the Stark Bank API
 
   Parameters (required):
-    id [string]: Boleto unique id. ex: "5656565656565656"
-  Parameters (optional):
     user [Project]: Project struct returned from StarkBank.User.project().
+    id [string]: Boleto unique id. ex: "5656565656565656"
   Return:
     deleted Boleto with updated attributes
   """

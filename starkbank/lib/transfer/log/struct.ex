@@ -7,11 +7,11 @@ defmodule StarkBank.Transfer.Log.Data do
   user.
 
   Attributes:
-    id [string, default nil]: unique id returned when the log is created. ex: "5656565656565656"
+    id [string]: unique id returned when the log is created. ex: "5656565656565656"
     transfer [Transfer]: Transfer entity to which the log refers to.
     errors [list of strings]: list of errors linked to this BoletoPayment event.
-    type [string, default nil]: type of the Transfer event which triggered the log creation. ex: "processing" or "success"
-    created [DateTime, default nil]: creation datetime for the transfer. ex: %DateTime{}
+    type [string]: type of the Transfer event which triggered the log creation. ex: "processing" or "success"
+    created [DateTime]: creation datetime for the transfer. ex: %DateTime{}
   """
   @enforce_keys [:id, :transfer, :errors, :type, :created]
   defstruct [:id, :transfer, :errors, :type, :created]
