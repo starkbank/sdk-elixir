@@ -119,7 +119,6 @@ defmodule StarkBank.Transaction do
       description: json[:description],
       external_id: json[:external_id],
       receiver_id: json[:receiver_id],
-      sender_id: json[:sender_id],
       tags: json[:tags],
       id: json[:id],
       fee: json[:fee],

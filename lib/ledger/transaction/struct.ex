@@ -17,7 +17,6 @@ defmodule StarkBank.Transaction.Data do
     - received_id [string]: unique id of the receiving workspace. ex: "5656565656565656"
 
   ## Parameters (optional):
-    - sender_id [string]: unique id of the sending workspace. ex: "8656565656565656"
     - tags [list of strings]: list of strings for reference when searching transactions (may be empty). ex: ["abc", "test"]
 
   ## Attributes (return-only):
@@ -27,5 +26,5 @@ defmodule StarkBank.Transaction.Data do
     - created [DateTime, default nil]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
-  defstruct [:amount, :description, :external_id, :receiver_id, :sender_id, :tags, :id, :fee, :created, :source]
+  defstruct [:amount, :description, :external_id, :receiver_id, :tags, :id, :fee, :created, :source]
 end
