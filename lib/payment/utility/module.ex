@@ -172,6 +172,7 @@ defmodule StarkBank.Payment.Utility do
       id: json[:id],
       status: json[:status],
       amount: json[:amount],
+      fee: json[:fee],
       created: json[:created] |> Checks.check_datetime
     }
   end
