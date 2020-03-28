@@ -67,19 +67,18 @@ defmodule StarkBankTest.WebhookEvent do
   @tag :webhook_event
   test "parse! webhook event" do
     user = StarkBankTest.Credentials.project()
-    {_event, public_key} = StarkBank.Webhook.Event.parse!(
+    {_event, cache_pid_1} = StarkBank.Webhook.Event.parse!(
+      user,
+      @content,
+      @signature
+    )
+    {event, cache_pid_2} = StarkBank.Webhook.Event.parse!(
       user,
       @content,
       @signature,
-      nil
+      cache_pid_1
     )
-    {event, public_key_2} = StarkBank.Webhook.Event.parse!(
-      user,
-      @content,
-      @signature,
-      public_key
-    )
-    assert public_key == public_key_2
+    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) == Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
     assert !is_nil(event.log)
   end
 
@@ -89,8 +88,20 @@ defmodule StarkBankTest.WebhookEvent do
     {:error, [error]} = StarkBank.Webhook.Event.parse(
       user,
       @content,
+      @bad_signature
+    )
+    assert error.code == "invalidSignature"
+
+    {_event, cache_pid} = StarkBank.Webhook.Event.parse!(
+      user,
+      @content,
+      @signature
+    )
+    {:error, [error]} = StarkBank.Webhook.Event.parse(
+      user,
+      @content,
       @bad_signature,
-      nil
+      cache_pid
     )
     assert error.code == "invalidSignature"
   end

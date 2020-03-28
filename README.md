@@ -539,22 +539,25 @@ the event.
 ```elixir
 response = listen()  # this is the function you made to get the events posted to your webhook
 
-{event, starkbank_public_key} = StarkBank.Webhook.Event.parse!(
+{event, cache_pid} = StarkBank.Webhook.Event.parse!(
   user,
   response.content,
   response.headers["Digital-Signature"]
 )
 ```
 
-To avoid making unnecessary requests to the API, you can pass the starkbank_public_key (returned on the first request)
-on your next parse.
+To avoid making unnecessary requests to the API (/GET public-key), you can pass the `cache_pid` (returned on all requests)
+on your next parse. The process referred by the PID `cache_pid` will store the latest Stark Bank public key
+and refresh it whenever an inconsistency is found between the content, signature and current public key.
+
+**Note**: If you don't send the cache_pid to the parser, a new cache process will be generated.
 
 ```elixir
-{event, validated_starkbank_public_key} = StarkBank.Webhook.Event.parse!(
+{event, _cache_pid} = StarkBank.Webhook.Event.parse!(
   user,
   response.content,
   response.headers["Digital-Signature"],
-  starkbank_public_key
+  cache_pid
 )
 ```
 
@@ -620,7 +623,7 @@ within our API. If you ever need a new pair of keys, just run:
 {private_key, public_key} = StarkBank.Key.create("file/keys/")
 ```
 
-NOTE: When you are creating a new Project, it is recommended that you create the
+**Note**: When you are creating a new Project, it is recommended that you create the
 keys inside the infrastructure that will use it, in order to avoid risky internet
 transmissions of your **private-key**. Then you can export the **public-key** alone to the
 computer where it will be used in the new Project creation.
