@@ -238,7 +238,8 @@ transfer = StarkBank.Transfer.get!(user, "4882890932355072")
 
 ### Get transfer PDF
 
-After its creation, a transfer PDF may also be retrieved by passing its id. 
+A transfer PDF may also be retrieved by passing its id.
+This operation is only valid for transfers with "processing" or "success" status.
 
 ```elixir
 pdf = StarkBank.Transfer.pdf!(user, "4882890932355072")

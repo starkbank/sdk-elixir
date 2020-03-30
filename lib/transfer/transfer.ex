@@ -100,7 +100,7 @@ defmodule StarkBank.Transfer do
   # Retrieve a specific Transfer pdf file
 
   Receive a single Transfer pdf receipt file generated in the Stark Bank API by passing its id.
-  Only valid for transfers with "success" status.
+  Only valid for transfers with "processing" or "success" status.
 
   ## Parameters (required):
     - user [Project]: Project struct returned from StarkBank.project().
