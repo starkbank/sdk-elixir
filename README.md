@@ -84,7 +84,7 @@ for the value to be credited to your account.
 
 Here are a few examples on how to use the SDK. If you have any doubts, use the built-in
 `h()` function to get more info on the desired functionality
-(for example: `StarkBank.Boleto.Data |> h`)
+(for example: `StarkBank.Boleto |> h`)
 
 **Note**: Almost all SDK functions also provide a bang (!) version. To simplify the examples, they will be used the most throughout this README.
 
@@ -106,7 +106,7 @@ you have in other banks.
 boletos = StarkBank.Boleto.create!(
   user,
   [
-    %StarkBank.Boleto.Data{
+    %StarkBank.Boleto{
         amount: 23571,  # R$ 235,71 
         name: "Buzz Aldrin",
         tax_id: "012.345.678-90", 
@@ -195,7 +195,7 @@ You can also create transfers in the SDK (TED/DOC).
 transfers = StarkBank.Transfer.create!(
   user,
   [
-    %StarkBank.Transfer.Data{
+    %StarkBank.Transfer{
         amount: 100,
         bank_code: "01",
         branch_code: "0001",
@@ -204,7 +204,7 @@ transfers = StarkBank.Transfer.create!(
         name: "Tony Stark",
         tags: ["iron", "suit"]
     },
-    %StarkBank.Transfer.Data{
+    %StarkBank.Transfer{
         amount: 200,
         bank_code: "341",
         branch_code: "1234",
@@ -276,14 +276,14 @@ Paying a boleto is also simple.
 payments = StarkBank.Payment.Boleto.create!(
   user,
   [
-    %StarkBank.Payment.Boleto.Data{
+    %StarkBank.Payment.Boleto{
         line: "34191.09008 61207.727308 71444.640008 5 81310001234321",
         tax_id: "012.345.678-90",
         scheduled: Date.utc_today |> Date.add(10),
         description: "take my money",
         tags: ["take", "my", "money"],
     },
-    %StarkBank.Payment.Boleto.Data{
+    %StarkBank.Payment.Boleto{
         bar_code: "34197819200000000011090063609567307144464000",
         tax_id: "012.345.678-90",
         scheduled: Date.utc_today |> Date.add(40),
@@ -366,13 +366,13 @@ Its also simple to pay utility bills (such electricity and water bills) in the S
 payments = StarkBank.Payment.Utility.create!(
   user,
   [
-    %StarkBank.Payment.Utility.Data{
+    %StarkBank.Payment.Utility{
         bar_code: "83660000004463001380074119002551100010601813",
         scheduled: Date.utc_today |> Date.add(2),
         description: "paying some bills",
         tags: ["take", "my", "money"],
     },
-    %StarkBank.Payment.Utility.Data{
+    %StarkBank.Payment.Utility{
         line: "83660000005 0 10430138007 7 41190025511 7 00010601813 8",
         scheduled: Date.utc_today |> Date.add(3),
         description: "never ending bills",
@@ -454,14 +454,14 @@ To send money between Stark Bank accounts, you can create transactions:
 transactions = StarkBank.Transaction.create!(
   user,
   [
-    %StarkBank.Transaction.Data{
+    %StarkBank.Transaction{
         amount: 100,  # (R$ 1.00)
         receiver_id: "5768064935133184",
         description: "Transaction to dear provider",
         external_id: "12345",  # so we can block anything you send twice by mistake
         tags: ["provider"]
     },
-    %StarkBank.Transaction.Data{
+    %StarkBank.Transaction{
         amount: 234,  # (R$ 2.34)
         receiver_id: "5768064935133184",
         description: "Transaction to the other provider",

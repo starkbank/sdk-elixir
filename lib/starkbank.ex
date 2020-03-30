@@ -4,7 +4,7 @@ defmodule StarkBank do
   SDK to facilitate Elixir integrations with the Stark Bank API v2.
   """
 
-  alias StarkBank.User, as: User
+  alias StarkBank.User.Project, as: Project
 
   @doc """
   # Creates a Project struct
@@ -27,6 +27,6 @@ defmodule StarkBank do
   """
   @spec project(:production | :sandbox, binary, binary, binary, [binary] | nil) :: StarkBank.User.Project.t()
   def project(environment, id, private_key, name \\ "", allowed_ips \\ nil) do
-    User.project(environment, id, private_key, name, allowed_ips)
+    Project.validate(environment, id, private_key, name, allowed_ips)
   end
 end

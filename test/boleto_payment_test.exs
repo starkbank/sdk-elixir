@@ -90,7 +90,7 @@ defmodule StarkBankTest.BoletoPayment do
   defp example_payment() do
     user = StarkBankTest.Credentials.project()
     boleto = StarkBank.Boleto.create!(user, [StarkBankTest.Boleto.example_boleto()]) |> hd
-    %StarkBank.Payment.Boleto.Data{
+    %StarkBank.Payment.Boleto{
       line: boleto.line,
       scheduled: Date.utc_today() |> Date.add(1),
       description: "loading a random account",

@@ -1,14 +1,41 @@
 defmodule StarkBank.Payment.Boleto do
 
-  @moduledoc """
-  Groups BoletoPayment related functions
-  """
-
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.Payment.Boleto.Data, as: BoletoPaymentData
+  alias StarkBank.Payment.Boleto, as: BoletoPayment
   alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
+
+  @moduledoc """
+  Groups BoletoPayment related functions
+
+  # BoletoPayment struct:
+
+  When you initialize a BoletoPayment, the entity will not be automatically
+  created in the Stark Bank API. The 'create' function sends the structs
+  to the Stark Bank API and returns the list of created structs.
+
+  ## Parameters (conditionally required):
+    - line [string, default nil]: Number sequence that describes the payment. Either 'line' or 'bar_code' parameters are required. If both are sent, they must match. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
+    - bar_code [string, default nil]: Bar code number that describes the payment. Either 'line' or 'barCode' parameters are required. If both are sent, they must match. ex: "34195819600000000621090063571277307144464000"
+
+  ## Parameters (required):
+    - tax_id [string]: receiver tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
+    - description [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
+
+  ## Parameters (optional):
+    - scheduled [Date, default today]: payment scheduled date. ex: ~D[2020-03-25]
+    - tags [list of strings]: list of strings for tagging
+
+  ## Attributes (return-only):
+    - id [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
+    - status [string, default nil]: current payment status. ex: "registered" or "paid"
+    - amount [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    - fee [integer, default nil]: fee charged when a boleto payment is created. ex: 200 (= R$ 2.00)
+    - created [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+  """
+  @enforce_keys [:tax_id, :description]
+  defstruct [:line, :bar_code, :tax_id, :description, :scheduled, :tags, :id, :status, :amount, :fee, :created]
 
   @doc """
   # Create BoletoPayments
@@ -22,8 +49,8 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - list of BoletoPayment structs with updated attributes
   """
-  @spec create(Project.t(), [BoletoPaymentData.t()]) ::
-    {:ok, [BoletoPaymentData.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [BoletoPayment.t()]) ::
+    {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
   def create(user, payments) do
     Rest.post(
       user,
@@ -35,7 +62,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [BoletoPaymentData.t()]) :: any
+  @spec create!(Project.t(), [BoletoPayment.t()]) :: any
   def create!(user, payments) do
     Rest.post!(
       user,
@@ -56,7 +83,7 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - BoletoPayment struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -64,7 +91,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoPaymentData.t()
+  @spec get!(Project, binary) :: BoletoPayment.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -112,7 +139,7 @@ defmodule StarkBank.Payment.Boleto do
     - stream of BoletoPayment structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [BoletoPaymentData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -123,7 +150,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [BoletoPaymentData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
@@ -142,7 +169,7 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - deleted BoletoPayment struct with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, BoletoPaymentData.t()} | {:error, [%Error{}]}
+  @spec delete(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def delete(user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -150,7 +177,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: BoletoPaymentData.t()
+  @spec delete!(Project, binary) :: BoletoPayment.t()
   def delete!(user, id) do
     Rest.delete_id!(user, resource(), id)
   end
@@ -165,7 +192,7 @@ defmodule StarkBank.Payment.Boleto do
 
   @doc false
   def resource_maker(json) do
-    %BoletoPaymentData{
+    %BoletoPayment{
       line: json[:line],
       bar_code: json[:bar_code],
       tax_id: json[:tax_id],

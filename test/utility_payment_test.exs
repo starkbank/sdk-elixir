@@ -92,7 +92,7 @@ defmodule StarkBankTest.UtilityPayment do
        |> to_string
        |> String.pad_leading(11, "0")
 
-    %StarkBank.Payment.Utility.Data{
+    %StarkBank.Payment.Utility{
       bar_code: "8366" <> bar_code_core <> "01380074119002551100010601813",
       scheduled: Date.utc_today() |> Date.add(schedule),
       description: "pagando a conta",

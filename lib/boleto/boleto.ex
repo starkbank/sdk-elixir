@@ -1,14 +1,49 @@
 defmodule StarkBank.Boleto do
 
-  @moduledoc """
-  Groups Boleto related functions
-  """
-
+  alias __MODULE__, as: Boleto
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.Boleto.Data, as: BoletoData
   alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
+
+  @moduledoc """
+  Groups Boleto related functions
+
+  # Boleto struct:
+
+  When you initialize a Boleto struct, the entity will not be automatically
+  sent to the Stark Bank API. The 'create' function sends the structs
+  to the Stark Bank API and returns the list of created structs.
+
+  ## Parameters (required):
+    - amount [integer]: Boleto value in cents. ex: 1234 (= R$ 12.34)
+    - name [string]: payer full name. ex: "Anthony Edward Stark"
+    - tax_id [string]: payer tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
+    - street_line_1 [string]: payer main address. ex: Av. Paulista, 200
+    - street_line_2 [string]: payer address complement. ex: Apto. 123
+    - district [string]: payer address district / neighbourhood. ex: Bela Vista
+    - city [string]: payer address city. ex: Rio de Janeiro
+    - state_code [string]: payer address state. ex: GO
+    - zip_code [string]: payer address zip code. ex: 01311-200
+    - due [Date, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
+
+  ## Parameters (optional):
+    - fine [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
+    - interest [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
+    - overdue_limit [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
+    - descriptions [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
+    - tags [list of strings]: list of strings for tagging
+
+  ## Attributes (return-only):
+    - id [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
+    - fee [integer, default nil]: fee charged when Boleto is paid. ex: 200 (= R$ 2.00)
+    - line [string, default nil]: generated Boleto line for payment. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
+    - bar_code [string, default nil]: generated Boleto bar-code for payment. ex: "34195819600000000621090063571277307144464000"
+    - status [string, default nil]: current Boleto status. ex: "registered" or "paid"
+    - created [DateTime, default nil]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
+  """
+  @enforce_keys [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code]
+  defstruct [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :due, :fine, :interest, :overdue_limit, :tags, :descriptions, :id, :fee, :line, :bar_code, :status, :created]
 
   @doc """
   # Create Boletos
@@ -22,8 +57,8 @@ defmodule StarkBank.Boleto do
   ## Return:
     - list of Boleto structs with updated attributes
   """
-  @spec create(Project.t(), [BoletoData.t()]) ::
-    {:ok, [BoletoData.t()]} | {:error, [Error.t()]}
+  @spec create(Project.t(), [Boleto.t()]) ::
+    {:ok, [Boleto.t()]} | {:error, [Error.t()]}
   def create(user, boletos) do
     Rest.post(
       user,
@@ -35,7 +70,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [BoletoData.t()]) :: any
+  @spec create!(Project.t(), [Boleto.t()]) :: any
   def create!(user, boletos) do
     Rest.post!(
       user,
@@ -56,7 +91,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoData.t()} | {:error, [%Error{}]}
+  @spec get(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def get(user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -64,7 +99,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoData.t()
+  @spec get!(Project, binary) :: Boleto.t()
   def get!(user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -114,7 +149,7 @@ defmodule StarkBank.Boleto do
     - stream of Boleto structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-        ({:cont, {:ok, [BoletoData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+        ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
@@ -125,7 +160,7 @@ defmodule StarkBank.Boleto do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [BoletoData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [Boleto.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
@@ -144,7 +179,7 @@ defmodule StarkBank.Boleto do
   ##  Return:
     - deleted Boleto struct with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, BoletoData.t()} | {:error, [%Error{}]}
+  @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -152,7 +187,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: BoletoData.t()
+  @spec delete!(Project, binary) :: Boleto.t()
   def delete!(user, id) do
     Rest.delete_id!(user, resource(), id)
   end
@@ -167,7 +202,7 @@ defmodule StarkBank.Boleto do
 
   @doc false
   def resource_maker(json) do
-    %BoletoData{
+    %Boleto{
       amount: json[:amount],
       name: json[:name],
       tax_id: json[:tax_id],

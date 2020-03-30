@@ -72,7 +72,7 @@ defmodule StarkBankTest.Transfer do
   end
 
   defp example_transfer() do
-    %StarkBank.Transfer.Data{
+    %StarkBank.Transfer{
       amount: 10,
       name: "João",
       tax_id: "01234567890",

@@ -51,7 +51,7 @@ defmodule StarkBankTest.Transaction do
   end
 
   defp example_transaction() do
-    %StarkBank.Transaction.Data{
+    %StarkBank.Transaction{
       amount: 1,
       receiver_id: "5768064935133184",
       external_id: :crypto.strong_rand_bytes(30) |> Base.url_encode64 |> binary_part(0, 30),

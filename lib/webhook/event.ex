@@ -1,15 +1,11 @@
 defmodule StarkBank.Webhook.Event do
 
-  @moduledoc """
-  Groups Webhook-Event related functions
-  """
-
+  alias __MODULE__, as: Event
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Utils.JSON, as: JSON
   alias StarkBank.Utils.API, as: API
-  alias StarkBank.Webhook.Event.Data, as: Event
-  alias StarkBank.User.Project.Data, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
   alias StarkBank.Utils.Request, as: Request
   alias StarkBank.Boleto.Log, as: BoletoLog
@@ -19,6 +15,24 @@ defmodule StarkBank.Webhook.Event do
   alias EllipticCurve.Signature, as: Signature
   alias EllipticCurve.PublicKey, as: PublicKey
   alias EllipticCurve.Ecdsa, as: Ecdsa
+
+  @moduledoc """
+  Groups Webhook-Event related functions
+
+  # Webhook Event struct:
+
+  An Event is the notification received from the subscription to the Webhook.
+  Events cannot be created, but may be retrieved from the Stark Bank API to
+  list all generated updates on entities.
+
+  ## Attributes:
+    - id [string]: unique id returned when the log is created. ex: "5656565656565656"
+    - log [Log]: a Log struct from one the subscription services (TransferLog, BoletoLog, BoletoPaymentlog or UtilityPaymentLog)
+    - created [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - delivered [DateTime]: delivery datetime when the notification was delivered to the user url. Will be nil if no successful attempts to deliver the event occurred. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - subscription [string]: service that triggered this event. ex: "transfer", "utility-payment"
+  """
+  defstruct [:id, :log, :created, :delivered, :subscription]
 
   @doc """
   # Retrieve a specific notification Event
