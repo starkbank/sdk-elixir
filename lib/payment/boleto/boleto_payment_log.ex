@@ -41,7 +41,7 @@ defmodule StarkBank.Payment.Boleto.Log do
     - BoletoPaymentLog struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, BoletoPaymentLog.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -49,7 +49,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: BoletoPaymentLog.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -71,7 +71,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPaymentLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, payment_ids: payment_ids, types: types} =
       Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
     Rest.get_list(user, resource(), limit, %{payment_ids: payment_ids, types: types})
@@ -82,7 +82,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoPaymentLog.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, payment_ids: payment_ids, types: types} =
       Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
     Rest.get_list!(user, resource(), limit, %{payment_ids: payment_ids, types: types})

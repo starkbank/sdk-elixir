@@ -51,7 +51,7 @@ defmodule StarkBank.Transfer do
   """
   @spec create(Project.t(), [Transfer.t()]) ::
     {:ok, [Transfer.t()]} | {:error, [Error.t()]}
-  def create(user, transfers) do
+  def create(%Project{} = user, transfers) do
     Rest.post(
       user,
       resource(),
@@ -63,7 +63,7 @@ defmodule StarkBank.Transfer do
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!(Project.t(), [Transfer.t()]) :: any
-  def create!(user, transfers) do
+  def create!(%Project{} = user, transfers) do
     Rest.post!(
       user,
       resource(),
@@ -84,7 +84,7 @@ defmodule StarkBank.Transfer do
     - Transfer struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -92,7 +92,7 @@ defmodule StarkBank.Transfer do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: Transfer.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -110,7 +110,7 @@ defmodule StarkBank.Transfer do
     - Transfer pdf file content
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(user, id) do
+  def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
 
@@ -118,7 +118,7 @@ defmodule StarkBank.Transfer do
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec pdf!(Project, binary) :: binary
-  def pdf!(user, id) do
+  def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end
 
@@ -144,7 +144,7 @@ defmodule StarkBank.Transfer do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
     Rest.get_list(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_, before: before, sort: sort})
@@ -155,7 +155,7 @@ defmodule StarkBank.Transfer do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [Transfer.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
     Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_, before: before, sort: sort})

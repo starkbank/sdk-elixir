@@ -40,7 +40,7 @@ defmodule StarkBank.Transfer.Log do
     - TransferLog struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, TransferLog.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -48,7 +48,7 @@ defmodule StarkBank.Transfer.Log do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: TransferLog.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -72,7 +72,7 @@ defmodule StarkBank.Transfer.Log do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [TransferLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
     Rest.get_list(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_, before: before})
@@ -83,7 +83,7 @@ defmodule StarkBank.Transfer.Log do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [TransferLog.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
     Rest.get_list!(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_, before: before})

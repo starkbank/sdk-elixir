@@ -50,7 +50,7 @@ defmodule StarkBank.Transaction do
   """
   @spec create(Project.t(), [Transaction.t()]) ::
     {:ok, [Transaction.t()]} | {:error, [Error.t()]}
-  def create(user, transactions) do
+  def create(%Project{} = user, transactions) do
     Rest.post(
       user,
       resource(),
@@ -62,7 +62,7 @@ defmodule StarkBank.Transaction do
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!(Project.t(), [Transaction.t()]) :: any
-  def create!(user, transactions) do
+  def create!(%Project{} = user, transactions) do
     Rest.post!(
       user,
       resource(),
@@ -83,7 +83,7 @@ defmodule StarkBank.Transaction do
     - Transaction struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -91,7 +91,7 @@ defmodule StarkBank.Transaction do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: Transaction.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -114,7 +114,7 @@ defmodule StarkBank.Transaction do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Transaction.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
     Rest.get_list(user, resource(), limit, %{external_ids: external_ids, after: after_, before: before})
@@ -125,7 +125,7 @@ defmodule StarkBank.Transaction do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [Transaction.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
     Rest.get_list!(user, resource(), limit, %{external_ids: external_ids, after: after_, before: before})

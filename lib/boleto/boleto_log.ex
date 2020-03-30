@@ -41,7 +41,7 @@ defmodule StarkBank.Boleto.Log do
     - BoletoLog struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, BoletoLog.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -49,7 +49,7 @@ defmodule StarkBank.Boleto.Log do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: BoletoLog.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -73,7 +73,7 @@ defmodule StarkBank.Boleto.Log do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoLog.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
     Rest.get_list(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})
@@ -84,7 +84,7 @@ defmodule StarkBank.Boleto.Log do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoLog.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
     Rest.get_list!(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})

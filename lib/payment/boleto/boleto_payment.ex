@@ -51,7 +51,7 @@ defmodule StarkBank.Payment.Boleto do
   """
   @spec create(Project.t(), [BoletoPayment.t()]) ::
     {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
-  def create(user, payments) do
+  def create(%Project{} = user, payments) do
     Rest.post(
       user,
       resource(),
@@ -63,7 +63,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!(Project.t(), [BoletoPayment.t()]) :: any
-  def create!(user, payments) do
+  def create!(%Project{} = user, payments) do
     Rest.post!(
       user,
       resource(),
@@ -84,7 +84,7 @@ defmodule StarkBank.Payment.Boleto do
     - BoletoPayment struct with updated attributes
   """
   @spec get(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
-  def get(user, id) do
+  def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
 
@@ -92,7 +92,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project, binary) :: BoletoPayment.t()
-  def get!(user, id) do
+  def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
 
@@ -110,7 +110,7 @@ defmodule StarkBank.Payment.Boleto do
     - BoletoPayment pdf file content
   """
   @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(user, id) do
+  def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
 
@@ -118,7 +118,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec pdf!(Project, binary) :: binary
-  def pdf!(user, id) do
+  def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end
 
@@ -140,7 +140,7 @@ defmodule StarkBank.Payment.Boleto do
   """
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(user, options \\ []) do
+  def query(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
     Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids})
@@ -151,7 +151,7 @@ defmodule StarkBank.Payment.Boleto do
   """
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(user, options \\ []) do
+  def query!(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
     Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids})
@@ -170,7 +170,7 @@ defmodule StarkBank.Payment.Boleto do
     - deleted BoletoPayment struct with updated attributes
   """
   @spec delete(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
-  def delete(user, id) do
+  def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
 
@@ -178,7 +178,7 @@ defmodule StarkBank.Payment.Boleto do
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec delete!(Project, binary) :: BoletoPayment.t()
-  def delete!(user, id) do
+  def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end
 
