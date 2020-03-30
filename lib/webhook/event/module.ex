@@ -56,7 +56,7 @@ defmodule StarkBank.Webhook.Event do
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - is_delivered [bool, default nil]: bool to filter successfully delivered events. ex: True or False
-    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - after_ [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
 
   ## Return:
@@ -65,9 +65,9 @@ defmodule StarkBank.Webhook.Event do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Webhook.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
-    %{limit: limit, is_delivered: is_delivered, created_after: created_after, created_before: created_before} =
-      Enum.into(options, %{limit: nil, is_delivered: nil, created_after: nil, created_before: nil})
-    Rest.get_list(user, resource(), limit, %{is_delivered: is_delivered, after: created_after, before: created_before})
+    %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
+    Rest.get_list(user, resource(), limit, %{is_delivered: is_delivered, after: after_, before: before})
   end
 
   @doc """
@@ -76,9 +76,9 @@ defmodule StarkBank.Webhook.Event do
   @spec query!(Project.t(), any) ::
           ({:cont, [Webhook.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
-    %{limit: limit, is_delivered: is_delivered, created_after: created_after, created_before: created_before} =
-      Enum.into(options, %{limit: nil, is_delivered: nil, created_after: nil, created_before: nil})
-    Rest.get_list!(user, resource(), limit, %{is_delivered: is_delivered, after: created_after, before: created_before})
+    %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
+    Rest.get_list!(user, resource(), limit, %{is_delivered: is_delivered, after: after_, before: before})
   end
 
   @doc """

@@ -49,6 +49,8 @@ defmodule StarkBank.Boleto.Log do
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - boleto_ids [list of strings, default nil]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
     - types [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
+    - after_ [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
 
   ## Return:
     - stream of BoletoLog structs with updated attributes
@@ -56,9 +58,9 @@ defmodule StarkBank.Boleto.Log do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoLogData.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(user, options \\ []) do
-    %{limit: limit, boleto_ids: boleto_ids, types: types, created_after: created_after, created_before: created_before} =
-      Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, created_after: nil, created_before: nil})
-    Rest.get_list(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: created_after, before: created_before})
+    %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
+    Rest.get_list(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})
   end
 
   @doc """
@@ -67,9 +69,9 @@ defmodule StarkBank.Boleto.Log do
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoLogData.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(user, options \\ []) do
-    %{limit: limit, boleto_ids: boleto_ids, types: types, created_after: created_after, created_before: created_before} =
-      Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, created_after: nil, created_before: nil})
-    Rest.get_list!(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: created_after, before: created_before})
+    %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
+    Rest.get_list!(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})
   end
 
   @doc false

@@ -165,8 +165,8 @@ You can get a stream of created boletos given some filters.
 ```elixir
 boletos = StarkBank.Boleto.query!(
   user,
-  created_after: Date.utc_today |> Date.add(-2),
-  created_before: Date.utc_today |> Date.add(-1),
+  after_: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
   limit: 10
 ) |> Enum.take(10)
 ```
@@ -222,8 +222,8 @@ You can query multiple transfers according to filters.
 ```elixir
 for transfer <- StarkBank.Transfer.query!(
   user,
-  created_after: Date.utc_today |> Date.add(-2),
-  created_before: Date.utc_today |> Date.add(-1),
+  after_: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
   limit: 10
 ) do transfer |> IO.inspect end
 ```
@@ -481,8 +481,8 @@ you receive boleto payments, pay a bill or make transfers, for example.
 ```elixir
 transactions = StarkBank.Transaction.query!(
   user,
-  created_after: "2020-03-20",
-  created_before: "2020-03-30"
+  after_: "2020-03-20",
+  before: "2020-03-30"
 ) |> Enum.take(10)
 ```
 
@@ -571,7 +571,7 @@ To search for webhooks events, run:
 ```elixir
 events = StarkBank.Webhook.Event.query!(
   user,
-  created_after: "2020-03-20",
+  after_: "2020-03-20",
   is_delivered: false,
   limit: 10
 ) |> Enum.take(10)
