@@ -9,7 +9,7 @@ defmodule StarkBank.Webhook.Event do
   alias StarkBank.Utils.JSON, as: JSON
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Webhook.Event.Data, as: Event
-  alias StarkBank.Project.Data, as: Project
+  alias StarkBank.User.Project.Data, as: Project
   alias StarkBank.Error, as: Error
   alias StarkBank.Utils.Request, as: Request
   alias StarkBank.Boleto.Log, as: BoletoLog
@@ -26,7 +26,7 @@ defmodule StarkBank.Webhook.Event do
   Receive a single notification Event struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -51,7 +51,7 @@ defmodule StarkBank.Webhook.Event do
   Receive a stream of notification Event structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -87,7 +87,7 @@ defmodule StarkBank.Webhook.Event do
   Delete a list of notification Event entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Event unique id. ex: "5656565656565656"
 
   ## Return:
@@ -113,7 +113,7 @@ defmodule StarkBank.Webhook.Event do
   After this is set, the event will no longer be returned on queries with is_delivered=False.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [list of strings]: Event unique ids. ex: "5656565656565656"
 
   ## Return:
@@ -140,7 +140,7 @@ defmodule StarkBank.Webhook.Event do
   error will be returned.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - content [string]: response content from request received at user endpoint (not parsed)
     - signature [string]: base-64 digital signature received at response header "Digital-Signature"
     - cache_pid [PID, default nil]: PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.

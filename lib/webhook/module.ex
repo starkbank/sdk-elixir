@@ -6,7 +6,7 @@ defmodule StarkBank.Webhook do
 
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Webhook.Data, as: Webhook
-  alias StarkBank.Project.Data, as: Project
+  alias StarkBank.User.Project.Data, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -15,7 +15,7 @@ defmodule StarkBank.Webhook do
   Send a single Webhook subscription for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - url [string]: url to which notification events will be sent to. ex: "https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29"
     - subscriptions [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "boleto-payment"]
 
@@ -52,7 +52,7 @@ defmodule StarkBank.Webhook do
   Receive a single Webhook subscription struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -77,7 +77,7 @@ defmodule StarkBank.Webhook do
   Receive a stream of Webhook subcription structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -110,7 +110,7 @@ defmodule StarkBank.Webhook do
   Delete a Webhook subscription entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Webhook unique id. ex: "5656565656565656"
 
   ## Return:

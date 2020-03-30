@@ -7,7 +7,7 @@ defmodule StarkBank.Payment.Boleto do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Payment.Boleto.Data, as: BoletoPaymentData
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -16,7 +16,7 @@ defmodule StarkBank.Payment.Boleto do
   Send a list of BoletoPayment structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - payments [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
 
   ## Return:
@@ -50,7 +50,7 @@ defmodule StarkBank.Payment.Boleto do
   Receive a single BoletoPayment struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -76,7 +76,7 @@ defmodule StarkBank.Payment.Boleto do
   Only valid for boleto payments with "success" status.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -101,7 +101,7 @@ defmodule StarkBank.Payment.Boleto do
   Receive a stream of BoletoPayment structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -136,7 +136,7 @@ defmodule StarkBank.Payment.Boleto do
   Delete a BoletoPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: BoletoPayment unique id. ex: "5656565656565656"
 
   ## Return:

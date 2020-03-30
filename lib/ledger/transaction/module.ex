@@ -6,7 +6,7 @@ defmodule StarkBank.Transaction do
 
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Transaction.Data, as: TransactionData
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -15,7 +15,7 @@ defmodule StarkBank.Transaction do
   Send a list of Transaction entities for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - transactions [list of Transaction entities]: list of Transaction entities to be created in the API
 
   ## Return:
@@ -49,7 +49,7 @@ defmodule StarkBank.Transaction do
   Receive a single Transaction entity previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: entity unique id. ex: "5656565656565656"
 
   ## Return:
@@ -74,7 +74,7 @@ defmodule StarkBank.Transaction do
   Receive a stream of Transaction entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35

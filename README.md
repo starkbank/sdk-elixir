@@ -39,7 +39,7 @@ integrations. To start using the SDK, create your first Sandbox Project in our
 Once you've created your project, you can load it in the SDK by doing:
 
 ```elixir
-user = StarkBank.User.project(
+user = StarkBank.project(
     :sandbox,
     "5671398416568321",
     """

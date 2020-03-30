@@ -7,7 +7,7 @@ defmodule StarkBank.Boleto do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Boleto.Data, as: BoletoData
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -16,7 +16,7 @@ defmodule StarkBank.Boleto do
   Send a list of Boleto structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - boletos [list of Boleto structs]: list of Boleto structs to be created in the API
 
   ## Return:
@@ -50,7 +50,7 @@ defmodule StarkBank.Boleto do
   Receive a single Boleto struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -75,7 +75,7 @@ defmodule StarkBank.Boleto do
   Receive a single Boleto pdf file generated in the Stark Bank API by passing its id.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -100,7 +100,7 @@ defmodule StarkBank.Boleto do
   Receive a stream of Boleto structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -138,7 +138,7 @@ defmodule StarkBank.Boleto do
   Delete a list of Boleto entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Boleto unique id. ex: "5656565656565656"
 
   ##  Return:

@@ -7,7 +7,7 @@ defmodule StarkBank.Transfer do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Transfer.Data, as: TransferData
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -16,7 +16,7 @@ defmodule StarkBank.Transfer do
   Send a list of Transfer structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - transfers [list of Transfer structs]: list of Transfer structs to be created in the API
 
   ## Return:
@@ -50,7 +50,7 @@ defmodule StarkBank.Transfer do
   Receive a single Transfer struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -76,7 +76,7 @@ defmodule StarkBank.Transfer do
   Only valid for transfers with "success" status.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -101,7 +101,7 @@ defmodule StarkBank.Transfer do
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35

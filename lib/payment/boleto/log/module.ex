@@ -9,7 +9,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Payment.Boleto.Log.Data, as: BoletoPaymentLogData
   alias StarkBank.Payment.Boleto, as: BoletoPayment
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -18,7 +18,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   Receive a single BoletoPaymentLog struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
 
   ## Return:
@@ -43,7 +43,7 @@ defmodule StarkBank.Payment.Boleto.Log do
   Receive a stream of BoletoPaymentLog structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35

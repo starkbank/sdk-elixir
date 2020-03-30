@@ -7,7 +7,7 @@ defmodule StarkBank.Balance do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Balance.Data, as: BalanceData
-  alias StarkBank.Project.Data, as: Project
+  alias StarkBank.User.Project.Data, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -16,7 +16,7 @@ defmodule StarkBank.Balance do
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Return:
     - Balance struct with updated attributes

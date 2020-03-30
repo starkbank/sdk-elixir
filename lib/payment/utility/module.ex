@@ -7,7 +7,7 @@ defmodule StarkBank.Payment.Utility do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.Payment.Utility.Data, as: UtilityPaymentData
-  alias StarkBank.Project, as: Project
+  alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
   @doc """
@@ -98,7 +98,7 @@ defmodule StarkBank.Payment.Utility do
   Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -134,7 +134,7 @@ defmodule StarkBank.Payment.Utility do
   Delete a UtilityPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.User.project().
+    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: UtilityPayment unique id. ex: "5656565656565656"
 
   ## Return:
