@@ -89,7 +89,7 @@ defmodule StarkBankTest.Boleto do
 
   def example_boleto() do
     %StarkBank.Boleto{
-        amount: 10,
+        amount: 200,
         due: Date.utc_today() |> Date.add(5),
         name: "Random Company",
         street_line_1: "Rua ABC",

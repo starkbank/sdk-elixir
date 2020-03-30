@@ -16,7 +16,7 @@ defmodule StarkBank.Boleto do
   to the Stark Bank API and returns the list of created structs.
 
   ## Parameters (required):
-    - amount [integer]: Boleto value in cents. ex: 1234 (= R$ 12.34)
+    - amount [integer]: Boleto value in cents. Minimum amount = 200 (R$2,00). ex: 1234 (= R$ 12.34)
     - name [string]: payer full name. ex: "Anthony Edward Stark"
     - tax_id [string]: payer tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - street_line_1 [string]: payer main address. ex: Av. Paulista, 200
