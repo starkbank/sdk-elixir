@@ -30,7 +30,7 @@ defmodule StarkBank.Transaction do
   ## Attributes (return-only):
     - id [string, default nil]: unique id returned when Transaction is created. ex: "7656565656565656"
     - fee [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
-    - status [string, default nil]: current boleto status. ex: "registered" or "paid"
+    - source [string, default nil]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
     - created [DateTime, default nil]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
