@@ -121,29 +121,30 @@ defmodule StarkBank.Webhook.Event do
   end
 
   @doc """
-  # Set notification Event entity as delivered
+  # Update notification Event entity
 
-  Set notification Event as delivered at the current timestamp (if it was not yet delivered) by passing id.
-  After this is set, the event will no longer be returned on queries with is_delivered=False.
+  Update notification Event by passing id.
+    If delivered is True, the event will no longer be returned on queries with is_delivered=False.
 
   ## Parameters (required):
     - user [Project]: Project struct returned from StarkBank.project().
     - id [list of strings]: Event unique ids. ex: "5656565656565656"
+    - delivered [bool]: If true, event will be set as delivered at current timestamp, if it hasn't been delivered already. ex: true
 
   ## Return:
     - target Event with updated attributes
   """
-  @spec set_delivered(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
-  def set_delivered(%Project{} = user, id) do
-    Rest.patch_id(user, resource(), id)
+  @spec update(Project, binary, boolean) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  def update(%Project{} = user, id, delivered) do
+    Rest.patch_id(user, resource(), id, %{delivered: delivered})
   end
 
   @doc """
-  Same as set_delivered(), but it will unwrap the error tuple and raise in case of errors.
+  Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec set_delivered!(Project, binary) :: Boleto.t()
-  def set_delivered!(%Project{} = user, id) do
-    Rest.patch_id!(user, resource(), id)
+  @spec update!(Project, binary, boolean) :: Boleto.t()
+  def update!(%Project{} = user, id, delivered) do
+    Rest.patch_id!(user, resource(), id, %{delivered: delivered})
   end
 
   @doc """

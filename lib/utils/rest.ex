@@ -124,15 +124,15 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
-  def patch_id(user, {resource_name, resource_maker}, id) do
-    case Request.fetch(user, :patch, "#{API.endpoint(resource_name)}/#{id}", payload: %{}) do
+  def patch_id(user, {resource_name, resource_maker}, id, payload) do
+    case Request.fetch(user, :patch, "#{API.endpoint(resource_name)}/#{id}", payload: payload) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end
   end
 
-  def patch_id!(user, {resource_name, resource_maker}, id) do
-    case patch_id(user, {resource_name, resource_maker}, id) do
+  def patch_id!(user, {resource_name, resource_maker}, id, payload) do
+    case patch_id(user, {resource_name, resource_maker}, id, payload) do
       {:ok, entity} -> entity
       {:error, errors} -> raise API.errors_to_string(errors)
     end

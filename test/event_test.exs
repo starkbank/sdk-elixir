@@ -6,25 +6,25 @@ defmodule StarkBankTest.WebhookEvent do
   @bad_signature "MEYCIQC+0fzgh+WX6Af0hm9FsnWmsRaeQbTHI9vITB0d+lg9QwIhAMpz2xBRLm8dO+E4NQZXVxtxLJylkS1rqdlB06PQGIub"
 
   @tag :webhook_event
-  test "get, set_delivered and delete webhook event" do
+  test "get, update and delete webhook event" do
     user = StarkBankTest.Credentials.project()
     {:ok, query_event} = StarkBank.Webhook.Event.query(user, limit: 1)
      |> Enum.take(1)
      |> hd
     {:ok, get_event} = StarkBank.Webhook.Event.get(user, query_event.id)
-    {:ok, delivered_event} = StarkBank.Webhook.Event.set_delivered(user, get_event.id)
+    {:ok, delivered_event} = StarkBank.Webhook.Event.update(user, get_event.id, true)
     {:ok, delete_event} = StarkBank.Webhook.Event.delete(user, delivered_event.id)
     assert !is_nil(delete_event.id)
   end
 
   @tag :webhook_event
-  test "get!, set_delivered! and delete! webhook event" do
+  test "get!, update! and delete! webhook event" do
     user = StarkBankTest.Credentials.project()
     query_event = StarkBank.Webhook.Event.query!(user, limit: 1)
      |> Enum.take(1)
      |> hd
     get_event = StarkBank.Webhook.Event.get!(user, query_event.id)
-    delivered_event = StarkBank.Webhook.Event.set_delivered!(user, get_event.id)
+    delivered_event = StarkBank.Webhook.Event.update!(user, get_event.id, true)
     delete_event = StarkBank.Webhook.Event.delete!(user, delivered_event.id)
     assert !is_nil(delete_event.id)
   end

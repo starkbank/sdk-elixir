@@ -22,6 +22,6 @@ defmodule StarkBankTest.Credentials do
   @private_key "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIBEcEJZLk/DyuXVsEjz0w4vrE7plPXhQxODvcG1Jc0WToAcGBSuBBAAK\noUQDQgAE6t4OGx1XYktOzH/7HV6FBukxq0Xs2As6oeN6re1Ttso2fwrh5BJXDq75\nmSYHeclthCRgU8zl6H1lFQ4BKZ5RCQ==\n-----END EC PRIVATE KEY-----\n"
 
   def project() do
-    StarkBank.User.project(:sandbox, @project_id, @private_key)
+    StarkBank.project(:sandbox, @project_id, @private_key)
   end
 end
