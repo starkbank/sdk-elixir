@@ -533,8 +533,8 @@ webhook = StarkBank.Webhook.delete!(user, "6178044066660352")
 
 ### Process webhook events
 
-Its easy to process events that arrived in your webhook. Remember to pass the
-signature header so the SDK can make sure its really StarkBank that sent you
+It's easy to process events that have arrived in your webhook. Remember to pass the
+signature header so the SDK can make sure it's really StarkBank that has sent you
 the event.
 
 ```elixir
@@ -609,7 +609,7 @@ events = StarkBank.Webhook.Event.set_delivered!(user, id="4652205932019712")
 The SDK may raise or return errors as the StarkBank.Error struct, which contains the "code" and "message" attributes.
 
 If you use bang functions, the list of errors will be converted into a string and raised.
-If you use normal functions, the list of error structs will returned so you can better analyse them.
+If you use normal functions, the list of error structs will be returned so you can better analyse them.
 
 
 ## Key pair generation
