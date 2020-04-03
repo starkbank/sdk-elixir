@@ -46,7 +46,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - Event struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -54,7 +54,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Webhook.t()
+  @spec get!(Project.t(), binary) :: Webhook.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -107,7 +107,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - deleted Event struct with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -115,7 +115,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: Boleto.t()
+  @spec delete!(Project.t(), binary) :: Boleto.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end
@@ -134,7 +134,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(Project, binary, boolean) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec update(Project.t(), binary, boolean) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def update(%Project{} = user, id, delivered) do
     Rest.patch_id(user, resource(), id, %{delivered: delivered})
   end
@@ -142,7 +142,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(Project, binary, boolean) :: Boleto.t()
+  @spec update!(Project.t(), binary, boolean) :: Boleto.t()
   def update!(%Project{} = user, id, delivered) do
     Rest.patch_id!(user, resource(), id, %{delivered: delivered})
   end

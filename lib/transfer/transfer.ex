@@ -83,7 +83,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - Transfer struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -91,7 +91,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Transfer.t()
+  @spec get!(Project.t(), binary) :: Transfer.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -109,7 +109,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - Transfer pdf file content
   """
-  @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
@@ -117,7 +117,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project, binary) :: binary
+  @spec pdf!(Project.t(), binary) :: binary
   def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end

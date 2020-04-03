@@ -73,7 +73,7 @@ defmodule StarkBank.Webhook do
   ## Return:
     - Webhook struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -81,7 +81,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Webhook.t()
+  @spec get!(Project.t(), binary) :: Webhook.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -131,7 +131,7 @@ defmodule StarkBank.Webhook do
   ## Return:
     - deleted Webhook with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -139,7 +139,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: Webhook.t()
+  @spec delete!(Project.t(), binary) :: Webhook.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end

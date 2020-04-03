@@ -39,7 +39,7 @@ defmodule StarkBank.Payment.Utility.Log do
   ## Return:
     - UtilityPaymentLog struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, UtilityPaymentLog.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, UtilityPaymentLog.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -47,7 +47,7 @@ defmodule StarkBank.Payment.Utility.Log do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: UtilityPaymentLog.t()
+  @spec get!(Project.t(), binary) :: UtilityPaymentLog.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end

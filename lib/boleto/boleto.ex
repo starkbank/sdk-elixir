@@ -91,7 +91,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -99,7 +99,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Boleto.t()
+  @spec get!(Project.t(), binary) :: Boleto.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -116,7 +116,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto pdf file content
   """
-  @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
@@ -124,7 +124,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project, binary) :: binary
+  @spec pdf!(Project.t(), binary) :: binary
   def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end
@@ -179,7 +179,7 @@ defmodule StarkBank.Boleto do
   ##  Return:
     - deleted Boleto struct with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -187,7 +187,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: Boleto.t()
+  @spec delete!(Project.t(), binary) :: Boleto.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end

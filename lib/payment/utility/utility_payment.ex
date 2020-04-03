@@ -79,7 +79,7 @@ defmodule StarkBank.Payment.Utility do
     - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
   """
-  @spec get(Project, binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -87,7 +87,7 @@ defmodule StarkBank.Payment.Utility do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: UtilityPayment.t()
+  @spec get!(Project.t(), binary) :: UtilityPayment.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -105,7 +105,7 @@ defmodule StarkBank.Payment.Utility do
   ## Return:
     - UtilityPayment pdf file content
   """
-  @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
@@ -113,7 +113,7 @@ defmodule StarkBank.Payment.Utility do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project, binary) :: binary
+  @spec pdf!(Project.t(), binary) :: binary
   def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end
@@ -166,7 +166,7 @@ defmodule StarkBank.Payment.Utility do
   ## Return:
     - deleted UtilityPayment with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -174,7 +174,7 @@ defmodule StarkBank.Payment.Utility do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: UtilityPayment.t()
+  @spec delete!(Project.t(), binary) :: UtilityPayment.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end

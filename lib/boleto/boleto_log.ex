@@ -40,7 +40,7 @@ defmodule StarkBank.Boleto.Log do
   ## Return:
     - BoletoLog struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoLog.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, BoletoLog.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -48,7 +48,7 @@ defmodule StarkBank.Boleto.Log do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoLog.t()
+  @spec get!(Project.t(), binary) :: BoletoLog.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end

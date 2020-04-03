@@ -82,7 +82,7 @@ defmodule StarkBank.Transaction do
   ## Return:
     - Transaction struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -90,7 +90,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: Transaction.t()
+  @spec get!(Project.t(), binary) :: Transaction.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end

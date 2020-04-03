@@ -83,7 +83,7 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - BoletoPayment struct with updated attributes
   """
-  @spec get(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -91,7 +91,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project, binary) :: BoletoPayment.t()
+  @spec get!(Project.t(), binary) :: BoletoPayment.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -109,7 +109,7 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - BoletoPayment pdf file content
   """
-  @spec pdf(Project, binary) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(%Project{} = user, id) do
     Rest.get_pdf(user, resource(), id)
   end
@@ -117,7 +117,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project, binary) :: binary
+  @spec pdf!(Project.t(), binary) :: binary
   def pdf!(%Project{} = user, id) do
     Rest.get_pdf!(user, resource(), id)
   end
@@ -169,7 +169,7 @@ defmodule StarkBank.Payment.Boleto do
   ## Return:
     - deleted BoletoPayment struct with updated attributes
   """
-  @spec delete(Project, binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -177,7 +177,7 @@ defmodule StarkBank.Payment.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project, binary) :: BoletoPayment.t()
+  @spec delete!(Project.t(), binary) :: BoletoPayment.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end
