@@ -141,9 +141,9 @@ defmodule StarkBank.Payment.Boleto do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids})
+    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
+    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_, before: before})
   end
 
   @doc """
@@ -152,9 +152,9 @@ defmodule StarkBank.Payment.Boleto do
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids})
+    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
+      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
+    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_, before: before})
   end
 
   @doc """
