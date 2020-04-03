@@ -67,7 +67,7 @@ defmodule StarkBank.Utils.Request do
     cond do
       status_code == 500 -> {:error, [%Error{code: "internalServerError", message: "Houston, we have a problem."}]}
       status_code == 400 -> {:error, JSON.decode!(body)["errors"] |> Enum.map(fn error -> %Error{code: error["code"], message: error["message"]} end)}
-      status_code != 200 -> {:unknown_error, [%Error{code: "unknownError", message: "Unknown exception encountered: " <> to_string(body)}]}
+      status_code != 200 -> {:error, [%Error{code: "unknownError", message: "Unknown exception encountered: " <> to_string(body)}]}
       true -> {:ok, body}
     end
   end
