@@ -6,6 +6,11 @@ defmodule StarkBank.Utils.API do
   def api_json(struct) do
     struct
      |> Map.from_struct()
+     |> cast_json_to_api_format
+  end
+
+  def cast_json_to_api_format(json) do
+    json
      |> Enum.filter(fn {_field, value} -> !is_nil(value) end)
      |> Enum.map(fn {field, value} -> {Case.snake_to_camel(to_string(field)), date_to_string(value)} end)
      |> Enum.into(%{})

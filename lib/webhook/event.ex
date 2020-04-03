@@ -29,10 +29,10 @@ defmodule StarkBank.Webhook.Event do
     - id [string]: unique id returned when the log is created. ex: "5656565656565656"
     - log [Log]: a Log struct from one the subscription services (TransferLog, BoletoLog, BoletoPaymentlog or UtilityPaymentLog)
     - created [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - delivered [DateTime]: delivery datetime when the notification was delivered to the user url. Will be nil if no successful attempts to deliver the event occurred. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - is_delivered [bool]: true if the event has been successfully delivered to the user url. ex: false
     - subscription [string]: service that triggered this event. ex: "transfer", "utility-payment"
   """
-  defstruct [:id, :log, :created, :delivered, :subscription]
+  defstruct [:id, :log, :created, :is_delivered, :subscription]
 
   @doc """
   # Retrieve a specific notification Event
@@ -69,7 +69,7 @@ defmodule StarkBank.Webhook.Event do
 
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - is_delivered [bool, default nil]: bool to filter successfully delivered events. ex: True or False
+    - is_delivered [bool, default nil]: filter successfully delivered events. ex: true or false
     - after_ [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
 
@@ -124,27 +124,27 @@ defmodule StarkBank.Webhook.Event do
   # Update notification Event entity
 
   Update notification Event by passing id.
-    If delivered is True, the event will no longer be returned on queries with is_delivered=False.
+    If is_delivered is true, the event will no longer be returned on queries with is_delivered=false.
 
   ## Parameters (required):
     - user [Project]: Project struct returned from StarkBank.project().
     - id [list of strings]: Event unique ids. ex: "5656565656565656"
-    - delivered [bool]: If true, event will be set as delivered at current timestamp, if it hasn't been delivered already. ex: true
+    - is_delivered [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
 
   ## Return:
     - target Event with updated attributes
   """
   @spec update(Project.t(), binary, boolean) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
-  def update(%Project{} = user, id, delivered) do
-    Rest.patch_id(user, resource(), id, %{delivered: delivered})
+  def update(%Project{} = user, id, is_delivered) do
+    Rest.patch_id(user, resource(), id, %{is_delivered: is_delivered})
   end
 
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec update!(Project.t(), binary, boolean) :: Boleto.t()
-  def update!(%Project{} = user, id, delivered) do
-    Rest.patch_id!(user, resource(), id, %{delivered: delivered})
+  def update!(%Project{} = user, id, is_delivered) do
+    Rest.patch_id!(user, resource(), id, %{is_delivered: is_delivered})
   end
 
   @doc """
@@ -275,7 +275,7 @@ defmodule StarkBank.Webhook.Event do
       id: json[:id],
       log: json[:log] |> API.from_api_json(log_maker_by_subscription(json[:subscription])),
       created: json[:created] |> Checks.check_datetime,
-      delivered: json[:delivered],
+      is_delivered: json[:is_delivered],
       subscription: json[:subscription]
     }
   end

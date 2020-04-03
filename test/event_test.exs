@@ -1,9 +1,9 @@
 defmodule StarkBankTest.WebhookEvent do
   use ExUnit.Case
 
-  @content "{\"event\": {\"log\": {\"transfer\": {\"status\": \"failed\", \"updated\": \"2020-03-13T14:49:10.189611+00:00\", \"fee\": 200, \"name\": \"Richard Jenkins\", \"accountNumber\": \"10000-0\", \"id\": \"5599003076984832\", \"tags\": [\"19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7\"], \"taxId\": \"81.680.513/0001-92\", \"created\": \"2020-03-13T14:49:09.943811+00:00\", \"amount\": 295136516, \"transactionIds\": [\"invalidBalance\"], \"bankCode\": \"01\", \"branchCode\": \"0001\"}, \"errors\": [\"invalidbalance\"], \"type\": \"failed\", \"id\": \"6046244933730304\", \"created\": \"2020-03-13T14:49:10.189586+00:00\"}, \"delivered\": null, \"subscription\": \"transfer\", \"id\": \"6270003208781824\", \"created\": \"2020-03-13T14:49:11.236120+00:00\"}}"
-  @signature "MEQCIGVKEnnhLFHjxKM+nDggweTsFEQOIsmnZkep2Ni5o8FeAiAVm//jnu3vmh9lxq1HRQcRW7SsMlqSGNERaa1CvnVnNA=="
-  @bad_signature "MEYCIQC+0fzgh+WX6Af0hm9FsnWmsRaeQbTHI9vITB0d+lg9QwIhAMpz2xBRLm8dO+E4NQZXVxtxLJylkS1rqdlB06PQGIub"
+  @content "{\"event\": {\"log\": {\"transfer\": {\"status\": \"processing\", \"updated\": \"2020-04-03T13:20:33.485644+00:00\", \"fee\": 160, \"name\": \"Lawrence James\", \"accountNumber\": \"10000-0\", \"id\": \"5107489032896512\", \"tags\": [], \"taxId\": \"91.642.017/0001-06\", \"created\": \"2020-04-03T13:20:32.530367+00:00\", \"amount\": 2, \"transactionIds\": [\"6547649079541760\"], \"bankCode\": \"01\", \"branchCode\": \"0001\"}, \"errors\": [], \"type\": \"sending\", \"id\": \"5648419829841920\", \"created\": \"2020-04-03T13:20:33.164373+00:00\"}, \"subscription\": \"transfer\", \"id\": \"6234355449987072\", \"created\": \"2020-04-03T13:20:40.784479+00:00\"}}"
+  @signature "MEYCIQCmFCAn2Z+6qEHmf8paI08Ee5ZJ9+KvLWSS3ddp8+RF3AIhALlK7ltfRvMCXhjS7cy8SPlcSlpQtjBxmhN6ClFC0Tv6"
+  @bad_signature "MEUCIQDOpo1j+V40DNZK2URL2786UQK/8mDXon9ayEd8U0/l7AIgYXtIZJBTs8zCRR3vmted6Ehz/qfw1GRut/eYyvf1yOk="
 
   @tag :webhook_event
   test "get, update and delete webhook event" do
@@ -24,7 +24,9 @@ defmodule StarkBankTest.WebhookEvent do
      |> Enum.take(1)
      |> hd
     get_event = StarkBank.Webhook.Event.get!(user, query_event.id)
+    assert !get_event.is_delivered
     delivered_event = StarkBank.Webhook.Event.update!(user, get_event.id, true)
+    assert delivered_event.is_delivered
     delete_event = StarkBank.Webhook.Event.delete!(user, delivered_event.id)
     assert !is_nil(delete_event.id)
   end
