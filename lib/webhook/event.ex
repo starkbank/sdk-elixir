@@ -34,6 +34,8 @@ defmodule StarkBank.Webhook.Event do
   """
   defstruct [:id, :log, :created, :is_delivered, :subscription]
 
+  @type t() :: %__MODULE__{}
+
   @doc """
   # Retrieve a specific notification Event
 

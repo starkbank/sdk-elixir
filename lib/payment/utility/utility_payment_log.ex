@@ -26,6 +26,7 @@ defmodule StarkBank.Payment.Utility.Log do
   """
   @enforce_keys [:id, :payment, :errors, :type, :created]
   defstruct [:id, :payment, :errors, :type, :created]
+  @type t() :: %__MODULE__{}
 
   @doc """
   # Retrieve a specific UtilityPaymentLog

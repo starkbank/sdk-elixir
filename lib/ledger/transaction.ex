@@ -35,6 +35,7 @@ defmodule StarkBank.Transaction do
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
   defstruct [:amount, :description, :external_id, :receiver_id, :tags, :id, :fee, :created, :source]
+  @type t() :: %__MODULE__{}
 
   @doc """
   # Create Transactions

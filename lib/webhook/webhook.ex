@@ -23,6 +23,7 @@ defmodule StarkBank.Webhook do
   """
   @enforce_keys [:url, :subscriptions]
   defstruct [:id, :url, :subscriptions]
+  @type t() :: %__MODULE__{}
 
   @doc """
   # Create Webhook subscription

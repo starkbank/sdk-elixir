@@ -24,6 +24,8 @@ defmodule StarkBank.Balance do
   """
   defstruct [:id, :amount, :currency, :updated]
 
+  @type t() :: %__MODULE__{}
+
   @doc """
   # Retrieve the Balance entity
 
@@ -46,7 +48,7 @@ defmodule StarkBank.Balance do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t()) :: Balance
+  @spec get!(Project.t()) :: Balance.t()
   def get!(%Project{} = user) do
     {:ok, balance} = get(user)
     balance
