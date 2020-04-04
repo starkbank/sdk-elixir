@@ -50,19 +50,19 @@ defmodule StarkBankTest.WebhookEvent do
   @tag :webhook_event
   test "parse webhook event" do
     user = StarkBankTest.Credentials.project()
-    {:ok, {_event, public_key}} = StarkBank.Webhook.Event.parse(
+    {:ok, {_event, cache_pid_1}} = StarkBank.Webhook.Event.parse(
       user,
       @content,
       @signature,
       nil
     )
-    {:ok, {event, public_key_2}} = StarkBank.Webhook.Event.parse(
+    {:ok, {event, cache_pid_2}} = StarkBank.Webhook.Event.parse(
       user,
       @content,
       @signature,
-      public_key
+      cache_pid_1
     )
-    assert public_key == public_key_2
+    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) == Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
     assert !is_nil(event.log)
   end
 
