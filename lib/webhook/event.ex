@@ -48,7 +48,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - Event struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec get(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
     Rest.get_id(user, resource(), id)
   end
@@ -56,7 +56,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Webhook.t()
+  @spec get!(Project.t(), binary) :: Event.t()
   def get!(%Project{} = user, id) do
     Rest.get_id!(user, resource(), id)
   end
@@ -79,7 +79,7 @@ defmodule StarkBank.Webhook.Event do
     - stream of Event structs with updated attributes
   """
   @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Webhook.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, {:ok, [Event.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
@@ -90,7 +90,7 @@ defmodule StarkBank.Webhook.Event do
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec query!(Project.t(), any) ::
-          ({:cont, [Webhook.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
@@ -109,7 +109,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - deleted Event struct with updated attributes
   """
-  @spec delete(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec delete(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(%Project{} = user, id) do
     Rest.delete_id(user, resource(), id)
   end
@@ -117,7 +117,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project.t(), binary) :: Boleto.t()
+  @spec delete!(Project.t(), binary) :: Event.t()
   def delete!(%Project{} = user, id) do
     Rest.delete_id!(user, resource(), id)
   end
@@ -136,7 +136,7 @@ defmodule StarkBank.Webhook.Event do
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(Project.t(), binary, boolean) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec update(Project.t(), binary, boolean) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def update(%Project{} = user, id, is_delivered) do
     Rest.patch_id(user, resource(), id, %{is_delivered: is_delivered})
   end
@@ -144,7 +144,7 @@ defmodule StarkBank.Webhook.Event do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(Project.t(), binary, boolean) :: Boleto.t()
+  @spec update!(Project.t(), binary, boolean) :: Event.t()
   def update!(%Project{} = user, id, is_delivered) do
     Rest.patch_id!(user, resource(), id, %{is_delivered: is_delivered})
   end

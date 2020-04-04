@@ -23,6 +23,7 @@ defmodule StarkBank.Webhook do
   """
   @enforce_keys [:url, :subscriptions]
   defstruct [:id, :url, :subscriptions]
+
   @type t() :: %__MODULE__{}
 
   @doc """
@@ -39,7 +40,7 @@ defmodule StarkBank.Webhook do
     - Webhook struct with updated attributes
   """
   @spec create(Project.t(), binary, [binary]) ::
-    {:ok, [Webhook.t()]} | {:error, [Error.t()]}
+    {:ok, Webhook.t()} | {:error, [Error.t()]}
   def create(%Project{} = user, url, subscriptions) do
     webhook = %Webhook{url: url, subscriptions: subscriptions}
     Rest.post_single(
