@@ -16,6 +16,7 @@
 # Ignore
 /.elixir_ls
 /keys
+mix.lock
 
 # If the VM crashes, it generates a dump, let's ignore it too.
 erl_crash.dump
@@ -26,3 +27,5 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 starkbank-*.tar
 
+# Debug configuration directory.
+/.vscode/
