@@ -36,6 +36,7 @@ defmodule StarkBank.Payment.Boleto do
   """
   @enforce_keys [:tax_id, :description]
   defstruct [:line, :bar_code, :tax_id, :description, :scheduled, :tags, :id, :status, :amount, :fee, :created]
+
   @type t() :: %__MODULE__{}
 
   @doc """

@@ -36,6 +36,7 @@ defmodule StarkBank.Transfer do
   """
   @enforce_keys [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number]
   defstruct [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number, :transaction_ids, :fee, :tags, :status, :id, :created, :updated]
+
   @type t() :: %__MODULE__{}
 
   @doc """

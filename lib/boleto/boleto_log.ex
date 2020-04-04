@@ -27,6 +27,7 @@ defmodule StarkBank.Boleto.Log do
   """
   @enforce_keys [:id, :boleto, :errors, :type, :created]
   defstruct [:id, :boleto, :errors, :type, :created]
+
   @type t() :: %__MODULE__{}
 
   @doc """

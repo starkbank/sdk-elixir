@@ -26,6 +26,7 @@ defmodule StarkBank.Transfer.Log do
   """
   @enforce_keys [:id, :transfer, :errors, :type, :created]
   defstruct [:id, :transfer, :errors, :type, :created]
+
   @type t() :: %__MODULE__{}
 
   @doc """

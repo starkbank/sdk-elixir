@@ -35,6 +35,7 @@ defmodule StarkBank.Payment.Utility do
   """
   @enforce_keys [:description]
   defstruct [:line, :bar_code, :description, :scheduled, :tags, :id, :status, :amount, :fee, :created]
+
   @type t() :: %__MODULE__{}
 
   @doc """
