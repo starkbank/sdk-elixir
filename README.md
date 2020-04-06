@@ -601,7 +601,7 @@ With this function, you can manually set events retrieved from the API as
 "delivered" to help future event queries with `is_delivered=False`.
 
 ```elixir
-events = StarkBank.Webhook.Event.update!(user, id="4652205932019712", is_delivered=true)
+event = StarkBank.Webhook.Event.update!(user, "4652205932019712", true)
 ```
 
 ## Handling errors
