@@ -266,7 +266,7 @@ logs = StarkBank.Transfer.Log.query!(user, limit: 50) |> Enum.take(50)
 You can also get a specific log by its id.
 
 ```elixir
-transfer = StarkBank.Transfer.Log.get!(user, "6751741127163904")
+log = StarkBank.Transfer.Log.get!(user, "6751741127163904")
 ```
 
 ### Pay a boleto
