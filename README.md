@@ -598,7 +598,7 @@ event = StarkBank.Webhook.Event.delete!(user, "4568139664719872")
 
 This can be used in case you've lost events.
 With this function, you can manually set events retrieved from the API as
-"delivered" to help future event queries with `is_delivered=False`.
+"delivered" to help future event queries with `is_delivered=false`.
 
 ```elixir
 event = StarkBank.Webhook.Event.update!(user, "4652205932019712", true)
