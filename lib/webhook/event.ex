@@ -1,4 +1,4 @@
-defmodule StarkBank.Webhook.Event do
+defmodule StarkBank.Event do
 
   alias __MODULE__, as: Event
   alias StarkBank.Utils.Rest, as: Rest
@@ -10,8 +10,8 @@ defmodule StarkBank.Webhook.Event do
   alias StarkBank.Utils.Request, as: Request
   alias StarkBank.Boleto.Log, as: BoletoLog
   alias StarkBank.Transfer.Log, as: TransferLog
-  alias StarkBank.Payment.Boleto.Log, as: BoletoPaymentLog
-  alias StarkBank.Payment.Utility.Log, as: UtilityPaymentLog
+  alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
+  alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
   alias EllipticCurve.Signature, as: Signature
   alias EllipticCurve.PublicKey, as: PublicKey
   alias EllipticCurve.Ecdsa, as: Ecdsa
@@ -19,7 +19,7 @@ defmodule StarkBank.Webhook.Event do
   @moduledoc """
   Groups Webhook-Event related functions
 
-  # Webhook Event struct:
+  # Event struct:
 
   An Event is the notification received from the subscription to the Webhook.
   Events cannot be created, but may be retrieved from the Stark Bank API to
@@ -27,7 +27,7 @@ defmodule StarkBank.Webhook.Event do
 
   ## Attributes:
     - id [string]: unique id returned when the log is created. ex: "5656565656565656"
-    - log [Log]: a Log struct from one the subscription services (TransferLog, BoletoLog, BoletoPaymentlog or UtilityPaymentLog)
+    - log [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log or UtilityPayment.Log)
     - created [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
     - is_delivered [bool]: true if the event has been successfully delivered to the user url. ex: false
     - subscription [string]: service that triggered this event. ex: "transfer", "utility-payment"

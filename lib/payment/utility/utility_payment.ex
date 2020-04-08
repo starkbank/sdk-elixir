@@ -1,4 +1,4 @@
-defmodule StarkBank.Payment.Utility do
+defmodule StarkBank.UtilityPayment do
 
   alias __MODULE__, as: UtilityPayment
   alias StarkBank.Utils.Rest, as: Rest

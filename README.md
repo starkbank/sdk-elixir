@@ -274,17 +274,17 @@ log = StarkBank.Transfer.Log.get!(user, "6751741127163904")
 Paying a boleto is also simple.
 
 ```elixir
-payments = StarkBank.Payment.Boleto.create!(
+payments = StarkBank.BoletoPayment.create!(
   user,
   [
-    %StarkBank.Payment.Boleto{
+    %StarkBank.BoletoPayment{
         line: "34191.09008 61207.727308 71444.640008 5 81310001234321",
         tax_id: "012.345.678-90",
         scheduled: Date.utc_today |> Date.add(10),
         description: "take my money",
         tags: ["take", "my", "money"],
     },
-    %StarkBank.Payment.Boleto{
+    %StarkBank.BoletoPayment{
         bar_code: "34197819200000000011090063609567307144464000",
         tax_id: "012.345.678-90",
         scheduled: Date.utc_today |> Date.add(40),
@@ -300,7 +300,7 @@ payments = StarkBank.Payment.Boleto.create!(
 To get a single boleto payment by its id, run:
 
 ```elixir
-payment = StarkBank.Payment.Boleto.get!(user, "5629412477239296")
+payment = StarkBank.BoletoPayment.get!(user, "5629412477239296")
 ```
 
 ### Get boleto payment PDF
@@ -308,7 +308,7 @@ payment = StarkBank.Payment.Boleto.get!(user, "5629412477239296")
 After its creation, a boleto payment PDF may be retrieved by passing its id. 
 
 ```elixir
-pdf = StarkBank.Payment.Boleto.pdf!(user, "5629412477239296")
+pdf = StarkBank.BoletoPayment.pdf!(user, "5629412477239296")
 
 file = File.open!("boleto-payment.pdf", [:write])
 IO.binwrite(file, pdf)
@@ -325,7 +325,7 @@ You can also cancel a boleto payment by its id.
 Note that this is not possible if it has been processed already.
 
 ```elixir
-payment = StarkBank.Payment.Boleto.delete!(user, "5629412477239296")
+payment = StarkBank.BoletoPayment.delete!(user, "5629412477239296")
 ```
 
 ### Query boleto payments
@@ -333,7 +333,7 @@ payment = StarkBank.Payment.Boleto.delete!(user, "5629412477239296")
 You can search for boleto payments using filters. 
 
 ```elixir
-payments = StarkBank.Payment.Boleto.query!(
+payments = StarkBank.BoletoPayment.query!(
   user,
   tags: ["company_1", "company_2"]
 ) |> Enum.take(10)
@@ -344,7 +344,7 @@ payments = StarkBank.Payment.Boleto.query!(
 Searches are also possible with boleto payment logs:
 
 ```elixir
-for log <- StarkBank.Payment.Boleto.Log.query!(
+for log <- StarkBank.BoletoPayment.Log.query!(
   user,
   payment_ids: ["5629412477239296", "5199478290120704"],
 ) do log |> IO.inspect end
@@ -356,7 +356,7 @@ You can also get a boleto payment log by specifying its id.
 
 ```elixir
 
-log = StarkBank.Payment.Boleto.Log.get!(user, "5391671273455616")
+log = StarkBank.BoletoPayment.Log.get!(user, "5391671273455616")
 ```
 
 ### Create utility payment
@@ -364,16 +364,16 @@ log = StarkBank.Payment.Boleto.Log.get!(user, "5391671273455616")
 Its also simple to pay utility bills (such electricity and water bills) in the SDK.
 
 ```elixir
-payments = StarkBank.Payment.Utility.create!(
+payments = StarkBank.UtilityPayment.create!(
   user,
   [
-    %StarkBank.Payment.Utility{
+    %StarkBank.UtilityPayment{
         bar_code: "83660000004463001380074119002551100010601813",
         scheduled: Date.utc_today |> Date.add(2),
         description: "paying some bills",
         tags: ["take", "my", "money"],
     },
-    %StarkBank.Payment.Utility{
+    %StarkBank.UtilityPayment{
         line: "83660000005 0 10430138007 7 41190025511 7 00010601813 8",
         scheduled: Date.utc_today |> Date.add(3),
         description: "never ending bills",
@@ -388,7 +388,7 @@ payments = StarkBank.Payment.Utility.create!(
 To search for utility payments using filters, run:
 
 ```elixir
-payments = StarkBank.Payment.Utility.query!(
+payments = StarkBank.UtilityPayment.query!(
   user,
   tags: ["electricity", "gas"]
 ) |> Enum.take(10)
@@ -399,7 +399,7 @@ payments = StarkBank.Payment.Utility.query!(
 You can get a specific bill by its id:
 
 ```elixir
-payment = StarkBank.Payment.Utility.get!(user, "6619425641857024")
+payment = StarkBank.UtilityPayment.get!(user, "6619425641857024")
 ```
 
 ### Get utility payment PDF
@@ -407,7 +407,7 @@ payment = StarkBank.Payment.Utility.get!(user, "6619425641857024")
 After its creation, a utility payment PDF may also be retrieved by passing its id. 
 
 ```elixir
-pdf = StarkBank.Payment.Utility.pdf!(user, "6619425641857024")
+pdf = StarkBank.UtilityPayment.pdf!(user, "6619425641857024")
 
 file = File.open!("utility-payment.pdf", [:write])
 IO.binwrite(file, pdf)
@@ -424,7 +424,7 @@ You can also cancel a utility payment by its id.
 Note that this is not possible if it has been processed already.
 
 ```elixir
-payment = StarkBank.Payment.Utility.delete!(user, "6619425641857024")
+payment = StarkBank.UtilityPayment.delete!(user, "6619425641857024")
 ```
 
 ### Query utility bill payment logs
@@ -433,7 +433,7 @@ You can search for payments by specifying filters. Use this to understand the
 bills life cycles.
 
 ```elixir
-for log <- StarkBank.Payment.Utility.Log.query!(
+for log <- StarkBank.UtilityPayment.Log.query!(
   user,
   payment_ids: ["6619425641857024", "5738969660653568"]
 ) do log |> IO.inspect end
@@ -444,7 +444,7 @@ for log <- StarkBank.Payment.Utility.Log.query!(
 If you want to get a specific payment log by its id, just run:
 
 ```elixir
-log = StarkBank.Payment.Utility.Log.get!(user, "6197807794880512")
+log = StarkBank.UtilityPayment.Log.get!(user, "6197807794880512")
 ```
 
 ### Create transactions
@@ -540,7 +540,7 @@ the event.
 ```elixir
 response = listen()  # this is the function you made to get the events posted to your webhook
 
-{event, cache_pid} = StarkBank.Webhook.Event.parse!(
+{event, cache_pid} = StarkBank.Event.parse!(
   user,
   response.content,
   response.headers["Digital-Signature"]
@@ -554,7 +554,7 @@ and refresh it whenever an inconsistency is found between the content, signature
 **Note**: If you don't send the cache_pid to the parser, a new cache process will be generated.
 
 ```elixir
-{event, _cache_pid} = StarkBank.Webhook.Event.parse!(
+{event, _cache_pid} = StarkBank.Event.parse!(
   user,
   response.content,
   response.headers["Digital-Signature"],
@@ -570,7 +570,7 @@ key from the API and try to validate the signature once more. If it still does n
 To search for webhooks events, run:
 
 ```elixir
-events = StarkBank.Webhook.Event.query!(
+events = StarkBank.Event.query!(
   user,
   after_: "2020-03-20",
   is_delivered: false,
@@ -583,7 +583,7 @@ events = StarkBank.Webhook.Event.query!(
 You can get a specific webhook event by its id.
 
 ```elixir
-event = StarkBank.Webhook.Event.get!(user, "4568139664719872")
+event = StarkBank.Event.get!(user, "4568139664719872")
 ```
 
 ### Delete webhook event
@@ -591,7 +591,7 @@ event = StarkBank.Webhook.Event.get!(user, "4568139664719872")
 You can also delete a specific webhook event by its id.
 
 ```elixir
-event = StarkBank.Webhook.Event.delete!(user, "4568139664719872")
+event = StarkBank.Event.delete!(user, "4568139664719872")
 ```
 
 ### Set webhook events as delivered
@@ -601,7 +601,7 @@ With this function, you can manually set events retrieved from the API as
 "delivered" to help future event queries with `is_delivered=false`.
 
 ```elixir
-event = StarkBank.Webhook.Event.update!(user, "4652205932019712", true)
+event = StarkBank.Event.update!(user, "4652205932019712", true)
 ```
 
 ## Handling errors

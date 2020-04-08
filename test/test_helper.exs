@@ -12,7 +12,7 @@ ExUnit.start(exclude: [
   :utility_payment_log,
   :utility_payment,
   :webhook,
-  :webhook_event
+  :event
 ])
 
 

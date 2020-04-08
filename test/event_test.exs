@@ -5,58 +5,58 @@ defmodule StarkBankTest.WebhookEvent do
   @signature "MEYCIQCmFCAn2Z+6qEHmf8paI08Ee5ZJ9+KvLWSS3ddp8+RF3AIhALlK7ltfRvMCXhjS7cy8SPlcSlpQtjBxmhN6ClFC0Tv6"
   @bad_signature "MEUCIQDOpo1j+V40DNZK2URL2786UQK/8mDXon9ayEd8U0/l7AIgYXtIZJBTs8zCRR3vmted6Ehz/qfw1GRut/eYyvf1yOk="
 
-  @tag :webhook_event
+  @tag :event
   test "get, update and delete webhook event" do
     user = StarkBankTest.Credentials.project()
-    {:ok, query_event} = StarkBank.Webhook.Event.query(user, limit: 1)
+    {:ok, query_event} = StarkBank.Event.query(user, limit: 1)
      |> Enum.take(1)
      |> hd
-    {:ok, get_event} = StarkBank.Webhook.Event.get(user, query_event.id)
-    {:ok, delivered_event} = StarkBank.Webhook.Event.update(user, get_event.id, true)
-    {:ok, delete_event} = StarkBank.Webhook.Event.delete(user, delivered_event.id)
+    {:ok, get_event} = StarkBank.Event.get(user, query_event.id)
+    {:ok, delivered_event} = StarkBank.Event.update(user, get_event.id, true)
+    {:ok, delete_event} = StarkBank.Event.delete(user, delivered_event.id)
     assert !is_nil(delete_event.id)
   end
 
-  @tag :webhook_event
+  @tag :event
   test "get!, update! and delete! webhook event" do
     user = StarkBankTest.Credentials.project()
-    query_event = StarkBank.Webhook.Event.query!(user, limit: 1)
+    query_event = StarkBank.Event.query!(user, limit: 1)
      |> Enum.take(1)
      |> hd
-    get_event = StarkBank.Webhook.Event.get!(user, query_event.id)
+    get_event = StarkBank.Event.get!(user, query_event.id)
     assert !get_event.is_delivered
-    delivered_event = StarkBank.Webhook.Event.update!(user, get_event.id, true)
+    delivered_event = StarkBank.Event.update!(user, get_event.id, true)
     assert delivered_event.is_delivered
-    delete_event = StarkBank.Webhook.Event.delete!(user, delivered_event.id)
+    delete_event = StarkBank.Event.delete!(user, delivered_event.id)
     assert !is_nil(delete_event.id)
   end
 
-  @tag :webhook_event
+  @tag :event
   test "query webhook event" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Webhook.Event.query(user, limit: 5)
+    StarkBank.Event.query(user, limit: 5)
      |> Enum.take(5)
      |> (fn list -> assert length(list) <= 5 end).()
   end
 
-  @tag :webhook_event
+  @tag :event
   test "query! webhook event" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Webhook.Event.query!(user, limit: 5)
+    StarkBank.Event.query!(user, limit: 5)
      |> Enum.take(5)
      |> (fn list -> assert length(list) <= 5 end).()
   end
 
-  @tag :webhook_event
+  @tag :event
   test "parse webhook event" do
     user = StarkBankTest.Credentials.project()
-    {:ok, {_event, cache_pid_1}} = StarkBank.Webhook.Event.parse(
+    {:ok, {_event, cache_pid_1}} = StarkBank.Event.parse(
       user,
       @content,
       @signature,
       nil
     )
-    {:ok, {event, cache_pid_2}} = StarkBank.Webhook.Event.parse(
+    {:ok, {event, cache_pid_2}} = StarkBank.Event.parse(
       user,
       @content,
       @signature,
@@ -66,15 +66,15 @@ defmodule StarkBankTest.WebhookEvent do
     assert !is_nil(event.log)
   end
 
-  @tag :webhook_event
+  @tag :event
   test "parse! webhook event" do
     user = StarkBankTest.Credentials.project()
-    {_event, cache_pid_1} = StarkBank.Webhook.Event.parse!(
+    {_event, cache_pid_1} = StarkBank.Event.parse!(
       user,
       @content,
       @signature
     )
-    {event, cache_pid_2} = StarkBank.Webhook.Event.parse!(
+    {event, cache_pid_2} = StarkBank.Event.parse!(
       user,
       @content,
       @signature,
@@ -84,22 +84,22 @@ defmodule StarkBankTest.WebhookEvent do
     assert !is_nil(event.log)
   end
 
-  @tag :webhook_event
+  @tag :event
   test "parse fake webhook event" do
     user = StarkBankTest.Credentials.project()
-    {:error, [error]} = StarkBank.Webhook.Event.parse(
+    {:error, [error]} = StarkBank.Event.parse(
       user,
       @content,
       @bad_signature
     )
     assert error.code == "invalidSignature"
 
-    {_event, cache_pid} = StarkBank.Webhook.Event.parse!(
+    {_event, cache_pid} = StarkBank.Event.parse!(
       user,
       @content,
       @signature
     )
-    {:error, [error]} = StarkBank.Webhook.Event.parse(
+    {:error, [error]} = StarkBank.Event.parse(
       user,
       @content,
       @bad_signature,
