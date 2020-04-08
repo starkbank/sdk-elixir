@@ -53,7 +53,7 @@ defmodule StarkBankTest.Transfer do
   @tag :transfer
   test "pdf transfer" do
     user = StarkBankTest.Credentials.project()
-    transfer = StarkBank.Transfer.query!(user)
+    transfer = StarkBank.Transfer.query!(user, status: "success")
      |> Enum.take(1)
      |> hd()
     {:ok, _pdf} = StarkBank.Transfer.pdf(user, transfer.id)
@@ -62,7 +62,7 @@ defmodule StarkBankTest.Transfer do
   @tag :transfer
   test "pdf! transfer" do
     user = StarkBankTest.Credentials.project()
-    transfer = StarkBank.Transfer.query!(user)
+    transfer = StarkBank.Transfer.query!(user, status: "success")
      |> Enum.take(1)
      |> hd()
     pdf = StarkBank.Transfer.pdf!(user, transfer.id)
