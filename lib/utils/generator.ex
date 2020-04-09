@@ -53,6 +53,10 @@ defmodule StarkBank.Utils.QueryGenerator do
       caller ->
         send(caller, {:error, error})
     end
+    receive do
+      caller ->
+        send(caller, :halt)
+    end
   end
 
   defp iterate_limit(limit) when is_nil(limit) do
