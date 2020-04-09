@@ -2,6 +2,7 @@ defmodule StarkBank.Transaction do
 
   alias __MODULE__, as: Transaction
   alias StarkBank.Utils.Rest, as: Rest
+  alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
 
@@ -119,7 +120,7 @@ defmodule StarkBank.Transaction do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{external_ids: external_ids, after: after_, before: before})
+    Rest.get_list(user, resource(), limit, %{external_ids: external_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """
@@ -130,7 +131,7 @@ defmodule StarkBank.Transaction do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{external_ids: external_ids, after: after_, before: before})
+    Rest.get_list!(user, resource(), limit, %{external_ids: external_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc false

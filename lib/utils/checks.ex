@@ -27,6 +27,22 @@ defmodule StarkBank.Utils.Checks do
     datetime
   end
 
+  def check_date(data) when is_nil(data) do
+    nil
+  end
+
+  def check_date(data) when is_binary(data) do
+    data |> Date.from_iso8601!
+  end
+
+  def check_date(data = %DateTime{}) do
+    %Date{year: data.year, month: data.month, day: data.day}
+  end
+
+  def check_date(data) do
+    data
+  end
+
   def check_private_key(private_key) do
     try do
       {:ok, parsed_key} = PrivateKey.fromPem(private_key)

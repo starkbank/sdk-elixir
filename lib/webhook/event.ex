@@ -83,7 +83,7 @@ defmodule StarkBank.Event do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{is_delivered: is_delivered, after: after_, before: before})
+    Rest.get_list(user, resource(), limit, %{is_delivered: is_delivered, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """
@@ -94,7 +94,7 @@ defmodule StarkBank.Event do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{is_delivered: is_delivered, after: after_, before: before})
+    Rest.get_list!(user, resource(), limit, %{is_delivered: is_delivered, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """

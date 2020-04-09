@@ -145,7 +145,7 @@ defmodule StarkBank.BoletoPayment do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_, before: before})
+    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """
@@ -156,7 +156,7 @@ defmodule StarkBank.BoletoPayment do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_, before: before})
+    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """

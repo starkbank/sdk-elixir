@@ -77,7 +77,7 @@ defmodule StarkBank.Transfer.Log do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_, before: before})
+    Rest.get_list(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """
@@ -88,7 +88,7 @@ defmodule StarkBank.Transfer.Log do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_, before: before})
+    Rest.get_list!(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc false

@@ -78,7 +78,7 @@ defmodule StarkBank.Boleto.Log do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})
+    Rest.get_list(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc """
@@ -89,7 +89,7 @@ defmodule StarkBank.Boleto.Log do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, boleto_ids: boleto_ids, types: types, after_: after_, before: before} =
       Enum.into(options, %{limit: nil, boleto_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_, before: before})
+    Rest.get_list!(user, resource(), limit, %{boleto_ids: boleto_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
   end
 
   @doc false

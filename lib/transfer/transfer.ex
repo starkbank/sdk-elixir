@@ -149,7 +149,7 @@ defmodule StarkBank.Transfer do
   def query(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_, before: before, sort: sort})
+    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date, sort: sort})
   end
 
   @doc """
@@ -160,7 +160,7 @@ defmodule StarkBank.Transfer do
   def query!(%Project{} = user, options \\ []) do
     %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
       Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_, before: before, sort: sort})
+    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date, sort: sort})
   end
 
   @doc false
