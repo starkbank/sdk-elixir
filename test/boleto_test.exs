@@ -19,7 +19,7 @@ defmodule StarkBankTest.Boleto do
   @tag :boleto
   test "query boleto" do
     user = StarkBankTest.Credentials.project()
-    StarkBank.Boleto.query(user, limit: 101, before: Date.utc_now())
+    StarkBank.Boleto.query(user, limit: 101, before: DateTime.utc_now())
      |> Enum.take(200)
      |> (fn list -> assert length(list) <= 101 end).()
   end
