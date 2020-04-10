@@ -144,7 +144,7 @@ defmodule StarkBank.Boleto do
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - after_ [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
 
   ## Return:
@@ -153,9 +153,7 @@ defmodule StarkBank.Boleto do
   @spec query(Project.t(), any) ::
         ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -164,9 +162,7 @@ defmodule StarkBank.Boleto do
   @spec query!(Project.t(), any) ::
           ({:cont, [Boleto.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """

@@ -137,7 +137,7 @@ defmodule StarkBank.Transfer do
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - transaction_ids [list of strings, default nil]: list of Transaction ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - after_ [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
     - sort [string, default "-created"]: sort order considered in response. Valid options are 'created', '-created', 'updated' or '-updated'.
 
@@ -147,9 +147,7 @@ defmodule StarkBank.Transfer do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date, sort: sort})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -158,9 +156,7 @@ defmodule StarkBank.Transfer do
   @spec query!(Project.t(), any) ::
           ({:cont, [Transfer.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, transaction_ids: transaction_ids, after_: after_, before: before, sort: sort} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, transaction_ids: nil, after_: nil, before: nil, sort: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, transaction_ids: transaction_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date, sort: sort})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc false

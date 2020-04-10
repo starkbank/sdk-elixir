@@ -74,9 +74,7 @@ defmodule StarkBank.BoletoPayment.Log do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Log.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, payment_ids: payment_ids, types: types} =
-      Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
-    Rest.get_list(user, resource(), limit, %{payment_ids: payment_ids, types: types})
+    Rest.get_list(user, resource(), options |> Checks.check_options)
   end
 
   @doc """
@@ -85,9 +83,7 @@ defmodule StarkBank.BoletoPayment.Log do
   @spec query!(Project.t(), any) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, payment_ids: payment_ids, types: types} =
-      Enum.into(options, %{limit: nil, payment_ids: nil, types: nil})
-    Rest.get_list!(user, resource(), limit, %{payment_ids: payment_ids, types: types})
+    Rest.get_list!(user, resource(), options |> Checks.check_options)
   end
 
   @doc false

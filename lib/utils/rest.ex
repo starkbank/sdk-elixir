@@ -6,7 +6,8 @@ defmodule StarkBank.Utils.Rest do
   alias StarkBank.Utils.API, as: API
   alias StarkBank.Utils.JSON, as: JSON
 
-  def get_list(user, {resource_name, resource_maker}, limit \\ nil, query \\ %{}) do
+  def get_list(user, {resource_name, resource_maker}, query \\ %{}) do
+    limit = query[:limit]
     getter = make_getter(user, resource_name)
 
     Stream.resource(
@@ -25,7 +26,8 @@ defmodule StarkBank.Utils.Rest do
     )
   end
 
-  def get_list!(user, {resource_name, resource_maker}, limit \\ nil, query \\ %{}) do
+  def get_list!(user, {resource_name, resource_maker}, query \\ %{}) do
+    limit = query[:limit]
     getter = make_getter(user, resource_name)
 
     Stream.resource(

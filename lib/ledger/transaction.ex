@@ -109,7 +109,7 @@ defmodule StarkBank.Transaction do
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - external_ids [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
-    - after_ [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
+    - after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for entities created only before specified date. ex: Date(2020, 3, 10)
 
   ## Return:
@@ -118,9 +118,7 @@ defmodule StarkBank.Transaction do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Transaction.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{external_ids: external_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -129,9 +127,7 @@ defmodule StarkBank.Transaction do
   @spec query!(Project.t(), any) ::
           ({:cont, [Transaction.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, external_ids: external_ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, external_ids: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{external_ids: external_ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc false

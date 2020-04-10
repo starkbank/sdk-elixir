@@ -72,7 +72,7 @@ defmodule StarkBank.Event do
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - is_delivered [bool, default nil]: filter successfully delivered events. ex: true or false
-    - after_ [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
 
   ## Return:
@@ -81,9 +81,7 @@ defmodule StarkBank.Event do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Event.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{is_delivered: is_delivered, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -92,9 +90,7 @@ defmodule StarkBank.Event do
   @spec query!(Project.t(), any) ::
           ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, is_delivered: is_delivered, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, is_delivered: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{is_delivered: is_delivered, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """

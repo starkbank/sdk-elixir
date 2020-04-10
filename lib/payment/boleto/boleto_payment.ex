@@ -136,6 +136,8 @@ defmodule StarkBank.BoletoPayment do
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
 
   ## Return:
     - stream of BoletoPayment structs with updated attributes
@@ -143,9 +145,7 @@ defmodule StarkBank.BoletoPayment do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -154,9 +154,7 @@ defmodule StarkBank.BoletoPayment do
   @spec query!(Project.t(), any) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, status: status, tags: tags, ids: ids, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, status: nil, tags: nil, ids: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{status: status, tags: tags, ids: ids, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """

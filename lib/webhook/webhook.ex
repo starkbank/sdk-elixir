@@ -4,6 +4,7 @@ defmodule StarkBank.Webhook do
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.User.Project, as: Project
   alias StarkBank.Error, as: Error
+  alias StarkBank.Utils.Checks, as: Checks
 
   @moduledoc """
   Groups Webhook related functions
@@ -105,9 +106,7 @@ defmodule StarkBank.Webhook do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Webhook.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit} =
-      Enum.into(options, %{limit: nil})
-    Rest.get_list(user, resource(), limit)
+    Rest.get_list(user, resource(), options |> Checks.check_options)
   end
 
   @doc """
@@ -116,9 +115,7 @@ defmodule StarkBank.Webhook do
   @spec query!(Project.t(), any) ::
           ({:cont, [Webhook.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit} =
-      Enum.into(options, %{limit: nil})
-    Rest.get_list!(user, resource(), limit)
+    Rest.get_list!(user, resource(), options |> Checks.check_options)
   end
 
   @doc """

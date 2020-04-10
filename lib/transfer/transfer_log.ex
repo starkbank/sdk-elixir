@@ -66,7 +66,7 @@ defmodule StarkBank.Transfer.Log do
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - transfer_ids [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - types [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
-    - after_ [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
 
   ## Return:
@@ -75,9 +75,7 @@ defmodule StarkBank.Transfer.Log do
   @spec query(Project.t(), any) ::
           ({:cont, {:ok, [Log.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query(%Project{} = user, options \\ []) do
-    %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -86,9 +84,7 @@ defmodule StarkBank.Transfer.Log do
   @spec query!(Project.t(), any) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(%Project{} = user, options \\ []) do
-    %{limit: limit, transfer_ids: transfer_ids, types: types, after_: after_, before: before} =
-      Enum.into(options, %{limit: nil, transfer_ids: nil, types: nil, after_: nil, before: nil})
-    Rest.get_list!(user, resource(), limit, %{transfer_ids: transfer_ids, types: types, after: after_ |> Checks.check_date, before: before |> Checks.check_date})
+    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
   end
 
   @doc false

@@ -54,4 +54,33 @@ defmodule StarkBank.Utils.Checks do
       parsed_key -> parsed_key
     end
   end
+
+  def check_options(options, after_before) when after_before do
+    options
+     |> Enum.into(%{})
+     |> fill_limit
+     |> fill_date_field(:after)
+     |> fill_date_field(:before)
+  end
+
+  def check_options(options) do
+    options
+     |> Enum.into(%{})
+     |> fill_limit
+  end
+
+  defp fill_limit(options) do
+    if !Map.has_key?(options, :limit) do
+      Map.put(options, :limit, nil)
+    end
+    options
+  end
+
+  defp fill_date_field(options, field) do
+    if !Map.has_key?(options, field) do
+      Map.put(options, field, nil)
+    else
+      Map.update!(options, field, &check_date/1)
+    end
+  end
 end
