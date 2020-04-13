@@ -80,6 +80,9 @@ defmodule StarkBank.UtilityPayment do
   ## Parameters (required):
     - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Return:
+    - UtilityPayment struct with updated attributes
   """
   @spec get(Project.t(), binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def get(%Project{} = user, id) do
