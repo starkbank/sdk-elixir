@@ -1,4 +1,4 @@
-# Stark Bank Elixir SDK
+# Stark Bank Elixir SDK Beta
 
 Welcome to the Stark Bank Elixir SDK! This tool is made for Elixir 
 developers who want to easily integrate with our API.
