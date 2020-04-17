@@ -3,9 +3,9 @@ defmodule StarkBank.MixProject do
 
   def project do
     [
-      app: :stark_bank,
-      name: :stark_bank,
-      version: "1.1.2",
+      app: :starkbank,
+      name: :starkbank,
+      version: "0.1.0",
       homepage_url: "https://starkbank.com",
       source_url: "https://github.com/starkbank/sdk-elixir",
       description: description(),
@@ -37,6 +37,7 @@ defmodule StarkBank.MixProject do
 
   defp deps do
     [
+      {:starkbank_ecdsa, "~> 1.0.0"},
       {:jason, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
