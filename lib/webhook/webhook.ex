@@ -40,7 +40,14 @@ defmodule StarkBank.Webhook do
   """
   @spec create([user: Project.t(), url: binary, subscriptions: [binary]]) ::
           {:ok, Webhook.t()} | {:error, [Error.t()]}
-  def create(url, subscriptions, options \\ []) do
+  def create(options \\ []) do
+    options = Enum.into(options, %{})
+
+    %{
+      url: url,
+      subscriptions: subscriptions
+    } = options
+
     webhook = %Webhook{url: url, subscriptions: subscriptions}
 
     Rest.post_single(
@@ -53,8 +60,15 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), binary, [binary]) :: any
-  def create!(url, subscriptions, options \\ []) do
+  @spec create!([user: Project.t(), url: binary, subscriptions: [binary]]) :: any
+  def create!(options \\ []) do
+    options = Enum.into(options, %{})
+
+    %{
+      url: url,
+      subscriptions: subscriptions
+    } = options
+
     webhook = %Webhook{url: url, subscriptions: subscriptions}
 
     Rest.post_single!(

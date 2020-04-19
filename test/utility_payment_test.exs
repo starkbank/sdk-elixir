@@ -66,7 +66,7 @@ defmodule StarkBankTest.UtilityPayment do
       |> hd()
 
     pdf = StarkBank.UtilityPayment.pdf!(payment.id)
-    file = File.open!("utility-payment.pdf", [:write])
+    file = File.open!("tmp/utility-payment.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)
   end

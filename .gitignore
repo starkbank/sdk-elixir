@@ -29,3 +29,5 @@ starkbank-*.tar
 
 # Debug configuration directory.
 /.vscode/
+
+tmp/

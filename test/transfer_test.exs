@@ -66,7 +66,7 @@ defmodule StarkBankTest.Transfer do
       |> hd()
 
     pdf = StarkBank.Transfer.pdf!(transfer.id)
-    file = File.open!("transfer.pdf", [:write])
+    file = File.open!("tmp/transfer.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)
   end
