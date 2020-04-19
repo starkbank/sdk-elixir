@@ -39,8 +39,10 @@ defmodule StarkBank.Event do
   Receive a single notification Event struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Event struct with updated attributes
@@ -61,14 +63,12 @@ defmodule StarkBank.Event do
   @doc """
   Receive a stream of notification Event structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
     - is_delivered [bool, default nil]: filter successfully delivered events. ex: true or false
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Event structs with updated attributes
@@ -97,8 +97,10 @@ defmodule StarkBank.Event do
   Delete a list of notification Event entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Event unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - deleted Event struct with updated attributes
@@ -121,10 +123,11 @@ defmodule StarkBank.Event do
     If is_delivered is true, the event will no longer be returned on queries with is_delivered=false.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [list of strings]: Event unique ids. ex: "5656565656565656"
-  ## Parameters (optional):
+
+  ## Keyword Args:
     - is_delivered [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - target Event with updated attributes
@@ -147,11 +150,11 @@ defmodule StarkBank.Event do
   If the provided digital signature does not check out with the StarkBank public key, an "invalidSignature"
   error will be returned.
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
     - content [string]: response content from request received at user endpoint (not parsed)
     - signature [string]: base-64 digital signature received at response header "Digital-Signature"
-    - cache_pid [PID, default nil]: PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.
+    - cache_pid [PID, default nil] (optional): PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.
 
   ## Return:
     - Event struct with updated attributes

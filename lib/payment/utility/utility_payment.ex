@@ -52,8 +52,10 @@ defmodule StarkBank.UtilityPayment do
   Send a list of UtilityPayment structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - payments [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of UtilityPayment structs with updated attributes
@@ -84,8 +86,10 @@ defmodule StarkBank.UtilityPayment do
   Receive a single UtilityPayment struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - UtilityPayment struct with updated attributes
@@ -108,8 +112,10 @@ defmodule StarkBank.UtilityPayment do
   Only valid for utility payments with "success" status.
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - UtilityPayment pdf file content
@@ -130,16 +136,14 @@ defmodule StarkBank.UtilityPayment do
   @doc """
   Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of UtilityPayment structs with updated attributes
@@ -168,8 +172,10 @@ defmodule StarkBank.UtilityPayment do
   Delete a UtilityPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: UtilityPayment unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - deleted UtilityPayment with updated attributes

@@ -29,15 +29,16 @@ defmodule StarkBank.Webhook do
   @doc """
   Send a single Webhook subscription for creation in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
+
+  ## Keyword Args:
     - url [string]: url to which notification events will be sent to. ex: "https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29"
     - subscriptions [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "boleto-payment"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Webhook struct with updated attributes
   """
-  @spec create(Project.t(), binary, [binary]) ::
+  @spec create([user: Project.t(), url: binary, subscriptions: [binary]]) ::
           {:ok, Webhook.t()} | {:error, [Error.t()]}
   def create(url, subscriptions, options \\ []) do
     webhook = %Webhook{url: url, subscriptions: subscriptions}
@@ -67,8 +68,10 @@ defmodule StarkBank.Webhook do
   Receive a single Webhook subscription struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Webhook struct with updated attributes
@@ -89,11 +92,9 @@ defmodule StarkBank.Webhook do
   @doc """
   Receive a stream of Webhook subcription structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Webhook structs with updated attributes
@@ -122,8 +123,10 @@ defmodule StarkBank.Webhook do
   Delete a Webhook subscription entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Webhook unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - deleted Webhook with updated attributes

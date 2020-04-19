@@ -28,8 +28,8 @@ defmodule StarkBank.Balance do
   @doc """
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Balance struct with updated attributes

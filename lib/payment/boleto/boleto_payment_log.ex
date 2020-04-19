@@ -33,8 +33,10 @@ defmodule StarkBank.BoletoPayment.Log do
   Receive a single Log struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Log struct with updated attributes
@@ -55,15 +57,13 @@ defmodule StarkBank.BoletoPayment.Log do
   @doc """
   Receive a stream of Log structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
   ## Parameters (optional):
     - limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for entities only before specified date. ex: Date(2020, 3, 10)
     - types [list of strings, default nil]: filter retrieved entities by event types. ex: "paid" or "registered"
     - payment_ids [list of strings, default nil]: list of BoletoPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Log structs with updated attributes

@@ -54,8 +54,10 @@ defmodule StarkBank.BoletoPayment do
   Send a list of BoletoPayment structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - payments [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of BoletoPayment structs with updated attributes
@@ -86,8 +88,10 @@ defmodule StarkBank.BoletoPayment do
   Receive a single BoletoPayment struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - BoletoPayment struct with updated attributes
@@ -110,8 +114,10 @@ defmodule StarkBank.BoletoPayment do
   Only valid for boleto payments with "success" status.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - BoletoPayment pdf file content
@@ -132,16 +138,14 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Receive a stream of BoletoPayment structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - ids [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of BoletoPayment structs with updated attributes
@@ -170,8 +174,10 @@ defmodule StarkBank.BoletoPayment do
   Delete a BoletoPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: BoletoPayment unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - deleted BoletoPayment struct with updated attributes

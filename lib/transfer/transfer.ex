@@ -56,8 +56,10 @@ defmodule StarkBank.Transfer do
   Send a list of Transfer structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - transfers [list of Transfer structs]: list of Transfer structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of Transfer structs with updated attributes
@@ -88,8 +90,10 @@ defmodule StarkBank.Transfer do
   Receive a single Transfer struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Transfer struct with updated attributes
@@ -112,8 +116,10 @@ defmodule StarkBank.Transfer do
   Only valid for transfers with "processing" or "success" status.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Transfer pdf file content
@@ -134,10 +140,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
@@ -145,6 +148,7 @@ defmodule StarkBank.Transfer do
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - sort [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Transfer structs with updated attributes
