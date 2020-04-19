@@ -1,5 +1,4 @@
 defmodule StarkBank.Key do
-
   @moduledoc """
   Used to generate API-compatible key pairs
   """
@@ -32,7 +31,7 @@ defmodule StarkBank.Key do
 
   defp save_file(pem, path, suffix) do
     File.mkdir_p!(path)
-    file = File.open!(Path.join(path,  suffix), [:write])
+    file = File.open!(Path.join(path, suffix), [:write])
     IO.binwrite(file, pem)
     File.close(file)
   end

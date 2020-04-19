@@ -1,5 +1,4 @@
 defmodule StarkBank.Boleto.Log do
-
   alias __MODULE__, as: Log
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -41,16 +40,16 @@ defmodule StarkBank.Boleto.Log do
     - Log struct with updated attributes
   """
   @spec get(Project.t(), binary) :: {:ok, Log.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project.t(), binary) :: Log.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -69,19 +68,24 @@ defmodule StarkBank.Boleto.Log do
   ## Return:
     - stream of Log structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Log.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Log.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc false
@@ -97,7 +101,7 @@ defmodule StarkBank.Boleto.Log do
     %Log{
       id: json[:id],
       boleto: json[:boleto] |> API.from_api_json(&Boleto.resource_maker/1),
-      created: json[:created] |> Checks.check_datetime,
+      created: json[:created] |> Checks.check_datetime(),
       type: json[:type],
       errors: json[:errors]
     }

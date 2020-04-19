@@ -1,5 +1,4 @@
 defmodule StarkBank.Event do
-
   alias __MODULE__, as: Event
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -47,16 +46,16 @@ defmodule StarkBank.Event do
     - Event struct with updated attributes
   """
   @spec get(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project.t(), binary) :: Event.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -74,19 +73,24 @@ defmodule StarkBank.Event do
   ## Return:
     - stream of Event structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Event.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Event.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -100,16 +104,16 @@ defmodule StarkBank.Event do
     - deleted Event struct with updated attributes
   """
   @spec delete(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
-  def delete(%Project{} = user, id) do
-    Rest.delete_id(user, resource(), id)
+  def delete(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
   end
 
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec delete!(Project.t(), binary) :: Event.t()
-  def delete!(%Project{} = user, id) do
-    Rest.delete_id!(user, resource(), id)
+  def delete!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
   end
 
   @doc """
@@ -125,17 +129,17 @@ defmodule StarkBank.Event do
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(Project.t(), binary, boolean) :: {:ok, Event.t()} | {:error, [%Error{}]}
-  def update(%Project{} = user, id, options \\ []) do
-    Rest.patch_id(user, resource(), id, options |> Enum.into(%{}))
+  @spec update(binary, any) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  def update(id, options \\ []) do
+    Rest.patch_id(resource(), id, options |> Enum.into(%{}))
   end
 
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(Project.t(), binary, boolean) :: Event.t()
-  def update!(%Project{} = user, id, options \\ []) do
-    Rest.patch_id!(user, resource(), id, options |> Enum.into(%{}))
+  @spec update!(binary, any) :: Event.t()
+  def update!(id, options \\ []) do
+    Rest.patch_id!(resource(), id, options |> Enum.into(%{}))
   end
 
   @doc """
@@ -153,19 +157,30 @@ defmodule StarkBank.Event do
     - Event struct with updated attributes
     - Cache PID that holds the Stark Bank public key in order to avoid unnecessary requests to the API on future parses
   """
-  @spec parse(Project.t(), binary, binary, PID.t() | nil) ::
+  @spec parse(any) ::
           {:ok, {Event.t(), binary}} | {:error, [Error.t()]}
-  def parse(%Project{} = user, content, signature, cache_pid \\ nil) do
+  def parse(options) do
+    options =
+      Keyword.merge(options, user: StarkBank.Utils.Request.default_project(), cache_pid: nil)
+      |> Enum.into(%{})
+
+    %{
+      content: content,
+      signature: signature,
+      cache_pid: cache_pid,
+      user: user
+    } = options
+
     parse(user, content, signature, cache_pid, 0)
   end
 
   @doc """
   Same as parse(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec parse!(Project.t(), binary, binary, PID.t() | nil) ::
+  @spec parse!(any) ::
           {Event.t(), any}
-  def parse!(%Project{} = user, content, signature, cache_pid \\ nil) do
-    case parse(user, content, signature, cache_pid, 0) do
+  def parse!(options) do
+    case parse(options) do
       {:ok, {event, cache_pid_}} -> {event, cache_pid_}
       {:error, errors} -> raise API.errors_to_string(errors)
     end
@@ -178,9 +193,14 @@ defmodule StarkBank.Event do
 
   defp parse(user, content, signature, cache_pid, counter) do
     case verify_signature(user, content, signature, cache_pid, counter) do
-      {:ok, true} -> {:ok, {content |> parse_content, cache_pid}}
-      {:ok, false} -> parse(user, content, signature, cache_pid |> update_public_key(nil), counter + 1)
-      {:error, errors} -> {:error, errors}
+      {:ok, true} ->
+        {:ok, {content |> parse_content, cache_pid}}
+
+      {:ok, false} ->
+        parse(user, content, signature, cache_pid |> update_public_key(nil), counter + 1)
+
+      {:error, errors} ->
+        {:error, errors}
     end
   end
 
@@ -191,7 +211,8 @@ defmodule StarkBank.Event do
     )
   end
 
-  defp verify_signature(_user, _content, _signature_base_64, _cache_pid, counter) when counter > 1 do
+  defp verify_signature(_user, _content, _signature_base_64, _cache_pid, counter)
+       when counter > 1 do
     {
       :error,
       [
@@ -203,32 +224,44 @@ defmodule StarkBank.Event do
     }
   end
 
-  defp verify_signature(user, content, signature_base_64, cache_pid, counter) when is_binary(signature_base_64) and counter <= 1 do
-    verify_signature(user, content, signature_base_64 |> Signature.fromBase64!, cache_pid, counter)
+  defp verify_signature(user, content, signature_base_64, cache_pid, counter)
+       when is_binary(signature_base_64) and counter <= 1 do
+    verify_signature(
+      user,
+      content,
+      signature_base_64 |> Signature.fromBase64!(),
+      cache_pid,
+      counter
+    )
   rescue
-    _error -> {
-      :error,
-      [
-        %Error{
-          code: "invalidSignature",
-          message: "The provided signature is not valid"
-        }
-      ]
-    }
+    _error ->
+      {
+        :error,
+        [
+          %Error{
+            code: "invalidSignature",
+            message: "The provided signature is not valid"
+          }
+        ]
+      }
   end
 
   defp verify_signature(user, content, signature, cache_pid, _counter) do
     case get_starkbank_public_key(user, cache_pid) do
-      {:ok, public_key} -> {
-        :ok,
-        (fn p -> Ecdsa.verify?(
-          content,
-          signature,
-          p |> PublicKey.fromPem!
-          ) end
-        ).(public_key)
+      {:ok, public_key} ->
+        {
+          :ok,
+          (fn p ->
+             Ecdsa.verify?(
+               content,
+               signature,
+               p |> PublicKey.fromPem!()
+             )
+           end).(public_key)
         }
-      {:error, errors} -> {:error, errors}
+
+      {:error, errors} ->
+        {:error, errors}
     end
   end
 
@@ -248,9 +281,10 @@ defmodule StarkBank.Event do
   end
 
   defp extract_public_key(response, cache_pid) do
-    public_key = JSON.decode!(response)["publicKeys"]
-     |> hd
-     |> (fn x -> x["content"] end).()
+    public_key =
+      JSON.decode!(response)["publicKeys"]
+      |> hd
+      |> (fn x -> x["content"] end).()
 
     update_public_key(cache_pid, public_key)
 
@@ -277,7 +311,7 @@ defmodule StarkBank.Event do
     %Event{
       id: json[:id],
       log: json[:log] |> API.from_api_json(log_maker_by_subscription(json[:subscription])),
-      created: json[:created] |> Checks.check_datetime,
+      created: json[:created] |> Checks.check_datetime(),
       is_delivered: json[:is_delivered],
       subscription: json[:subscription]
     }

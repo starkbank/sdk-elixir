@@ -1,5 +1,4 @@
 defmodule StarkBank.BoletoPayment do
-
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
   alias StarkBank.BoletoPayment, as: BoletoPayment
@@ -35,7 +34,19 @@ defmodule StarkBank.BoletoPayment do
     - created [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:tax_id, :description]
-  defstruct [:line, :bar_code, :tax_id, :description, :scheduled, :tags, :id, :status, :amount, :fee, :created]
+  defstruct [
+    :line,
+    :bar_code,
+    :tax_id,
+    :description,
+    :scheduled,
+    :tags,
+    :id,
+    :status,
+    :amount,
+    :fee,
+    :created
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -50,12 +61,12 @@ defmodule StarkBank.BoletoPayment do
     - list of BoletoPayment structs with updated attributes
   """
   @spec create(Project.t(), [BoletoPayment.t()]) ::
-    {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
-  def create(%Project{} = user, payments) do
+          {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
+  def create(payments, options \\ []) do
     Rest.post(
-      user,
       resource(),
-      payments
+      payments,
+      options
     )
   end
 
@@ -63,11 +74,11 @@ defmodule StarkBank.BoletoPayment do
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!(Project.t(), [BoletoPayment.t()]) :: any
-  def create!(%Project{} = user, payments) do
+  def create!(payments, options \\ []) do
     Rest.post!(
-      user,
       resource(),
-      payments
+      payments,
+      options
     )
   end
 
@@ -82,16 +93,16 @@ defmodule StarkBank.BoletoPayment do
     - BoletoPayment struct with updated attributes
   """
   @spec get(Project.t(), binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project.t(), binary) :: BoletoPayment.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -106,16 +117,16 @@ defmodule StarkBank.BoletoPayment do
     - BoletoPayment pdf file content
   """
   @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(%Project{} = user, id) do
-    Rest.get_pdf(user, resource(), id)
+  def pdf(id, options \\ []) do
+    Rest.get_pdf(resource(), id, options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec pdf!(Project.t(), binary) :: binary
-  def pdf!(%Project{} = user, id) do
-    Rest.get_pdf!(user, resource(), id)
+  def pdf!(id, options \\ []) do
+    Rest.get_pdf!(resource(), id, options)
   end
 
   @doc """
@@ -135,19 +146,24 @@ defmodule StarkBank.BoletoPayment do
   ## Return:
     - stream of BoletoPayment structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [BoletoPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [BoletoPayment.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
@@ -161,16 +177,16 @@ defmodule StarkBank.BoletoPayment do
     - deleted BoletoPayment struct with updated attributes
   """
   @spec delete(Project.t(), binary) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
-  def delete(%Project{} = user, id) do
-    Rest.delete_id(user, resource(), id)
+  def delete(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
   end
 
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec delete!(Project.t(), binary) :: BoletoPayment.t()
-  def delete!(%Project{} = user, id) do
-    Rest.delete_id!(user, resource(), id)
+  def delete!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
   end
 
   @doc false
@@ -188,13 +204,13 @@ defmodule StarkBank.BoletoPayment do
       bar_code: json[:bar_code],
       tax_id: json[:tax_id],
       description: json[:description],
-      scheduled: json[:scheduled] |> Checks.check_datetime,
+      scheduled: json[:scheduled] |> Checks.check_datetime(),
       tags: json[:tags],
       id: json[:id],
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
-      created: json[:created] |> Checks.check_datetime
+      created: json[:created] |> Checks.check_datetime()
     }
   end
 end

@@ -1,5 +1,4 @@
 defmodule StarkBank.Balance do
-
   alias __MODULE__, as: Balance
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -36,8 +35,8 @@ defmodule StarkBank.Balance do
     - Balance struct with updated attributes
   """
   @spec get(Project.t()) :: {:ok, Balance.t()} | {:error, [Error]}
-  def get(%Project{} = user) do
-    case Rest.get_list(user, resource()) |> Enum.take(1) do
+  def get(options \\ []) do
+    case Rest.get_list(resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
       [{:error, error}] -> {:error, error}
     end
@@ -47,8 +46,8 @@ defmodule StarkBank.Balance do
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project.t()) :: Balance.t()
-  def get!(%Project{} = user) do
-    {:ok, balance} = get(user)
+  def get!(options \\ []) do
+    {:ok, balance} = get(options)
     balance
   end
 
@@ -66,7 +65,7 @@ defmodule StarkBank.Balance do
       id: json[:id],
       amount: json[:amount],
       currency: json[:currency],
-      updated: json[:updated] |> Checks.check_datetime
+      updated: json[:updated] |> Checks.check_datetime()
     }
   end
 end

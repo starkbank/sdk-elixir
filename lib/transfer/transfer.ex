@@ -1,5 +1,4 @@
 defmodule StarkBank.Transfer do
-
   alias __MODULE__, as: Transfer
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -35,7 +34,21 @@ defmodule StarkBank.Transfer do
     - updated [DateTime, default nil]: latest update datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number]
-  defstruct [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number, :transaction_ids, :fee, :tags, :status, :id, :created, :updated]
+  defstruct [
+    :amount,
+    :name,
+    :tax_id,
+    :bank_code,
+    :branch_code,
+    :account_number,
+    :transaction_ids,
+    :fee,
+    :tags,
+    :status,
+    :id,
+    :created,
+    :updated
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -50,12 +63,12 @@ defmodule StarkBank.Transfer do
     - list of Transfer structs with updated attributes
   """
   @spec create(Project.t(), [Transfer.t()]) ::
-    {:ok, [Transfer.t()]} | {:error, [Error.t()]}
-  def create(%Project{} = user, transfers) do
+          {:ok, [Transfer.t()]} | {:error, [Error.t()]}
+  def create(transfers, options \\ []) do
     Rest.post(
-      user,
       resource(),
-      transfers
+      transfers,
+      options
     )
   end
 
@@ -63,11 +76,11 @@ defmodule StarkBank.Transfer do
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!(Project.t(), [Transfer.t()]) :: any
-  def create!(%Project{} = user, transfers) do
+  def create!(transfers, options \\ []) do
     Rest.post!(
-      user,
       resource(),
-      transfers
+      transfers,
+      options
     )
   end
 
@@ -82,16 +95,16 @@ defmodule StarkBank.Transfer do
     - Transfer struct with updated attributes
   """
   @spec get(Project.t(), binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(Project.t(), binary) :: Transfer.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -106,16 +119,16 @@ defmodule StarkBank.Transfer do
     - Transfer pdf file content
   """
   @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(%Project{} = user, id) do
-    Rest.get_pdf(user, resource(), id)
+  def pdf(id, options \\ []) do
+    Rest.get_pdf(resource(), id, options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec pdf!(Project.t(), binary) :: binary
-  def pdf!(%Project{} = user, id) do
-    Rest.get_pdf!(user, resource(), id)
+  def pdf!(id, options \\ []) do
+    Rest.get_pdf!(resource(), id, options)
   end
 
   @doc """
@@ -136,19 +149,24 @@ defmodule StarkBank.Transfer do
   ## Return:
     - stream of Transfer structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Transfer.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Transfer.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc false
@@ -173,8 +191,8 @@ defmodule StarkBank.Transfer do
       tags: json[:tags],
       status: json[:status],
       id: json[:id],
-      created: json[:created] |> Checks.check_datetime,
-      updated: json[:updated] |> Checks.check_datetime
+      created: json[:created] |> Checks.check_datetime(),
+      updated: json[:updated] |> Checks.check_datetime()
     }
   end
 end

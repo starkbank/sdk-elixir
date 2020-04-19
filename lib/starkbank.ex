@@ -1,5 +1,4 @@
 defmodule StarkBank do
-
   @moduledoc """
   SDK to facilitate Elixir integrations with the Stark Bank API v2.
   """
@@ -23,7 +22,8 @@ defmodule StarkBank do
     - name [string, default ""]: project name. ex: "MyProject"
     - allowed_ips [list of strings]: list containing the strings of the ips allowed to make requests on behalf of this project. ex: ["190.190.0.50"]
   """
-  @spec project(:production | :sandbox, binary, binary, binary, [binary] | nil) :: StarkBank.User.Project.t()
+  @spec project(:production | :sandbox, binary, binary, binary, [binary] | nil) ::
+          StarkBank.User.Project.t()
   def project(environment, id, private_key, name \\ "", allowed_ips \\ nil) do
     Project.validate(environment, id, private_key, name, allowed_ips)
   end
