@@ -6,8 +6,7 @@ defmodule StarkBank.Utils.Request do
   alias StarkBank.Error, as: Error
 
   def default_project() do
-    user = Application.fetch_env!(:starkbank, :user)
-    StarkBank.project(user[:environment], user[:id], user[:private_key])
+    Application.fetch_env!(:starkbank, :project) |> StarkBank.project()
   end
 
   def fetch(user, method, path, options \\ []) do

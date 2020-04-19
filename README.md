@@ -119,15 +119,15 @@ To inform the user to the SDK, as a keyword argument `user`
 balance = StarkBank.Balance.get!(user: user)
 ```
 
-Or to set it as the project default, set the `config/config.exs` file:
+Or to configure a project as the default user in the `config/config.exs` file:
 
 ```elixir
 config :starkbank,
-  user: %{
+  project: [
     environment: :sandbox,
     id: "9999999999999999",
     private_key: private_key_content
-  }
+  ]
 ```
 
 ## Testing in Sandbox
@@ -574,8 +574,8 @@ To create a webhook subscription and be notified whenever an event occurs, run:
 
 ```elixir
 webhook = StarkBank.Webhook.create!(
-  "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
-  ["transfer", "boleto", "boleto-payment", "utility-payment"]
+  url: "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
+  subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
 ) |> IO.inspect
 ```
 
