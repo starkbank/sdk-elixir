@@ -1,13 +1,13 @@
 defmodule StarkBank.User do
   @moduledoc false
 
-  alias StarkBank.Utils.Checks, as: Checks
+  alias StarkBank.Utils.Check
 
   def validate(kind, id, private_key, environment) do
     {
-      Checks.check_environment(environment),
+      Check.environment(environment),
       "#{kind}/#{id}",
-      Checks.check_private_key(private_key)
+      Check.private_key(private_key)
     }
   end
 end

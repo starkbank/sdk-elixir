@@ -1,9 +1,9 @@
 defmodule StarkBank.Balance do
   alias __MODULE__, as: Balance
-  alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.User.Project, as: Project
-  alias StarkBank.Error, as: Error
+  alias StarkBank.Utils.Rest
+  alias StarkBank.Utils.Check
+  alias StarkBank.User.Project
+  alias StarkBank.Error
 
   @moduledoc """
   Groups Balance related functions
@@ -16,10 +16,10 @@ defmodule StarkBank.Balance do
   can be retrieved to see the information available.
 
   ## Attributes (return-only):
-    - id [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
-    - amount [integer, default nil]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
-    - currency [string, default nil]: currency of the current workspace. Expect others to be added eventually. ex: "BRL"
-    - updated [DateTime, default nil]: update datetime for the balance. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
+    - `:amount` [integer, default nil]: current balance amount of the workspace in cents. ex: 200 (= R$ 2.00)
+    - `:currency` [string, default nil]: currency of the current workspace. Expect others to be added eventually. ex: "BRL"
+    - `:updated` [DateTime, default nil]: update datetime for the balance. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   defstruct [:id, :amount, :currency, :updated]
 
@@ -28,13 +28,13 @@ defmodule StarkBank.Balance do
   @doc """
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
-  ## Keyword Args:
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Balance struct with updated attributes
   """
-  @spec get(user: Project.t()) :: {:ok, Balance.t()} | {:error, [Error]}
+  @spec get(user: Project.t() | nil) :: {:ok, Balance.t()} | {:error, [Error]}
   def get(options \\ []) do
     case Rest.get_list(resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
@@ -45,10 +45,9 @@ defmodule StarkBank.Balance do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(user: Project.t()) :: Balance.t()
+  @spec get!(user: Project.t() | nil) :: Balance.t()
   def get!(options \\ []) do
-    {:ok, balance} = get(options)
-    balance
+    Rest.get_list!(resource(), options) |> Enum.take(1) |> hd()
   end
 
   @doc false
@@ -65,7 +64,7 @@ defmodule StarkBank.Balance do
       id: json[:id],
       amount: json[:amount],
       currency: json[:currency],
-      updated: json[:updated] |> Checks.check_datetime()
+      updated: json[:updated] |> Check.datetime()
     }
   end
 end

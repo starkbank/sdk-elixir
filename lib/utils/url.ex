@@ -39,7 +39,7 @@ defmodule StarkBank.Utils.URL do
 
   defp query_key(key) do
     key
-    |> to_string
+    |> to_string()
   end
 
   defp query_argument(value) when is_list(value) or is_tuple(value) do

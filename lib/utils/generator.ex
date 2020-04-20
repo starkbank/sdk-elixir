@@ -1,8 +1,8 @@
 defmodule StarkBank.Utils.QueryGenerator do
   @moduledoc false
 
-  alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.Utils.JSON, as: JSON
+  alias StarkBank.Utils.Check
+  alias StarkBank.Utils.JSON
 
   def start_query(function, key, query) do
     Task.start_link(fn -> yield([], function, key, query, true) end)
@@ -31,7 +31,7 @@ defmodule StarkBank.Utils.QueryGenerator do
     cursor = query[:cursor]
 
     if (first or !is_nil(cursor)) and (is_nil(limit) or limit > 0) do
-      case function.(query |> Map.put(:limit, limit |> Checks.check_limit())) do
+      case function.(query |> Map.put(:limit, limit |> Check.limit())) do
         {:ok, result} ->
           decoded = JSON.decode!(result)
 

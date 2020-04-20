@@ -1,12 +1,12 @@
 defmodule StarkBank.Utils.API do
   @moduledoc false
 
-  alias StarkBank.Utils.Case, as: Case
+  alias StarkBank.Utils.Case
 
   def api_json(struct) do
     struct
     |> Map.from_struct()
-    |> cast_json_to_api_format
+    |> cast_json_to_api_format()
   end
 
   def cast_json_to_api_format(json) do
@@ -46,7 +46,7 @@ defmodule StarkBank.Utils.API do
 
   def last_name_plural(resource_name) do
     resource_name
-    |> last_name
+    |> last_name()
     |> (fn x -> x <> "s" end).()
   end
 
@@ -61,7 +61,7 @@ defmodule StarkBank.Utils.API do
     errors
     |> Enum.map(&Map.from_struct/1)
     |> Enum.map(&map_to_string/1)
-    |> to_string
+    |> to_string()
   end
 
   defp map_to_string(map) do

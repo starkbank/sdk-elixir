@@ -1,16 +1,14 @@
 defmodule StarkBank.Utils.Rest do
   @moduledoc false
 
-  alias StarkBank.Utils.Request, as: Request
-  alias StarkBank.Utils.QueryGenerator, as: QueryGenerator
-  alias StarkBank.Utils.API, as: API
-  alias StarkBank.Utils.JSON, as: JSON
+  alias StarkBank.Utils.Request
+  alias StarkBank.Utils.Check
+  alias StarkBank.Utils.QueryGenerator
+  alias StarkBank.Utils.API
+  alias StarkBank.Utils.JSON
 
-  def get_list({resource_name, resource_maker}, query) do
-    query = Enum.into(query, %{})
-    user = query[:user]
-    limit = query[:limit]
-    getter = make_getter(user, resource_name)
+  def get_list({resource_name, resource_maker}, options) do
+    {getter, query} = get_list_parameters(options, resource_name)
 
     Stream.resource(
       fn ->
@@ -18,9 +16,8 @@ defmodule StarkBank.Utils.Rest do
           QueryGenerator.start_query(
             getter,
             API.last_name_plural(resource_name),
-            query |> Map.put(:limit, limit)
+            query
           )
-
         pid
       end,
       fn pid ->
@@ -34,10 +31,8 @@ defmodule StarkBank.Utils.Rest do
     )
   end
 
-  def get_list!({resource_name, resource_maker}, query \\ %{}) do
-    user = query[:user]
-    limit = query[:limit]
-    getter = make_getter(user, resource_name)
+  def get_list!({resource_name, resource_maker}, options) do
+    {getter, query} = get_list_parameters(options, resource_name)
 
     Stream.resource(
       fn ->
@@ -45,9 +40,8 @@ defmodule StarkBank.Utils.Rest do
           QueryGenerator.start_query(
             getter,
             API.last_name_plural(resource_name),
-            query |> Map.put(:limit, limit)
+            query
           )
-
         pid
       end,
       fn pid ->
@@ -61,13 +55,22 @@ defmodule StarkBank.Utils.Rest do
     )
   end
 
+  defp get_list_parameters(options, resource_name) do
+    query = Enum.into(options |> Check.options(), %{})
+
+    {
+      make_getter(query[:user],resource_name),
+      query |> Map.delete(:user) |> Map.put(:limit, query[:limit])
+    }
+  end
+
   defp make_getter(user, resource_name) do
     fn query ->
       Request.fetch(
-        user,
         :get,
         API.endpoint(resource_name),
-        query: query
+        query: query,
+        user: user
       )
     end
   end
@@ -75,7 +78,7 @@ defmodule StarkBank.Utils.Rest do
   def get_id({resource_name, resource_maker}, id, options) do
     user = options[:user]
 
-    case Request.fetch(user, :get, "#{API.endpoint(resource_name)}/#{id}") do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}", user: user) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end
@@ -91,7 +94,7 @@ defmodule StarkBank.Utils.Rest do
   def get_pdf({resource_name, _resource_maker}, id, options) do
     user = options[:user]
 
-    case Request.fetch(user, :get, "#{API.endpoint(resource_name)}/#{id}/pdf") do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", user: user) do
       {:ok, pdf} -> {:ok, pdf}
       {:error, errors} -> {:error, errors}
     end
@@ -100,7 +103,7 @@ defmodule StarkBank.Utils.Rest do
   def get_pdf!({resource_name, _resource_maker}, id, options) do
     user = options[:user]
 
-    case Request.fetch(user, :get, "#{API.endpoint(resource_name)}/#{id}/pdf") do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", user: user) do
       {:ok, pdf} -> pdf
       {:error, errors} -> raise API.errors_to_string(errors)
     end
@@ -109,9 +112,12 @@ defmodule StarkBank.Utils.Rest do
   def post({resource_name, resource_maker}, entities, options) do
     user = options[:user]
 
-    case Request.fetch(user, :post, "#{API.endpoint(resource_name)}",
-           payload: prepare_payload(resource_name, entities)
-         ) do
+    case Request.fetch(
+      :post,
+      "#{API.endpoint(resource_name)}",
+      payload: prepare_payload(resource_name, entities),
+      user: user
+    ) do
       {:ok, response} -> {:ok, process_response(resource_name, resource_maker, response)}
       {:error, errors} -> {:error, errors}
     end
@@ -127,9 +133,12 @@ defmodule StarkBank.Utils.Rest do
   def post_single({resource_name, resource_maker}, entity, options) do
     user = options[:user]
 
-    case Request.fetch(user, :post, "#{API.endpoint(resource_name)}",
-           payload: API.api_json(entity)
-         ) do
+    case Request.fetch(
+      :post,
+      "#{API.endpoint(resource_name)}",
+      payload: API.api_json(entity),
+      user: user
+    ) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end
@@ -145,7 +154,7 @@ defmodule StarkBank.Utils.Rest do
   def delete_id({resource_name, resource_maker}, id, options) do
     user = options[:user]
 
-    case Request.fetch(user, :delete, "#{API.endpoint(resource_name)}/#{id}") do
+    case Request.fetch(:delete, "#{API.endpoint(resource_name)}/#{id}", user: user) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end
@@ -159,11 +168,12 @@ defmodule StarkBank.Utils.Rest do
   end
 
   def patch_id({resource_name, resource_maker}, id, payload) do
-    user = payload[:user]
-
-    case Request.fetch(user, :patch, "#{API.endpoint(resource_name)}/#{id}",
-           payload: payload |> API.cast_json_to_api_format()
-         ) do
+    case Request.fetch(
+      :patch,
+      "#{API.endpoint(resource_name)}/#{id}",
+      payload: payload |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      user: payload[:user]
+    ) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end

@@ -113,13 +113,15 @@ There are two kinds of users that can access our API: **Project** and **Member**
 - `Member` is the one you use when you log into our webpage with your e-mail.
 - `Project` is designed for integrations and is the one meant for our SDK.
 
-To inform the user to the SDK, as a keyword argument `user`
+There are two ways to inform the user to the SDK:
+ 
+4.1 Passing the user as argument in all functions using the `user` keyword:
 
 ```elixir
 balance = StarkBank.Balance.get!(user: user)
 ```
 
-Or to configure a project as the default user in the `config/config.exs` file:
+4.2 Set it as a default user in the `config/config.exs` file:
 
 ```elixir
 import Config
@@ -131,6 +133,9 @@ config :starkbank,
     private_key: private_key_content
   ]
 ```
+
+Just select the way of passing the project user that is more convenient to you.
+On all following examples we will assume a default user has been set in the configs.
 
 ## Testing in Sandbox
 

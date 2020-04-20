@@ -1,19 +1,16 @@
 defmodule StarkBank.Utils.Request do
   @moduledoc false
 
-  alias StarkBank.Utils.JSON, as: JSON
-  alias StarkBank.Utils.URL, as: URL
-  alias StarkBank.Error, as: Error
+  alias StarkBank.Utils.JSON
+  alias StarkBank.Utils.Check
+  alias StarkBank.Utils.URL
+  alias StarkBank.Error
 
-  def default_project() do
-    Application.fetch_env!(:starkbank, :project) |> StarkBank.project()
-  end
+  def fetch(method, path, options \\ []) do
+    %{payload: payload, query: query, version: version, user: user_parameter} =
+      Enum.into(options, %{payload: nil, query: nil, version: 'v2', user: nil})
 
-  def fetch(user, method, path, options \\ []) do
-    %{payload: payload, query: query, version: version} =
-      Enum.into(options, %{payload: nil, query: nil, version: 'v2'})
-
-    user = user || default_project()
+    user = user_parameter |> Check.user()
 
     request(
       user,

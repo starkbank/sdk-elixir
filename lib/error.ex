@@ -8,8 +8,8 @@ defmodule StarkBank.Error do
     - any other binary: the API has detected a mistake in your request
 
   ## Attributes:
-    - code [string]: defines de error code. ex: "invalidCredentials"
-    - message [string]: explains the detected error. ex: "Provided digital signature in the header Access-Signature does not check out. See https://docs.api.starkbank.com/#auth for details."
+    - `code` [string]: defines de error code. ex: "invalidCredentials"
+    - `message` [string]: explains the detected error. ex: "Provided digital signature in the header Access-Signature does not check out. See https://docs.api.starkbank.com/#auth for details."
   """
   defstruct [:code, :message]
 end

@@ -1,19 +1,19 @@
 defmodule StarkBank.Event do
   alias __MODULE__, as: Event
-  alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.Utils.JSON, as: JSON
-  alias StarkBank.Utils.API, as: API
-  alias StarkBank.User.Project, as: Project
-  alias StarkBank.Error, as: Error
-  alias StarkBank.Utils.Request, as: Request
+  alias EllipticCurve.Signature
+  alias EllipticCurve.PublicKey
+  alias EllipticCurve.Ecdsa
+  alias StarkBank.Utils.Rest
+  alias StarkBank.Utils.Check
+  alias StarkBank.Utils.JSON
+  alias StarkBank.Utils.API
+  alias StarkBank.User.Project
+  alias StarkBank.Error
+  alias StarkBank.Utils.Request
   alias StarkBank.Boleto.Log, as: BoletoLog
   alias StarkBank.Transfer.Log, as: TransferLog
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
-  alias EllipticCurve.Signature, as: Signature
-  alias EllipticCurve.PublicKey, as: PublicKey
-  alias EllipticCurve.Ecdsa, as: Ecdsa
 
   @moduledoc """
   Groups Webhook-Event related functions
@@ -25,11 +25,11 @@ defmodule StarkBank.Event do
   list all generated updates on entities.
 
   ## Attributes:
-    - id [string]: unique id returned when the log is created. ex: "5656565656565656"
-    - log [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log or UtilityPayment.Log)
-    - created [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - is_delivered [bool]: true if the event has been successfully delivered to the user url. ex: false
-    - subscription [string]: service that triggered this event. ex: "transfer", "utility-payment"
+    - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
+    - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log or UtilityPayment.Log)
+    - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:is_delivered` [bool]: true if the event has been successfully delivered to the user url. ex: false
+    - `:subscription` [string]: service that triggered this event. ex: "transfer", "utility-payment"
   """
   defstruct [:id, :log, :created, :is_delivered, :subscription]
 
@@ -39,15 +39,15 @@ defmodule StarkBank.Event do
   Receive a single notification Event struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - id [string]: struct unique id. ex: "5656565656565656"
+    - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Keyword Args:
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Event struct with updated attributes
   """
-  @spec get(binary, user: Project.t()) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -55,7 +55,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t()) :: Event.t()
+  @spec get!(binary, user: Project.t() | nil) :: Event.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -63,17 +63,23 @@ defmodule StarkBank.Event do
   @doc """
   Receive a stream of notification Event structs previously created in the Stark Bank API
 
-  ## Keyword Args:
-    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
-    - is_delivered [bool, default nil]: filter successfully delivered events. ex: true or false
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date | string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
+    - `:is_delivered` [bool, default nil]: filter successfully delivered events. ex: true or false
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Event structs with updated attributes
   """
-  @spec query(any) ::
+  @spec query(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          is_delivered: boolean,
+          user: Project.t()
+        ) ::
           ({:cont, {:ok, [Event.t()]}}
            | {:error, [Error.t()]}
            | {:halt, any}
@@ -81,31 +87,37 @@ defmodule StarkBank.Event do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options |> Checks.check_options(true))
+    Rest.get_list(resource(), options)
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(any) ::
+  @spec query!(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          is_delivered: boolean,
+          user: Project.t()
+        ) ::
           ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options |> Checks.check_options(true))
+    Rest.get_list!(resource(), options)
   end
 
   @doc """
   Delete a list of notification Event entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - id [string]: Event unique id. ex: "5656565656565656"
+    - `id` [string]: Event unique id. ex: "5656565656565656"
 
-  ## Keyword Args:
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - deleted Event struct with updated attributes
   """
-  @spec delete(binary, user: Project.t()) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -113,7 +125,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(binary, user: Project.t()) :: Event.t()
+  @spec delete!(binary, user: Project.t() | nil) :: Event.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end
@@ -123,27 +135,27 @@ defmodule StarkBank.Event do
     If is_delivered is true, the event will no longer be returned on queries with is_delivered=false.
 
   ## Parameters (required):
-    - id [list of strings]: Event unique ids. ex: "5656565656565656"
+    - `id` [list of strings]: Event unique ids. ex: "5656565656565656"
+    - `:is_delivered` [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
 
-  ## Keyword Args:
-    - is_delivered [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Parameters (optional):
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(binary, is_delivered: bool, user: Project.t()) ::
+  @spec update(binary, is_delivered: bool, user: Project.t() | nil) ::
           {:ok, Event.t()} | {:error, [%Error{}]}
-  def update(id, options \\ []) do
-    Rest.patch_id(resource(), id, options |> Enum.into(%{}))
+  def update(id, parameters \\ []) do
+    Rest.patch_id(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
   end
 
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(binary, is_delivered: bool, user: Project.t()) :: Event.t()
-  def update!(id, options \\ []) do
-    Rest.patch_id!(resource(), id, options |> Enum.into(%{}))
+  @spec update!(binary, is_delivered: bool, user: Project.t() | nil) :: Event.t()
+  def update!(id, parameters \\ []) do
+    Rest.patch_id!(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
   end
 
   @doc """
@@ -151,29 +163,31 @@ defmodule StarkBank.Event do
   If the provided digital signature does not check out with the StarkBank public key, an "invalidSignature"
   error will be returned.
 
-  ## Keyword Args:
-    - user [Project] (optional): Project struct returned from StarkBank.project().
-    - content [string]: response content from request received at user endpoint (not parsed)
-    - signature [string]: base-64 digital signature received at response header "Digital-Signature"
-    - cache_pid [PID, default nil] (optional): PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.
+  ## Parameters (required):
+    - `content` [string]: response content from request received at user endpoint (not parsed)
+    - `signature` [string]: base-64 digital signature received at response header "Digital-Signature"
+
+  ## Parameters (optional):
+    - `cache_pid` [PID, default nil]: PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.
+    - `user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Event struct with updated attributes
     - Cache PID that holds the Stark Bank public key in order to avoid unnecessary requests to the API on future parses
   """
-  @spec parse(any) ::
+  @spec parse(
+          content: binary,
+          signature: binary,
+          cache_pid: PID,
+          user: Project.t()
+        ) ::
           {:ok, {Event.t(), binary}} | {:error, [Error.t()]}
-  def parse(options) do
-    options =
-      Keyword.merge(options, user: StarkBank.Utils.Request.default_project(), cache_pid: nil)
-      |> Enum.into(%{})
-
-    %{
-      content: content,
-      signature: signature,
-      cache_pid: cache_pid,
-      user: user
-    } = options
+  def parse(parameters) do
+    %{content: content, signature: signature, cache_pid: cache_pid, user: user} =
+      Enum.into(
+        parameters |> Check.enforced_keys([:content, :signature]),
+        %{cache_pid: nil, user: nil}
+      )
 
     parse(user, content, signature, cache_pid, 0)
   end
@@ -181,10 +195,15 @@ defmodule StarkBank.Event do
   @doc """
   Same as parse(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec parse!(any) ::
+  @spec parse!(
+          content: binary,
+          signature: binary,
+          cache_pid: PID,
+          user: Project.t()
+        ) ::
           {Event.t(), any}
-  def parse!(options) do
-    case parse(options) do
+  def parse!(parameters) do
+    case parse(parameters) do
       {:ok, {event, cache_pid_}} -> {event, cache_pid_}
       {:error, errors} -> raise API.errors_to_string(errors)
     end
@@ -230,16 +249,10 @@ defmodule StarkBank.Event do
 
   defp verify_signature(user, content, signature_base_64, cache_pid, counter)
        when is_binary(signature_base_64) and counter <= 1 do
-    verify_signature(
-      user,
-      content,
-      signature_base_64 |> Signature.fromBase64!(),
-      cache_pid,
-      counter
-    )
-  rescue
-    _error ->
-      {
+    try do
+      signature_base_64 |> Signature.fromBase64!()
+    rescue
+      _error -> {
         :error,
         [
           %Error{
@@ -248,6 +261,15 @@ defmodule StarkBank.Event do
           }
         ]
       }
+    else
+      signature -> verify_signature(
+        user,
+        content,
+        signature,
+        cache_pid,
+        counter
+      )
+    end
   end
 
   defp verify_signature(user, content, signature, cache_pid, _counter) do
@@ -274,7 +296,7 @@ defmodule StarkBank.Event do
   end
 
   defp fill_public_key(public_key, user, cache_pid) when is_nil(public_key) do
-    case Request.fetch(user, :get, "public-key", query: %{limit: 1}) do
+    case Request.fetch(:get, "public-key", query: %{limit: 1}, user: user) do
       {:ok, response} -> {:ok, response |> extract_public_key(cache_pid)}
       {:error, errors} -> {:error, errors}
     end
@@ -315,7 +337,7 @@ defmodule StarkBank.Event do
     %Event{
       id: json[:id],
       log: json[:log] |> API.from_api_json(log_maker_by_subscription(json[:subscription])),
-      created: json[:created] |> Checks.check_datetime(),
+      created: json[:created] |> Check.datetime(),
       is_delivered: json[:is_delivered],
       subscription: json[:subscription]
     }

@@ -1,11 +1,11 @@
 defmodule StarkBank.UtilityPayment.Log do
   alias __MODULE__, as: Log
-  alias StarkBank.Utils.Rest, as: Rest
-  alias StarkBank.Utils.Checks, as: Checks
-  alias StarkBank.Utils.API, as: API
-  alias StarkBank.UtilityPayment, as: UtilityPayment
-  alias StarkBank.User.Project, as: Project
-  alias StarkBank.Error, as: Error
+  alias StarkBank.Utils.Rest
+  alias StarkBank.Utils.Check
+  alias StarkBank.Utils.API
+  alias StarkBank.UtilityPayment
+  alias StarkBank.User.Project
+  alias StarkBank.Error
 
   @moduledoc """
   Groups UtilityPayment.Log related functions
@@ -17,11 +17,11 @@ defmodule StarkBank.UtilityPayment.Log do
   be retrieved to check additional information on the UtilityPayment.
 
   ## Attributes:
-    - id [string]: unique id returned when the log is created. ex: "5656565656565656"
-    - payment [UtilityPayment]: UtilityPayment entity to which the log refers to.
-    - errors [list of strings]: list of errors linked to this BoletoPayment event.
-    - type [string]: type of the UtilityPayment event which triggered the log creation. ex: "registered" or "paid"
-    - created [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
+    - `:payment` [UtilityPayment]: UtilityPayment entity to which the log refers to.
+    - `:errors` [list of strings]: list of errors linked to this BoletoPayment event.
+    - `:type` [string]: type of the UtilityPayment event which triggered the log creation. ex: "registered" or "paid"
+    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :payment, :errors, :type, :created]
   defstruct [:id, :payment, :errors, :type, :created]
@@ -32,15 +32,15 @@ defmodule StarkBank.UtilityPayment.Log do
   Receive a single Log struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - id [string]: struct unique id. ex: "5656565656565656"
+    - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Keyword Args:
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Log struct with updated attributes
   """
-  @spec get(binary, user: Project.t()) :: {:ok, Log.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | nil) :: {:ok, Log.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -48,7 +48,7 @@ defmodule StarkBank.UtilityPayment.Log do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t()) :: Log.t()
+  @spec get!(binary, user: Project.t() | nil) :: Log.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -56,18 +56,25 @@ defmodule StarkBank.UtilityPayment.Log do
   @doc """
   Receive a stream of Log structs previously created in the Stark Bank API
 
-  ## Keyword Args:
-    - limit [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - after [Date, default nil] date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    - before [Date, default nil] date filter for entities only before specified date. ex: Date(2020, 3, 10)
-    - types [list of strings, default nil]: filter retrieved entities by event types. ex: "paid" or "registered"
-    - payment_ids [list of strings, default nil]: list of UtilityPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
-    - user [Project] (optional): Project struct returned from StarkBank.project().
+  ## Options:
+    - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date | string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date | string, default nil]: date filter for entities only before specified date. ex: Date(2020, 3, 10)
+    - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "paid" or "registered"
+    - `:payment_ids` [list of strings, default nil]: list of UtilityPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Log structs with updated attributes
   """
-  @spec query(any) ::
+  @spec query(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          types: [binary],
+          payment_ids: [binary],
+          user: Project.t()
+        ) ::
           ({:cont, {:ok, [Log.t()]}}
            | {:error, [Error.t()]}
            | {:halt, any}
@@ -75,16 +82,23 @@ defmodule StarkBank.UtilityPayment.Log do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options |> Checks.check_options(true))
+    Rest.get_list(resource(), options)
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(any) ::
+  @spec query!(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          types: [binary],
+          payment_ids: [binary],
+          user: Project.t()
+        ) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options |> Checks.check_options(true))
+    Rest.get_list!(resource(), options)
   end
 
   @doc false
@@ -100,7 +114,7 @@ defmodule StarkBank.UtilityPayment.Log do
     %Log{
       id: json[:id],
       payment: json[:payment] |> API.from_api_json(&UtilityPayment.resource_maker/1),
-      created: json[:created] |> Checks.check_datetime(),
+      created: json[:created] |> Check.datetime(),
       type: json[:type],
       errors: json[:errors]
     }

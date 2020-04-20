@@ -3,15 +3,15 @@ defmodule StarkBank.Utils.Case do
 
   def camel_to_kebab(string) do
     string
-    |> camel_to_snake
+    |> camel_to_snake()
     |> String.replace("_", "-")
   end
 
   def camel_to_snake(string) do
     string
     |> String.graphemes()
-    |> camel_to_snake_graphemes
-    |> strip_underscore
+    |> camel_to_snake_graphemes()
+    |> strip_underscore()
     |> Enum.join()
   end
 
@@ -43,7 +43,7 @@ defmodule StarkBank.Utils.Case do
   def snake_to_camel(string) do
     string
     |> String.graphemes()
-    |> snake_to_camel_graphemes
+    |> snake_to_camel_graphemes()
     |> Enum.join()
   end
 
