@@ -47,7 +47,7 @@ defmodule StarkBank.Event do
   ## Return:
     - Event struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t()) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -55,7 +55,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Event.t()
+  @spec get!(binary, user: Project.t()) :: Event.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -105,7 +105,7 @@ defmodule StarkBank.Event do
   ## Return:
     - deleted Event struct with updated attributes
   """
-  @spec delete(Project.t(), binary) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t()) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -113,7 +113,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project.t(), binary) :: Event.t()
+  @spec delete!(binary, user: Project.t()) :: Event.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end
