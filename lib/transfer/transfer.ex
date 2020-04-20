@@ -64,7 +64,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - list of Transfer structs with updated attributes
   """
-  @spec create([Transfer.t()], [user: Project.t()]) ::
+  @spec create([Transfer.t()], user: Project.t()) ::
           {:ok, [Transfer.t()]} | {:error, [Error.t()]}
   def create(transfers, options \\ []) do
     Rest.post(
@@ -77,7 +77,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Transfer.t()], [user: Project.t()]) :: any
+  @spec create!([Transfer.t()], user: Project.t()) :: any
   def create!(transfers, options \\ []) do
     Rest.post!(
       resource(),
@@ -98,7 +98,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - Transfer struct with updated attributes
   """
-  @spec get(binary, [user: Project.t()]) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t()) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -106,7 +106,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, [user: Project.t()]) :: Transfer.t()
+  @spec get!(binary, user: Project.t()) :: Transfer.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -124,7 +124,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - Transfer pdf file content
   """
-  @spec pdf(binary, [user: Project.t()]) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, user: Project.t()) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
     Rest.get_pdf(resource(), id, options)
   end
@@ -132,7 +132,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, [user: Project.t()]) :: binary
+  @spec pdf!(binary, user: Project.t()) :: binary
   def pdf!(id, options \\ []) do
     Rest.get_pdf!(resource(), id, options)
   end

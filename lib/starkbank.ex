@@ -22,13 +22,26 @@ defmodule StarkBank do
     - name [string, default ""]: project name. ex: "MyProject"
     - allowed_ips [list of strings]: list containing the strings of the ips allowed to make requests on behalf of this project. ex: ["190.190.0.50"]
   """
-  @spec project([environment: :production | :sandbox, id: binary, private_key: binary, name: binary, allowed_ips: [binary] | nil]) ::
+  @spec project(
+          environment: :production | :sandbox,
+          id: binary,
+          private_key: binary,
+          name: binary,
+          allowed_ips: [binary] | nil
+        ) ::
           StarkBank.User.Project.t()
   def project(options) do
     defaults = [name: "", allowed_ips: nil]
     options = Keyword.merge(defaults, options) |> Enum.into(%{})
 
-    %{environment: environment, id: id, private_key: private_key, name: name, allowed_ips: allowed_ips} = options
+    %{
+      environment: environment,
+      id: id,
+      private_key: private_key,
+      name: name,
+      allowed_ips: allowed_ips
+    } = options
+
     Project.validate(environment, id, private_key, name, allowed_ips)
   end
 end

@@ -132,7 +132,8 @@ defmodule StarkBank.Event do
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(binary, [is_delivered: bool, user: Project.t()]) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec update(binary, is_delivered: bool, user: Project.t()) ::
+          {:ok, Event.t()} | {:error, [%Error{}]}
   def update(id, options \\ []) do
     Rest.patch_id(resource(), id, options |> Enum.into(%{}))
   end
@@ -140,7 +141,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(binary, [is_delivered: bool, user: Project.t()]) :: Event.t()
+  @spec update!(binary, is_delivered: bool, user: Project.t()) :: Event.t()
   def update!(id, options \\ []) do
     Rest.patch_id!(resource(), id, options |> Enum.into(%{}))
   end

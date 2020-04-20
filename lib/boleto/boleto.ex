@@ -90,7 +90,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - list of Boleto structs with updated attributes
   """
-  @spec create([Boleto.t()], [user: Project.t()]) ::
+  @spec create([Boleto.t()], user: Project.t()) ::
           {:ok, [Boleto.t()]} | {:error, [Error.t()]}
   def create(boletos, options \\ []) do
     Rest.post(
@@ -103,7 +103,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Boleto.t()], [user: Project.t()]) :: any
+  @spec create!([Boleto.t()], user: Project.t()) :: any
   def create!(boletos, options \\ []) do
     Rest.post!(
       resource(),
@@ -124,7 +124,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto struct with updated attributes
   """
-  @spec get(binary, [user: Project.t()]) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t()) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -132,7 +132,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, [user: Project.t()]) :: Boleto.t()
+  @spec get!(binary, user: Project.t()) :: Boleto.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -149,7 +149,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto pdf file content
   """
-  @spec pdf(binary, [user: Project.t()]) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, user: Project.t()) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
     Rest.get_pdf(resource(), id, options)
   end
@@ -157,7 +157,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, [user: Project.t()]) :: binary
+  @spec pdf!(binary, user: Project.t()) :: binary
   def pdf!(id, options \\ []) do
     Rest.get_pdf!(resource(), id, options)
   end
@@ -209,7 +209,7 @@ defmodule StarkBank.Boleto do
   ##  Return:
     - deleted Boleto struct with updated attributes
   """
-  @spec delete(binary, [user: Project.t()]) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t()) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -217,7 +217,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(binary, [user: Project.t()]) :: Boleto.t()
+  @spec delete!(binary, user: Project.t()) :: Boleto.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end

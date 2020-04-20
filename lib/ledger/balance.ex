@@ -34,7 +34,7 @@ defmodule StarkBank.Balance do
   ## Return:
     - Balance struct with updated attributes
   """
-  @spec get([user: Project.t()]) :: {:ok, Balance.t()} | {:error, [Error]}
+  @spec get(user: Project.t()) :: {:ok, Balance.t()} | {:error, [Error]}
   def get(options \\ []) do
     case Rest.get_list(resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
@@ -45,7 +45,7 @@ defmodule StarkBank.Balance do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!([user: Project.t()]) :: Balance.t()
+  @spec get!(user: Project.t()) :: Balance.t()
   def get!(options \\ []) do
     {:ok, balance} = get(options)
     balance
