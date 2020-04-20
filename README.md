@@ -122,6 +122,8 @@ balance = StarkBank.Balance.get!(user: user)
 Or to configure a project as the default user in the `config/config.exs` file:
 
 ```elixir
+import Config
+
 config :starkbank,
   project: [
     environment: :sandbox,
