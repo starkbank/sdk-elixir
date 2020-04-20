@@ -22,7 +22,7 @@ defmodule StarkBankTest.WebhookEvent do
   @tag :event
   test "get!, update! and delete! webhook event" do
     query_event =
-      StarkBank.Event.query!(limit: 1)
+      StarkBank.Event.query!(limit: 1, is_delivered: false)
       |> Enum.take(1)
       |> hd
 
