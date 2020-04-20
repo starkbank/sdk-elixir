@@ -8,102 +8,107 @@ defmodule StarkBankTest.WebhookEvent do
 
   @tag :event
   test "get, update and delete webhook event" do
-    user = StarkBankTest.Credentials.project()
-    {:ok, query_event} = StarkBank.Event.query(user, limit: 1)
-     |> Enum.take(1)
-     |> hd
-    {:ok, get_event} = StarkBank.Event.get(user, query_event.id)
-    {:ok, delivered_event} = StarkBank.Event.update(user, get_event.id, is_delivered: true)
-    {:ok, delete_event} = StarkBank.Event.delete(user, delivered_event.id)
+    {:ok, query_event} =
+      StarkBank.Event.query(limit: 1)
+      |> Enum.take(1)
+      |> hd
+
+    {:ok, get_event} = StarkBank.Event.get(query_event.id)
+    {:ok, delivered_event} = StarkBank.Event.update(get_event.id, is_delivered: true)
+    {:ok, delete_event} = StarkBank.Event.delete(delivered_event.id)
     assert !is_nil(delete_event.id)
   end
 
   @tag :event
   test "get!, update! and delete! webhook event" do
-    user = StarkBankTest.Credentials.project()
-    query_event = StarkBank.Event.query!(user, limit: 1)
-     |> Enum.take(1)
-     |> hd
-    get_event = StarkBank.Event.get!(user, query_event.id)
+    query_event =
+      StarkBank.Event.query!(limit: 1, is_delivered: false)
+      |> Enum.take(1)
+      |> hd
+
+    get_event = StarkBank.Event.get!(query_event.id)
     assert !get_event.is_delivered
-    delivered_event = StarkBank.Event.update!(user, get_event.id, is_delivered: true)
+    delivered_event = StarkBank.Event.update!(get_event.id, is_delivered: true)
     assert delivered_event.is_delivered
-    delete_event = StarkBank.Event.delete!(user, delivered_event.id)
+    delete_event = StarkBank.Event.delete!(delivered_event.id)
     assert !is_nil(delete_event.id)
   end
 
   @tag :event
   test "query webhook event" do
-    user = StarkBankTest.Credentials.project()
-    StarkBank.Event.query(user, limit: 5)
-     |> Enum.take(5)
-     |> (fn list -> assert length(list) <= 5 end).()
+    StarkBank.Event.query(limit: 5)
+    |> Enum.take(5)
+    |> (fn list -> assert length(list) <= 5 end).()
   end
 
   @tag :event
   test "query! webhook event" do
-    user = StarkBankTest.Credentials.project()
-    StarkBank.Event.query!(user, limit: 5)
-     |> Enum.take(5)
-     |> (fn list -> assert length(list) <= 5 end).()
+    StarkBank.Event.query!(limit: 5)
+    |> Enum.take(5)
+    |> (fn list -> assert length(list) <= 5 end).()
   end
 
   @tag :event
   test "parse webhook event" do
-    user = StarkBankTest.Credentials.project()
-    {:ok, {_event, cache_pid_1}} = StarkBank.Event.parse(
-      user,
-      @content,
-      @signature,
-      nil
-    )
-    {:ok, {event, cache_pid_2}} = StarkBank.Event.parse(
-      user,
-      @content,
-      @signature,
-      cache_pid_1
-    )
-    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) == Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
+    {:ok, {_event, cache_pid_1}} =
+      StarkBank.Event.parse(
+        content: @content,
+        signature: @signature
+      )
+
+    {:ok, {event, cache_pid_2}} =
+      StarkBank.Event.parse(
+        content: @content,
+        signature: @signature,
+        cache_pid: cache_pid_1
+      )
+
+    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) ==
+             Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
+
     assert !is_nil(event.log)
   end
 
   @tag :event
   test "parse! webhook event" do
-    user = StarkBankTest.Credentials.project()
-    {_event, cache_pid_1} = StarkBank.Event.parse!(
-      user,
-      @content,
-      @signature
-    )
-    {event, cache_pid_2} = StarkBank.Event.parse!(
-      user,
-      @content,
-      @signature,
-      cache_pid_1
-    )
-    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) == Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
+    {_event, cache_pid_1} =
+      StarkBank.Event.parse!(
+        content: @content,
+        signature: @signature
+      )
+
+    {event, cache_pid_2} =
+      StarkBank.Event.parse!(
+        content: @content,
+        signature: @signature,
+        cache_pid: cache_pid_1
+      )
+
+    assert Agent.get(cache_pid_1, fn map -> Map.get(map, :starkbank_public_key) end) ==
+             Agent.get(cache_pid_2, fn map -> Map.get(map, :starkbank_public_key) end)
+
     assert !is_nil(event.log)
   end
 
   @tag :event
   test "parse webhook event with invalid signature" do
-    user = StarkBankTest.Credentials.project()
-    {:error, [error]} = StarkBank.Event.parse(
-      user,
-      @content,
-      @bad_signature
-    )
+    {:error, [error]} =
+      StarkBank.Event.parse(
+        content: @content,
+        signature: @bad_signature
+      )
+
     assert error.code == "invalidSignature"
   end
 
   @tag :event
   test "parse webhook event with malformed signature" do
-    user = StarkBankTest.Credentials.project()
-    {:error, [error]} = StarkBank.Event.parse(
-      user,
-      @content,
-      @malformed_signature
-    )
+    {:error, [error]} =
+      StarkBank.Event.parse(
+        content: @content,
+        signature: @malformed_signature
+      )
+
     assert error.code == "invalidSignature"
   end
 end

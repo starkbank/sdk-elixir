@@ -3,8 +3,7 @@ defmodule StarkBankTest.Balance do
 
   @tag :balance
   test "get balance" do
-    user = StarkBankTest.Credentials.project()
-    balance = StarkBank.Balance.get!(user)
+    balance = StarkBank.Balance.get!()
     assert !is_nil(balance.amount)
   end
 end

@@ -23,7 +23,7 @@ defmodule StarkBank.Utils.Checks do
   end
 
   def check_datetime(data) when is_binary(data) do
-    {:ok, datetime, _utc_offset} = data |> DateTime.from_iso8601
+    {:ok, datetime, _utc_offset} = data |> DateTime.from_iso8601()
     datetime
   end
 
@@ -32,7 +32,7 @@ defmodule StarkBank.Utils.Checks do
   end
 
   def check_date(data) when is_binary(data) do
-    data |> Date.from_iso8601!
+    data |> Date.from_iso8601!()
   end
 
   def check_date(data = %DateTime{}) do
@@ -57,22 +57,23 @@ defmodule StarkBank.Utils.Checks do
 
   def check_options(options, after_before) when after_before do
     options
-     |> Enum.into(%{})
-     |> fill_limit
-     |> fill_date_field(:after)
-     |> fill_date_field(:before)
+    |> Enum.into(%{})
+    |> fill_limit
+    |> fill_date_field(:after)
+    |> fill_date_field(:before)
   end
 
   def check_options(options) do
     options
-     |> Enum.into(%{})
-     |> fill_limit
+    |> Enum.into(%{})
+    |> fill_limit
   end
 
   defp fill_limit(options) do
     if !Map.has_key?(options, :limit) do
       Map.put(options, :limit, nil)
     end
+
     options
   end
 

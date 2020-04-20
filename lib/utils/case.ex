@@ -3,23 +3,28 @@ defmodule StarkBank.Utils.Case do
 
   def camel_to_kebab(string) do
     string
-     |> camel_to_snake
-     |> String.replace("_", "-")
+    |> camel_to_snake
+    |> String.replace("_", "-")
   end
 
   def camel_to_snake(string) do
     string
-      |> String.graphemes
-      |> camel_to_snake_graphemes
-      |> strip_underscore
-      |> Enum.join
+    |> String.graphemes()
+    |> camel_to_snake_graphemes
+    |> strip_underscore
+    |> Enum.join()
   end
 
   defp camel_to_snake_graphemes([letter | rest]) do
     cond do
-      letter == letter |> String.upcase -> ["_" | [String.downcase(letter) | camel_to_snake_graphemes(rest)]]
-      :error != Integer.parse(letter) -> ["_" | [letter | camel_to_snake_graphemes(rest)]]
-      true -> [letter | camel_to_snake_graphemes(rest)]
+      letter == letter |> String.upcase() ->
+        ["_" | [String.downcase(letter) | camel_to_snake_graphemes(rest)]]
+
+      :error != Integer.parse(letter) ->
+        ["_" | [letter | camel_to_snake_graphemes(rest)]]
+
+      true ->
+        [letter | camel_to_snake_graphemes(rest)]
     end
   end
 
@@ -37,9 +42,9 @@ defmodule StarkBank.Utils.Case do
 
   def snake_to_camel(string) do
     string
-     |> String.graphemes
-     |> snake_to_camel_graphemes
-     |> Enum.join
+    |> String.graphemes()
+    |> snake_to_camel_graphemes
+    |> Enum.join()
   end
 
   defp snake_to_camel_graphemes([letter | rest]) when letter == "_" do

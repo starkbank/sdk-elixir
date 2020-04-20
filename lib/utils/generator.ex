@@ -10,6 +10,7 @@ defmodule StarkBank.Utils.QueryGenerator do
 
   def get(pid) do
     send(pid, self())
+
     receive do
       :halt -> :halt
       {:ok, element} -> {:ok, element}
@@ -28,17 +29,21 @@ defmodule StarkBank.Utils.QueryGenerator do
   defp yield([], function, key, query, first \\ false) do
     limit = query[:limit]
     cursor = query[:cursor]
+
     if (first or !is_nil(cursor)) and (is_nil(limit) or limit > 0) do
-      case function.(query |> Map.put(:limit, limit |> Checks.check_limit)) do
+      case function.(query |> Map.put(:limit, limit |> Checks.check_limit())) do
         {:ok, result} ->
           decoded = JSON.decode!(result)
+
           yield(
             decoded[key],
             function,
             key,
             query |> Map.put(:cursor, decoded["cursor"]) |> Map.put(:limit, iterate_limit(limit))
           )
-        {:error, error} -> yield_error(error)
+
+        {:error, error} ->
+          yield_error(error)
       end
     else
       receive do
@@ -53,6 +58,7 @@ defmodule StarkBank.Utils.QueryGenerator do
       caller ->
         send(caller, {:error, error})
     end
+
     receive do
       caller ->
         send(caller, :halt)

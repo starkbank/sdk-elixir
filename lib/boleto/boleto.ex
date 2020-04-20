@@ -1,5 +1,4 @@
 defmodule StarkBank.Boleto do
-
   alias __MODULE__, as: Boleto
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -42,8 +41,40 @@ defmodule StarkBank.Boleto do
     - status [string, default nil]: current Boleto status. ex: "registered" or "paid"
     - created [DateTime, default nil]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code]
-  defstruct [:amount, :name, :tax_id, :street_line_1, :street_line_2, :district, :city, :state_code, :zip_code, :due, :fine, :interest, :overdue_limit, :tags, :descriptions, :id, :fee, :line, :bar_code, :status, :created]
+  @enforce_keys [
+    :amount,
+    :name,
+    :tax_id,
+    :street_line_1,
+    :street_line_2,
+    :district,
+    :city,
+    :state_code,
+    :zip_code
+  ]
+  defstruct [
+    :amount,
+    :name,
+    :tax_id,
+    :street_line_1,
+    :street_line_2,
+    :district,
+    :city,
+    :state_code,
+    :zip_code,
+    :due,
+    :fine,
+    :interest,
+    :overdue_limit,
+    :tags,
+    :descriptions,
+    :id,
+    :fee,
+    :line,
+    :bar_code,
+    :status,
+    :created
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -51,31 +82,33 @@ defmodule StarkBank.Boleto do
   Send a list of Boleto structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - boletos [list of Boleto structs]: list of Boleto structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of Boleto structs with updated attributes
   """
-  @spec create(Project.t(), [Boleto.t()]) ::
-    {:ok, [Boleto.t()]} | {:error, [Error.t()]}
-  def create(%Project{} = user, boletos) do
+  @spec create([Boleto.t()], user: Project.t()) ::
+          {:ok, [Boleto.t()]} | {:error, [Error.t()]}
+  def create(boletos, options \\ []) do
     Rest.post(
-      user,
       resource(),
-      boletos
+      boletos,
+      options
     )
   end
 
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Boleto.t()]) :: any
-  def create!(%Project{} = user, boletos) do
+  @spec create!([Boleto.t()], user: Project.t()) :: any
+  def create!(boletos, options \\ []) do
     Rest.post!(
-      user,
       resource(),
-      boletos
+      boletos,
+      options
     )
   end
 
@@ -83,101 +116,110 @@ defmodule StarkBank.Boleto do
   Receive a single Boleto struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Boleto struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  @spec get(binary, user: Project.t()) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Boleto.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  @spec get!(binary, user: Project.t()) :: Boleto.t()
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
   Receive a single Boleto pdf file generated in the Stark Bank API by passing its id.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Boleto pdf file content
   """
-  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(%Project{} = user, id) do
-    Rest.get_pdf(user, resource(), id)
+  @spec pdf(binary, user: Project.t()) :: {:ok, binary} | {:error, [%Error{}]}
+  def pdf(id, options \\ []) do
+    Rest.get_pdf(resource(), id, options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project.t(), binary) :: binary
-  def pdf!(%Project{} = user, id) do
-    Rest.get_pdf!(user, resource(), id)
+  @spec pdf!(binary, user: Project.t()) :: binary
+  def pdf!(id, options \\ []) do
+    Rest.get_pdf!(resource(), id, options)
   end
 
   @doc """
   Receive a stream of Boleto structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
-    - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
-    - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
-    - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    - ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+  ## Keyword Args:
+    - limit [integer, default nil] (optional): maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - after [Date, default nil] (optional) date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - before [Date, default nil] (optional): date filter for structs only before specified date. ex: Date(2020, 3, 10)
+    - status [string, default nil] (optional): filter for status of retrieved structs. ex: "paid" or "registered"
+    - tags [list of strings, default nil] (optional): tags to filter retrieved structs. ex: ["tony", "stark"]
+    - ids [list of strings, default nil] (optional): list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Boleto structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-        ({:cont, {:ok, [Boleto.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Boleto.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Boleto.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Delete a list of Boleto entities previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: Boleto unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ##  Return:
     - deleted Boleto struct with updated attributes
   """
-  @spec delete(Project.t(), binary) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
-  def delete(%Project{} = user, id) do
-    Rest.delete_id(user, resource(), id)
+  @spec delete(binary, user: Project.t()) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
+  def delete(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
   end
 
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project.t(), binary) :: Boleto.t()
-  def delete!(%Project{} = user, id) do
-    Rest.delete_id!(user, resource(), id)
+  @spec delete!(binary, user: Project.t()) :: Boleto.t()
+  def delete!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
   end
 
   @doc false
@@ -200,7 +242,7 @@ defmodule StarkBank.Boleto do
       city: json[:city],
       state_code: json[:state_code],
       zip_code: json[:zip_code],
-      due: json[:due] |> Checks.check_datetime,
+      due: json[:due] |> Checks.check_datetime(),
       fine: json[:fine],
       interest: json[:interest],
       overdue_limit: json[:overdue_limit],
@@ -211,7 +253,7 @@ defmodule StarkBank.Boleto do
       line: json[:line],
       bar_code: json[:bar_code],
       status: json[:status],
-      created: json[:created] |> Checks.check_datetime
+      created: json[:created] |> Checks.check_datetime()
     }
   end
 end

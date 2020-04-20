@@ -1,5 +1,4 @@
 defmodule StarkBank.UtilityPayment do
-
   alias __MODULE__, as: UtilityPayment
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -34,7 +33,18 @@ defmodule StarkBank.UtilityPayment do
     - created [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:description]
-  defstruct [:line, :bar_code, :description, :scheduled, :tags, :id, :status, :amount, :fee, :created]
+  defstruct [
+    :line,
+    :bar_code,
+    :description,
+    :scheduled,
+    :tags,
+    :id,
+    :status,
+    :amount,
+    :fee,
+    :created
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -42,31 +52,33 @@ defmodule StarkBank.UtilityPayment do
   Send a list of UtilityPayment structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - payments [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of UtilityPayment structs with updated attributes
   """
-  @spec create(Project.t(), [UtilityPayment.t()]) ::
-    {:ok, [UtilityPayment.t()]} | {:error, [Error.t()]}
-  def create(%Project{} = user, payments) do
+  @spec create([UtilityPayment.t()], user: Project.t()) ::
+          {:ok, [UtilityPayment.t()]} | {:error, [Error.t()]}
+  def create(payments, options \\ []) do
     Rest.post(
-      user,
       resource(),
-      payments
+      payments,
+      options
     )
   end
 
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [UtilityPayment.t()]) :: any
-  def create!(%Project{} = user, payments) do
+  @spec create!([UtilityPayment.t()], user: Project.t()) :: any
+  def create!(payments, options \\ []) do
     Rest.post!(
-      user,
       resource(),
-      payments
+      payments,
+      options
     )
   end
 
@@ -74,23 +86,25 @@ defmodule StarkBank.UtilityPayment do
   Receive a single UtilityPayment struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - UtilityPayment struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  @spec get(binary, user: Project.t()) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: UtilityPayment.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  @spec get!(binary, user: Project.t()) :: UtilityPayment.t()
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -98,78 +112,85 @@ defmodule StarkBank.UtilityPayment do
   Only valid for utility payments with "success" status.
 
   ## Parameters (required):
-    - user [Project struct]: Project struct. Not necessary if starkbank.user was set before function call
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - UtilityPayment pdf file content
   """
-  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(%Project{} = user, id) do
-    Rest.get_pdf(user, resource(), id)
+  @spec pdf(binary, user: Project.t()) :: {:ok, binary} | {:error, [%Error{}]}
+  def pdf(id, options \\ []) do
+    Rest.get_pdf(resource(), id, options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project.t(), binary) :: binary
-  def pdf!(%Project{} = user, id) do
-    Rest.get_pdf!(user, resource(), id)
+  @spec pdf!(binary, user: Project.t()) :: binary
+  def pdf!(id, options \\ []) do
+    Rest.get_pdf!(resource(), id, options)
   end
 
   @doc """
   Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - ids [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of UtilityPayment structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [UtilityPayment.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [UtilityPayment.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [UtilityPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Delete a UtilityPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: UtilityPayment unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - deleted UtilityPayment with updated attributes
   """
-  @spec delete(Project.t(), binary) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
-  def delete(%Project{} = user, id) do
-    Rest.delete_id(user, resource(), id)
+  @spec delete(binary, user: Project.t()) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
+  def delete(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
   end
 
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(Project.t(), binary) :: UtilityPayment.t()
-  def delete!(%Project{} = user, id) do
-    Rest.delete_id!(user, resource(), id)
+  @spec delete!(binary, user: Project.t()) :: UtilityPayment.t()
+  def delete!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
   end
 
   @doc false
@@ -186,13 +207,13 @@ defmodule StarkBank.UtilityPayment do
       line: json[:line],
       bar_code: json[:bar_code],
       description: json[:description],
-      scheduled: json[:scheduled] |> Checks.check_datetime,
+      scheduled: json[:scheduled] |> Checks.check_datetime(),
       tags: json[:tags],
       id: json[:id],
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
-      created: json[:created] |> Checks.check_datetime
+      created: json[:created] |> Checks.check_datetime()
     }
   end
 end

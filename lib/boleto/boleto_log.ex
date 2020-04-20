@@ -1,5 +1,4 @@
 defmodule StarkBank.Boleto.Log do
-
   alias __MODULE__, as: Log
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -34,54 +33,59 @@ defmodule StarkBank.Boleto.Log do
   Receive a single Log struct previously created by the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Log struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Log.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  @spec get(binary, user: Project.t()) :: {:ok, Log.t()} | {:error, [%Error{}]}
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Log.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  @spec get!(binary, user: Project.t()) :: Log.t()
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
   Receive a stream of Log structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil] date filter for structs created only after specified date. ex: Date(2020, 3, 10)
     - before [Date, default nil] date filter for structs only before specified date. ex: Date(2020, 3, 10)
     - types [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
     - boleto_ids [list of strings, default nil]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Log structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Log.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Log.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc false
@@ -97,7 +101,7 @@ defmodule StarkBank.Boleto.Log do
     %Log{
       id: json[:id],
       boleto: json[:boleto] |> API.from_api_json(&Boleto.resource_maker/1),
-      created: json[:created] |> Checks.check_datetime,
+      created: json[:created] |> Checks.check_datetime(),
       type: json[:type],
       errors: json[:errors]
     }

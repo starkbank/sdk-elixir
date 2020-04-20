@@ -1,5 +1,4 @@
 defmodule StarkBank.Transfer do
-
   alias __MODULE__, as: Transfer
   alias StarkBank.Utils.Rest, as: Rest
   alias StarkBank.Utils.Checks, as: Checks
@@ -35,7 +34,21 @@ defmodule StarkBank.Transfer do
     - updated [DateTime, default nil]: latest update datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number]
-  defstruct [:amount, :name, :tax_id, :bank_code, :branch_code, :account_number, :transaction_ids, :fee, :tags, :status, :id, :created, :updated]
+  defstruct [
+    :amount,
+    :name,
+    :tax_id,
+    :bank_code,
+    :branch_code,
+    :account_number,
+    :transaction_ids,
+    :fee,
+    :tags,
+    :status,
+    :id,
+    :created,
+    :updated
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -43,31 +56,33 @@ defmodule StarkBank.Transfer do
   Send a list of Transfer structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - transfers [list of Transfer structs]: list of Transfer structs to be created in the API
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - list of Transfer structs with updated attributes
   """
-  @spec create(Project.t(), [Transfer.t()]) ::
-    {:ok, [Transfer.t()]} | {:error, [Error.t()]}
-  def create(%Project{} = user, transfers) do
+  @spec create([Transfer.t()], user: Project.t()) ::
+          {:ok, [Transfer.t()]} | {:error, [Error.t()]}
+  def create(transfers, options \\ []) do
     Rest.post(
-      user,
       resource(),
-      transfers
+      transfers,
+      options
     )
   end
 
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Transfer.t()]) :: any
-  def create!(%Project{} = user, transfers) do
+  @spec create!([Transfer.t()], user: Project.t()) :: any
+  def create!(transfers, options \\ []) do
     Rest.post!(
-      user,
       resource(),
-      transfers
+      transfers,
+      options
     )
   end
 
@@ -75,23 +90,25 @@ defmodule StarkBank.Transfer do
   Receive a single Transfer struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Transfer struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
-  def get(%Project{} = user, id) do
-    Rest.get_id(user, resource(), id)
+  @spec get(binary, user: Project.t()) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
   end
 
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Transfer.t()
-  def get!(%Project{} = user, id) do
-    Rest.get_id!(user, resource(), id)
+  @spec get!(binary, user: Project.t()) :: Transfer.t()
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
   end
 
   @doc """
@@ -99,32 +116,31 @@ defmodule StarkBank.Transfer do
   Only valid for transfers with "processing" or "success" status.
 
   ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
     - id [string]: struct unique id. ex: "5656565656565656"
+
+  ## Keyword Args:
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - Transfer pdf file content
   """
-  @spec pdf(Project.t(), binary) :: {:ok, binary} | {:error, [%Error{}]}
-  def pdf(%Project{} = user, id) do
-    Rest.get_pdf(user, resource(), id)
+  @spec pdf(binary, user: Project.t()) :: {:ok, binary} | {:error, [%Error{}]}
+  def pdf(id, options \\ []) do
+    Rest.get_pdf(resource(), id, options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(Project.t(), binary) :: binary
-  def pdf!(%Project{} = user, id) do
-    Rest.get_pdf!(user, resource(), id)
+  @spec pdf!(binary, user: Project.t()) :: binary
+  def pdf!(id, options \\ []) do
+    Rest.get_pdf!(resource(), id, options)
   end
 
   @doc """
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
-  ## Parameters (required):
-    - user [Project]: Project struct returned from StarkBank.project().
-
-  ## Parameters (optional):
+  ## Keyword Args:
     - limit [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - after [Date, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - before [Date, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
@@ -132,23 +148,29 @@ defmodule StarkBank.Transfer do
     - status [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - sort [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
     - tags [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - user [Project] (optional): Project struct returned from StarkBank.project().
 
   ## Return:
     - stream of Transfer structs with updated attributes
   """
-  @spec query(Project.t(), any) ::
-          ({:cont, {:ok, [Transfer.t()]}} | {:error, [Error.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query(%Project{} = user, options \\ []) do
-    Rest.get_list(user, resource(), options |> Checks.check_options(true))
+  @spec query(any) ::
+          ({:cont, {:ok, [Transfer.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options |> Checks.check_options(true))
   end
 
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec query!(Project.t(), any) ::
+  @spec query!(any) ::
           ({:cont, [Transfer.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  def query!(%Project{} = user, options \\ []) do
-    Rest.get_list!(user, resource(), options |> Checks.check_options(true))
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options |> Checks.check_options(true))
   end
 
   @doc false
@@ -173,8 +195,8 @@ defmodule StarkBank.Transfer do
       tags: json[:tags],
       status: json[:status],
       id: json[:id],
-      created: json[:created] |> Checks.check_datetime,
-      updated: json[:updated] |> Checks.check_datetime
+      created: json[:created] |> Checks.check_datetime(),
+      updated: json[:updated] |> Checks.check_datetime()
     }
   end
 end
