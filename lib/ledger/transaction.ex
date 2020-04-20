@@ -62,7 +62,7 @@ defmodule StarkBank.Transaction do
   ## Return:
     - list of Transaction structs with updated attributes
   """
-  @spec create(Project.t(), [Transaction.t()]) ::
+  @spec create([Transaction.t()], [user: Project.t()]) ::
           {:ok, [Transaction.t()]} | {:error, [Error.t()]}
   def create(transactions, options \\ []) do
     Rest.post(
@@ -75,7 +75,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(Project.t(), [Transaction.t()]) :: any
+  @spec create!([Transaction.t()], [user: Project.t()]) :: any
   def create!(transactions, options \\ []) do
     Rest.post!(
       resource(),
@@ -96,7 +96,7 @@ defmodule StarkBank.Transaction do
   ## Return:
     - Transaction struct with updated attributes
   """
-  @spec get(Project.t(), binary) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
+  @spec get(binary, [user: Project.t()]) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -104,7 +104,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(Project.t(), binary) :: Transaction.t()
+  @spec get!(binary, [user: Project.t()]) :: Transaction.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
