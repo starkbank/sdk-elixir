@@ -113,6 +113,20 @@ defmodule StarkBankTest.Boleto do
           text: "product C",
           amount: 789
         }
+      ],
+      discounts: [
+        %{
+          percentage: 5,
+          date: Date.utc_today()
+        },
+        %{
+          percentage: 3,
+          date: Date.utc_today() |> Date.add(1)
+        },
+        %{
+          percentage: 1.5,
+          date: Date.utc_today() |> Date.add(2)
+        }
       ]
     }
   end

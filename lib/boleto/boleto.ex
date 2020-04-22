@@ -24,13 +24,14 @@ defmodule StarkBank.Boleto do
     - `:city` [string]: payer address city. ex: Rio de Janeiro
     - `:state_code` [string]: payer address state. ex: GO
     - `:zip_code` [string]: payer address zip code. ex: 01311-200
-    - `:due` [Date, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
 
   ## Parameters (optional):
+    - `:due` [Date or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
     - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
     - `:overdue_limit` [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
     - `:descriptions` [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
+    - `:discounts` [list of maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
@@ -68,6 +69,7 @@ defmodule StarkBank.Boleto do
     :overdue_limit,
     :tags,
     :descriptions,
+    :discounts,
     :id,
     :fee,
     :line,
@@ -264,6 +266,7 @@ defmodule StarkBank.Boleto do
       overdue_limit: json[:overdue_limit],
       tags: json[:tags],
       descriptions: json[:descriptions],
+      discounts: json[:discounts],
       id: json[:id],
       fee: json[:fee],
       line: json[:line],
