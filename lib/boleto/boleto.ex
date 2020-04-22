@@ -26,7 +26,7 @@ defmodule StarkBank.Boleto do
     - `:zip_code` [string]: payer address zip code. ex: 01311-200
 
   ## Parameters (optional):
-    - `:due` [Date or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
+    - `:due` [Date, DateTime or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
     - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
     - `:overdue_limit` [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
@@ -169,8 +169,8 @@ defmodule StarkBank.Boleto do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: (optional) date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
@@ -181,8 +181,8 @@ defmodule StarkBank.Boleto do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           status: binary,
           tags: [binary],
           ids: [binary],
@@ -203,8 +203,8 @@ defmodule StarkBank.Boleto do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           status: binary,
           tags: [binary],
           ids: [binary],

@@ -142,8 +142,8 @@ defmodule StarkBank.Transfer do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
     - `:transaction_ids` [list of strings, default nil]: list of transaction IDs linked to the desired transfers. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
@@ -155,8 +155,8 @@ defmodule StarkBank.Transfer do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           transaction_ids: [binary],
           status: binary,
           sort: binary,
@@ -178,8 +178,8 @@ defmodule StarkBank.Transfer do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           transaction_ids: [binary],
           status: binary,
           sort: binary,

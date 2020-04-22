@@ -59,8 +59,8 @@ defmodule StarkBank.BoletoPayment.Log do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date | string, default nil]: date filter for entities only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: Date(2020, 3, 10)
     - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "paid" or "registered"
     - `:payment_ids` [list of strings, default nil]: list of BoletoPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
@@ -70,8 +70,8 @@ defmodule StarkBank.BoletoPayment.Log do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           types: [binary],
           payment_ids: [binary],
           user: Project.t()
@@ -91,8 +91,8 @@ defmodule StarkBank.BoletoPayment.Log do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           types: [binary],
           payment_ids: [binary],
           user: Project.t()
