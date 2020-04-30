@@ -64,7 +64,7 @@ defmodule StarkBank.Transfer do
   ## Return:
     - list of Transfer structs with updated attributes
   """
-  @spec create([Transfer.t()], user: Project.t() | nil) ::
+  @spec create([Transfer.t() | map()], user: Project.t() | nil) ::
           {:ok, [Transfer.t()]} | {:error, [Error.t()]}
   def create(transfers, options \\ []) do
     Rest.post(
@@ -77,7 +77,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Transfer.t()], user: Project.t() | nil) :: any
+  @spec create!([Transfer.t() | map()], user: Project.t() | nil) :: any
   def create!(transfers, options \\ []) do
     Rest.post!(
       resource(),

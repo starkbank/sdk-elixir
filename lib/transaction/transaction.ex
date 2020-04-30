@@ -62,7 +62,7 @@ defmodule StarkBank.Transaction do
   ## Return:
     - list of Transaction structs with updated attributes
   """
-  @spec create([Transaction.t()], user: Project.t() | nil) ::
+  @spec create([Transaction.t() | map()], user: Project.t() | nil) ::
           {:ok, [Transaction.t()]} | {:error, [Error.t()]}
   def create(transactions, options \\ []) do
     Rest.post(
@@ -75,7 +75,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Transaction.t()], user: Project.t() | nil) :: any
+  @spec create!([Transaction.t() | map()], user: Project.t() | nil) :: any
   def create!(transactions, options \\ []) do
     Rest.post!(
       resource(),

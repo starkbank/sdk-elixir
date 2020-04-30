@@ -62,7 +62,7 @@ defmodule StarkBank.BoletoPayment do
   ## Return:
     - list of BoletoPayment structs with updated attributes
   """
-  @spec create([BoletoPayment.t()], user: Project.t() | nil) ::
+  @spec create([BoletoPayment.t() | map()], user: Project.t() | nil) ::
           {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
     Rest.post(
@@ -75,7 +75,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([BoletoPayment.t()], user: Project.t() | nil) :: any
+  @spec create!([BoletoPayment.t() | map()], user: Project.t() | nil) :: any
   def create!(payments, options \\ []) do
     Rest.post!(
       resource(),

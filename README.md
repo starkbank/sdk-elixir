@@ -193,6 +193,8 @@ boletos = StarkBank.Boleto.create!(
 ) |> IO.inspect
 ```
 
+**Note**: Instead of using Boleto structs, you can also pass each boleto element in map format
+
 ### Get boleto
 
 After its creation, information on a boleto may be retrieved by passing its id.
@@ -287,6 +289,8 @@ transfers = StarkBank.Transfer.create!(
 ]) |> IO.inspect
 ```
 
+**Note**: Instead of using Transfer structs, you can also pass each transfer element in map format
+
 ### Query transfers
 
 You can query multiple transfers according to filters.
@@ -370,6 +374,8 @@ payments = StarkBank.BoletoPayment.create!(
   ]
 ) |> IO.inspect
 ```
+
+**Note**: Instead of using BoletoPayment structs, you can also pass each payment element in map format
 
 ### Get boleto payment
 
@@ -460,6 +466,8 @@ payments = StarkBank.UtilityPayment.create!(
   ]
 ) |> IO.inspect
 ```
+
+**Note**: Instead of using UtilityPayment structs, you can also pass each payment element in map format
 
 ### Query utility payments
 
@@ -552,6 +560,8 @@ transactions = StarkBank.Transaction.create!(
   ]
 ) |> IO.inspect
 ```
+
+**Note**: Instead of using Transaction structs, you can also pass each transaction element in map format
 
 ### Query transactions
 

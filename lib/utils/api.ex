@@ -3,9 +3,14 @@ defmodule StarkBank.Utils.API do
 
   alias StarkBank.Utils.Case
 
-  def api_json(struct) do
+  def api_json(%{__struct__: _} = struct) do
     struct
     |> Map.from_struct()
+    |> api_json()
+  end
+
+  def api_json(map) when is_map(map) do
+    map
     |> cast_json_to_api_format()
   end
 
