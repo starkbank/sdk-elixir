@@ -32,6 +32,7 @@ defmodule StarkBank.Transaction do
     - `:sender_id` [string]: unique id of the sending workspace. ex: "5656565656565656"
     - `:fee` [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
     - `:source` [string, default nil]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
+    - `:balance` [integer, default null]: account balance after transaction was processed. ex: 100000000 (= R$ 1,000,000.00)
     - `:created` [DateTime, default nil]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
@@ -44,8 +45,9 @@ defmodule StarkBank.Transaction do
     :tags,
     :id,
     :fee,
-    :created,
-    :source
+    :balance,
+    :source,
+    :created
   ]
 
   @type t() :: %__MODULE__{}
@@ -173,8 +175,9 @@ defmodule StarkBank.Transaction do
       tags: json[:tags],
       id: json[:id],
       fee: json[:fee],
-      created: json[:created] |> Check.datetime(),
-      source: json[:source]
+      source: json[:source],
+      balance: json[:balance],
+      created: json[:created] |> Check.datetime()
     }
   end
 end
