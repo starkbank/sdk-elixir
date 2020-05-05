@@ -35,7 +35,7 @@ To install the package with mix, add this to your deps and run `mix deps.get`:
 ```elixir
 def deps do
   [
-    {:starkbank, "~> 0.2.0"}
+    {:starkbank, "~> 0.3.0"}
   ]
 end
 ```
