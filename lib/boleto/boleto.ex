@@ -24,13 +24,14 @@ defmodule StarkBank.Boleto do
     - `:city` [string]: payer address city. ex: Rio de Janeiro
     - `:state_code` [string]: payer address state. ex: GO
     - `:zip_code` [string]: payer address zip code. ex: 01311-200
-    - `:due` [Date, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
 
   ## Parameters (optional):
+    - `:due` [Date, DateTime or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
     - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
     - `:overdue_limit` [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
     - `:descriptions` [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
+    - `:discounts` [list of maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
@@ -68,6 +69,7 @@ defmodule StarkBank.Boleto do
     :overdue_limit,
     :tags,
     :descriptions,
+    :discounts,
     :id,
     :fee,
     :line,
@@ -90,7 +92,7 @@ defmodule StarkBank.Boleto do
   ## Return:
     - list of Boleto structs with updated attributes
   """
-  @spec create([Boleto.t()], user: Project.t() | nil) ::
+  @spec create([Boleto.t() | map()], user: Project.t() | nil) ::
           {:ok, [Boleto.t()]} | {:error, [Error.t()]}
   def create(boletos, options \\ []) do
     Rest.post(
@@ -103,7 +105,7 @@ defmodule StarkBank.Boleto do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Boleto.t()], user: Project.t() | nil) :: any
+  @spec create!([Boleto.t() | map()], user: Project.t() | nil) :: any
   def create!(boletos, options \\ []) do
     Rest.post!(
       resource(),
@@ -167,8 +169,8 @@ defmodule StarkBank.Boleto do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: (optional) date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
@@ -179,8 +181,8 @@ defmodule StarkBank.Boleto do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           status: binary,
           tags: [binary],
           ids: [binary],
@@ -201,8 +203,8 @@ defmodule StarkBank.Boleto do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           status: binary,
           tags: [binary],
           ids: [binary],
@@ -264,6 +266,7 @@ defmodule StarkBank.Boleto do
       overdue_limit: json[:overdue_limit],
       tags: json[:tags],
       descriptions: json[:descriptions],
+      discounts: json[:discounts],
       id: json[:id],
       fee: json[:fee],
       line: json[:line],

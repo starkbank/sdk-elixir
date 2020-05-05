@@ -23,7 +23,7 @@ defmodule StarkBank.BoletoPayment do
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
 
   ## Parameters (optional):
-    - `:scheduled` [Date, default today]: payment scheduled date. ex: ~D[2020-03-25]
+    - `:scheduled` [Date, DateTime or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
@@ -62,7 +62,7 @@ defmodule StarkBank.BoletoPayment do
   ## Return:
     - list of BoletoPayment structs with updated attributes
   """
-  @spec create([BoletoPayment.t()], user: Project.t() | nil) ::
+  @spec create([BoletoPayment.t() | map()], user: Project.t() | nil) ::
           {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
     Rest.post(
@@ -75,7 +75,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([BoletoPayment.t()], user: Project.t() | nil) :: any
+  @spec create!([BoletoPayment.t() | map()], user: Project.t() | nil) :: any
   def create!(payments, options \\ []) do
     Rest.post!(
       resource(),
@@ -140,8 +140,8 @@ defmodule StarkBank.BoletoPayment do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
@@ -152,8 +152,8 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           tags: [binary],
           ids: [binary],
           status: binary,
@@ -174,8 +174,8 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           tags: [binary],
           ids: [binary],
           status: binary,

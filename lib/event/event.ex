@@ -65,8 +65,8 @@ defmodule StarkBank.Event do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date | string, default nil]: date filter for structs only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:is_delivered` [bool, default nil]: filter successfully delivered events. ex: true or false
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
@@ -75,8 +75,8 @@ defmodule StarkBank.Event do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           is_delivered: boolean,
           user: Project.t()
         ) ::
@@ -95,8 +95,8 @@ defmodule StarkBank.Event do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           is_delivered: boolean,
           user: Project.t()
         ) ::

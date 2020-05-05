@@ -3,31 +3,49 @@ defmodule StarkBank.Utils.API do
 
   alias StarkBank.Utils.Case
 
-  def api_json(struct) do
+  def api_json(%{__struct__: _} = struct) do
     struct
     |> Map.from_struct()
+    |> api_json()
+  end
+
+  def api_json(map) when is_map(map) do
+    map
     |> cast_json_to_api_format()
   end
 
-  def cast_json_to_api_format(json) do
-    json
+  def cast_json_to_api_format(map) when is_map(map) do
+    map
     |> Enum.filter(fn {_field, value} -> !is_nil(value) end)
     |> Enum.map(fn {field, value} ->
-      {Case.snake_to_camel(to_string(field)), date_to_string(value)}
+      {Case.snake_to_camel(to_string(field)), coerce_types(value)}
     end)
     |> Enum.into(%{})
   end
 
-  defp date_to_string(%Date{} = date) do
+  def cast_json_to_api_format(list) when is_list(list) do
+    list
+    |> Enum.map(fn value -> cast_json_to_api_format(value) end)
+  end
+
+  def cast_json_to_api_format(value) do
+    value
+  end
+
+  defp coerce_types(list) when is_list(list) do
+    cast_json_to_api_format(list)
+  end
+
+  defp coerce_types(%Date{} = date) do
     "#{date.year}-#{date.month}-#{date.day}"
   end
 
-  defp date_to_string(%DateTime{} = datetime) do
+  defp coerce_types(%DateTime{} = datetime) do
     "#{datetime.year}-#{datetime.month}-#{datetime.day}"
   end
 
-  defp date_to_string(data) do
-    data
+  defp coerce_types(value) do
+    value
   end
 
   def from_api_json(json, resource_maker) do

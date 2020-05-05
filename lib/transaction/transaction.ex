@@ -32,6 +32,7 @@ defmodule StarkBank.Transaction do
     - `:sender_id` [string]: unique id of the sending workspace. ex: "5656565656565656"
     - `:fee` [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
     - `:source` [string, default nil]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
+    - `:balance` [integer, default nil]: account balance after transaction was processed. ex: 100000000 (= R$ 1,000,000.00)
     - `:created` [DateTime, default nil]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
@@ -44,8 +45,9 @@ defmodule StarkBank.Transaction do
     :tags,
     :id,
     :fee,
-    :created,
-    :source
+    :balance,
+    :source,
+    :created
   ]
 
   @type t() :: %__MODULE__{}
@@ -62,7 +64,7 @@ defmodule StarkBank.Transaction do
   ## Return:
     - list of Transaction structs with updated attributes
   """
-  @spec create([Transaction.t()], user: Project.t() | nil) ::
+  @spec create([Transaction.t() | map()], user: Project.t() | nil) ::
           {:ok, [Transaction.t()]} | {:error, [Error.t()]}
   def create(transactions, options \\ []) do
     Rest.post(
@@ -75,7 +77,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Transaction.t()], user: Project.t() | nil) :: any
+  @spec create!([Transaction.t() | map()], user: Project.t() | nil) :: any
   def create!(transactions, options \\ []) do
     Rest.post!(
       resource(),
@@ -114,8 +116,8 @@ defmodule StarkBank.Transaction do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date | string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date | string, default nil]: date filter for entities created only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
+    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: Date(2020, 3, 10)
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
@@ -124,8 +126,8 @@ defmodule StarkBank.Transaction do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           external_ids: [binary],
           user: Project.t()
         ) ::
@@ -144,8 +146,8 @@ defmodule StarkBank.Transaction do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
+          after: Date.t() | DateTime.t() | binary,
+          before: Date.t() | DateTime.t() | binary,
           external_ids: [binary],
           user: Project.t()
         ) ::
@@ -173,8 +175,9 @@ defmodule StarkBank.Transaction do
       tags: json[:tags],
       id: json[:id],
       fee: json[:fee],
-      created: json[:created] |> Check.datetime(),
-      source: json[:source]
+      source: json[:source],
+      balance: json[:balance],
+      created: json[:created] |> Check.datetime()
     }
   end
 end
