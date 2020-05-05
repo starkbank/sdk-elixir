@@ -21,8 +21,8 @@ defmodule StarkBank.BoletoPayment.Log do
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:payment` [BoletoPayment]: BoletoPayment entity to which the log refers to.
     - `:errors` [list of strings]: list of errors linked to this BoletoPayment event.
-    - `:type` [string]: type of the BoletoPayment event which triggered the log creation. ex: "registered" or "paid"
-    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:type` [string]: type of the BoletoPayment event which triggered the log creation. ex: "processing" or "success"
+    - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :payment, :errors, :type, :created]
   defstruct [:id, :payment, :errors, :type, :created]
@@ -59,9 +59,9 @@ defmodule StarkBank.BoletoPayment.Log do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: Date(2020, 3, 10)
-    - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "paid" or "registered"
+    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
+    - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "processing" or "success"
     - `:payment_ids` [list of strings, default nil]: list of BoletoPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 

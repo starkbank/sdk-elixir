@@ -21,7 +21,7 @@ defmodule StarkBank.Transfer.Log do
     - `:transfer` [Transfer]: Transfer entity to which the log refers to.
     - `:errors` [list of strings]: list of errors linked to this BoletoPayment event.
     - `:type` [string]: type of the Transfer event which triggered the log creation. ex: "processing" or "success"
-    - `:created` [DateTime]: creation datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :transfer, :errors, :type, :created]
   defstruct [:id, :transfer, :errors, :type, :created]
@@ -58,8 +58,8 @@ defmodule StarkBank.Transfer.Log do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
     - `:transfer_ids` [list of strings, default nil]: list of Transfer ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.

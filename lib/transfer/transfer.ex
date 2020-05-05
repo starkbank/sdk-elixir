@@ -18,7 +18,7 @@ defmodule StarkBank.Transfer do
     - `:amount` [integer]: amount in cents to be transferred. ex: 1234 (= R$ 12.34)
     - `:name` [string]: receiver full name. ex: "Anthony Edward Stark"
     - `:tax_id` [string]: receiver tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
-    - `:bank_code` [string]: receiver 1 to 3 digits of the bank institution in Brazil. ex: "200" or "341"
+    - `:bank_code` [string]: 1 to 3 digits of the receiver bank institution in Brazil. ex: "200" or "341"
     - `:branch_code` [string]: receiver bank account branch. Use '-' in case there is a verifier digit. ex: "1357-9"
     - `:account_number` [string]: Receiver Bank Account number. Use '-' before the verifier digit. ex: "876543-2"
 
@@ -28,7 +28,7 @@ defmodule StarkBank.Transfer do
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
     - `:fee` [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
-    - `:status` [string, default nil]: current boleto status. ex: "registered" or "paid"
+    - `:status` [string, default nil]: current transfer status. ex: "success" or "failed"
     - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this transfer (if there are two, second is the chargeback). ex: ["19827356981273"]
     - `:created` [DateTime, default nil]: creation datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:updated` [DateTime, default nil]: latest update datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]

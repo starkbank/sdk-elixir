@@ -22,7 +22,7 @@ defmodule StarkBank.Boleto.Log do
     - `:boleto` [Boleto]: Boleto entity to which the log refers to.
     - `:errors` [list of strings]: list of errors linked to this Boleto event
     - `:type` [string]: type of the Boleto event which triggered the log creation. ex: "registered" or "paid"
-    - `:created` [DateTime]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:id, :boleto, :errors, :type, :created]
   defstruct [:id, :boleto, :errors, :type, :created]
@@ -59,8 +59,8 @@ defmodule StarkBank.Boleto.Log do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
     - `:boleto_ids` [list of strings, default nil]: list of Boleto ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.

@@ -25,7 +25,7 @@ defmodule StarkBank.Event do
   list all generated updates on entities.
 
   ## Attributes:
-    - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
+    - `:id` [string]: unique id returned when the event is created. ex: "5656565656565656"
     - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log or UtilityPayment.Log)
     - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:is_delivered` [bool]: true if the event has been successfully delivered to the user url. ex: false

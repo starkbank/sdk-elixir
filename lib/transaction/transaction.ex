@@ -30,10 +30,10 @@ defmodule StarkBank.Transaction do
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transaction is created. ex: "7656565656565656"
     - `:sender_id` [string]: unique id of the sending workspace. ex: "5656565656565656"
-    - `:fee` [integer, default nil]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
+    - `:fee` [integer, default nil]: fee charged when the transaction was created. ex: 200 (= R$ 2.00)
     - `:source` [string, default nil]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
     - `:balance` [integer, default nil]: account balance after transaction was processed. ex: 100000000 (= R$ 1,000,000.00)
-    - `:created` [DateTime, default nil]: creation datetime for the boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:created` [DateTime, default nil]: creation datetime for the transaction. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [:amount, :description, :external_id, :receiver_id]
   defstruct [
@@ -116,8 +116,8 @@ defmodule StarkBank.Transaction do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
