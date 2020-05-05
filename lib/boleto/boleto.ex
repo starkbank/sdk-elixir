@@ -29,7 +29,7 @@ defmodule StarkBank.Boleto do
     - `:due` [Date, DateTime or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
     - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
-    - `:overdue_limit` [integer, default 59]: limit in days for automatic Boleto cancellation after due date. ex: 7 (max: 59)
+    - `:overdue_limit` [integer, default 59]: limit in days for payment after due date. ex: 7 (max: 59)
     - `:descriptions` [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
     - `:discounts` [list of maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
     - `:tags` [list of strings]: list of strings for tagging
@@ -169,8 +169,8 @@ defmodule StarkBank.Boleto do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: Date(2020, 3, 10)
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: Date(2020, 3, 10)
+    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]

@@ -19,7 +19,7 @@ defmodule StarkBank.Webhook do
     - `:subscriptions` [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "boleto-payment"]
 
   ## Attributes:
-    - `:id` [string, default nil]: unique id returned when the log is created. ex: "5656565656565656"
+    - `:id` [string, default nil]: unique id returned when the webhook is created. ex: "5656565656565656"
   """
   @enforce_keys [:url, :subscriptions]
   defstruct [:id, :url, :subscriptions]
