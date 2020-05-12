@@ -97,6 +97,8 @@ defmodule StarkBankTest.Boleto do
       state_code: "SP",
       zip_code: "01234-567",
       tax_id: "012.345.678-90",
+      receiver_name: "Random Receiver",
+      receiver_tax_id: "123.456.789-09",
       overdue_limit: 10,
       fine: 0.00,
       interest: 0.00,
