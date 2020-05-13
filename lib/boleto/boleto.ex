@@ -30,6 +30,8 @@ defmodule StarkBank.Boleto do
     - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
     - `:overdue_limit` [integer, default 59]: limit in days for payment after due date. ex: 7 (max: 59)
+    - `:receiver_name` [string]: receiver (Sacador Avalista) full name. ex: "Anthony Edward Stark"
+    - `:receiver_tax_id` [string]: receiver (Sacador Avalista) tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - `:descriptions` [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
     - `:discounts` [list of maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
     - `:tags` [list of strings]: list of strings for tagging
@@ -67,6 +69,8 @@ defmodule StarkBank.Boleto do
     :fine,
     :interest,
     :overdue_limit,
+    :receiver_name,
+    :receiver_tax_id,
     :tags,
     :descriptions,
     :discounts,
@@ -264,6 +268,8 @@ defmodule StarkBank.Boleto do
       fine: json[:fine],
       interest: json[:interest],
       overdue_limit: json[:overdue_limit],
+      receiver_name: json[:receiver_name],
+      receiver_tax_id: json[:receiver_tax_id],
       tags: json[:tags],
       descriptions: json[:descriptions],
       discounts: json[:discounts],
