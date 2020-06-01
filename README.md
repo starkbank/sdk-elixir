@@ -137,6 +137,21 @@ config :starkbank,
 Just select the way of passing the project user that is more convenient to you.
 On all following examples we will assume a default user has been set in the configs.
 
+
+### 5. Setting up the error language
+
+The error language can also be set in the `config/config.exs` file:
+
+```elixir
+import Config
+
+config :starkbank,
+  language: "en-US"
+```
+
+Language options are "en-US" for english and "pt-BR" for brazilian portuguese. English is default
+
+
 ## Testing in Sandbox
 
 Your initial balance is zero. For many operations in Stark Bank, you'll need funds
