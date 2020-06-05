@@ -150,22 +150,23 @@ defmodule StarkBank.Boleto do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
+    - `:layout` [string]: Layout specification. Available options are "default" and "booklet".
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Boleto pdf file content
   """
-  @spec pdf(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, layout: binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_pdf(resource(), id, options)
+    Rest.get_pdf(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, user: Project.t() | nil) :: binary
+  @spec pdf!(binary, layout: binary, user: Project.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_pdf!(resource(), id, options)
+    Rest.get_pdf!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
 
   @doc """

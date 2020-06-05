@@ -124,7 +124,7 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec pdf(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_pdf(resource(), id, options)
+    Rest.get_pdf(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
 
   @doc """
@@ -132,7 +132,7 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec pdf!(binary, user: Project.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_pdf!(resource(), id, options)
+    Rest.get_pdf!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
 
   @doc """

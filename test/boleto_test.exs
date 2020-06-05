@@ -55,7 +55,7 @@ defmodule StarkBankTest.Boleto do
       |> Enum.take(1)
       |> hd()
 
-    {:ok, _pdf} = StarkBank.Boleto.pdf(boleto.id)
+    {:ok, _pdf} = StarkBank.Boleto.pdf(boleto.id, layout: "default")
   end
 
   @tag :boleto
@@ -65,7 +65,7 @@ defmodule StarkBankTest.Boleto do
       |> Enum.take(1)
       |> hd()
 
-    pdf = StarkBank.Boleto.pdf!(boleto.id)
+    pdf = StarkBank.Boleto.pdf!(boleto.id, layout: "booklet")
     file = File.open!("tmp/boleto.pdf", [:write])
     IO.binwrite(file, pdf)
     File.close(file)

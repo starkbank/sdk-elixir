@@ -210,7 +210,7 @@ boleto = StarkBank.Boleto.get!("6750458353811456")
 After its creation, a boleto PDF may be retrieved by passing its id.
 
 ```elixir
-pdf = StarkBank.Boleto.pdf!("6750458353811456")
+pdf = StarkBank.Boleto.pdf!("6750458353811456", layout: "default")
 
 file = File.open!("boleto.pdf", [:write])
 IO.binwrite(file, pdf)

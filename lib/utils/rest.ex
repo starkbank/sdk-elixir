@@ -91,19 +91,15 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
-  def get_pdf({resource_name, _resource_maker}, id, options) do
-    user = options[:user]
-
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", user: user) do
+  def get_pdf({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", query: options, user: user) do
       {:ok, pdf} -> {:ok, pdf}
       {:error, errors} -> {:error, errors}
     end
   end
 
-  def get_pdf!({resource_name, _resource_maker}, id, options) do
-    user = options[:user]
-
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", user: user) do
+  def get_pdf!({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", query: options, user: user) do
       {:ok, pdf} -> pdf
       {:error, errors} -> raise API.errors_to_string(errors)
     end
