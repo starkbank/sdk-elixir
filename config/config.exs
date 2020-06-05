@@ -1,6 +1,7 @@
 import Config
 
 config :starkbank,
+  language: "en-US",
   project: [
     environment: :sandbox,
     id: System.fetch_env!("SANDBOX_ID"), # "9999999999999999",

@@ -92,6 +92,16 @@ defmodule StarkBank.Utils.Check do
     user
   end
 
+  def language() do
+    case Application.fetch_env(:starkbank, :language) do
+      {:ok, 'en-US'} -> 'en-US'
+      {:ok, "en-US"} -> 'en-US'
+      {:ok, 'pt-BR'} -> 'pt-BR'
+      {:ok, "pt-BR"} -> 'pt-BR'
+      :error -> 'en-US'
+    end
+  end
+
   def enforced_keys(parameters, enforced_keys) do
     case get_missing_keys(parameters |> Enum.into(%{}), enforced_keys) do
       [] -> parameters
