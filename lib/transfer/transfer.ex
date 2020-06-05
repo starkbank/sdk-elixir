@@ -146,6 +146,7 @@ defmodule StarkBank.Transfer do
     - `:before` [Date, DateTime or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
     - `:transaction_ids` [list of strings, default nil]: list of transaction IDs linked to the desired transfers. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
+    - `:tax_id` [string, default nil]: filter for transfers sent to the specified tax ID. ex: "012.345.678-90"
     - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
@@ -159,6 +160,7 @@ defmodule StarkBank.Transfer do
           before: Date.t() | DateTime.t() | binary,
           transaction_ids: [binary],
           status: binary,
+          tax_id: binary,
           sort: binary,
           tags: [binary],
           user: Project.t()
@@ -182,6 +184,7 @@ defmodule StarkBank.Transfer do
           before: Date.t() | DateTime.t() | binary,
           transaction_ids: [binary],
           status: binary,
+          tax_id: binary,
           sort: binary,
           tags: [binary],
           user: Project.t()
