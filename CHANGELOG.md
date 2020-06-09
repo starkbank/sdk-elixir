@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [0.5.1] - 2020-06-09
 ### Fixed
 - Production bug on Mix call inside SDK
 
