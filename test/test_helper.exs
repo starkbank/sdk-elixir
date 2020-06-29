@@ -12,6 +12,10 @@ ExUnit.start(
     # :transfer,
     # :utility_payment_log,
     # :utility_payment,
+    # :das_payment_log,
+    # :das_payment,
+    # :iss_payment_log,
+    # :iss_payment,
     # :webhook,
     # :event
   ]

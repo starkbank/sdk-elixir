@@ -551,6 +551,190 @@ log = StarkBank.UtilityPayment.Log.get!("6197807794880512")
   |> IO.inspect
 ```
 
+### Create DAS payment
+
+It's also simple to pay DAS taxes in the SDK.
+
+```elixir
+payments = StarkBank.DasPayment.create!(
+  [
+    %StarkBank.DasPayment{
+        bar_code: "83600000001522801380037107172881100021296561",
+        scheduled: Date.utc_today |> Date.add(2),
+        description: "paying some taxes",
+        tags: ["take", "my", "money"],
+    },
+    %StarkBank.DasPayment{
+        line: "83680000001 7 08430138003 0 71070987611 8 00041351685 7",
+        scheduled: Date.utc_today |> Date.add(3),
+        description: "never ending taxes",
+        tags: ["again"],
+    },
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using DasPayment structs, you can also pass each payment element in map format
+
+### Query DAS payments
+
+To search for DAS payments using filters, run:
+
+```elixir
+payments = StarkBank.DasPayment.query!(
+  tags: ["state", "government"]
+) |> Enum.take(10) |> IO.inspect
+```
+
+### Get DAS payment
+
+You can get a specific tax by its id:
+
+```elixir
+payment = StarkBank.DasPayment.get!("6619425641857024")
+  |> IO.inspect
+```
+
+### Get DAS payment PDF
+
+After its creation, a DAS payment PDF may also be retrieved by passing its id.
+
+```elixir
+pdf = StarkBank.DasPayment.pdf!("6619425641857024")
+
+file = File.open!("das-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Delete DAS payment
+
+You can also cancel a DAS payment by its id.
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.DasPayment.delete!("6619425641857024")
+  |> IO.inspect
+```
+
+### Query DAS payment logs
+
+You can search for payments by specifying filters. Use this to understand the
+taxes life cycles.
+
+```elixir
+for log <- StarkBank.DasPayment.Log.query!(
+  payment_ids: ["6619425641857024", "5738969660653568"]
+) do
+  log |> IO.inspect
+end
+```
+
+### Get DAS payment log
+
+If you want to get a specific payment log by its id, just run:
+
+```elixir
+log = StarkBank.DasPayment.Log.get!("6197807794880512")
+  |> IO.inspect
+```
+
+### Create ISS payment
+
+It's also simple to pay ISS taxes in the SDK.
+
+```elixir
+payments = StarkBank.IssPayment.create!(
+  [
+    %StarkBank.IssPayment{
+        bar_code: "83600000001522801380037107172881100021296561",
+        scheduled: Date.utc_today |> Date.add(2),
+        description: "paying some taxes",
+        tags: ["take", "my", "money"],
+    },
+    %StarkBank.IssPayment{
+        line: "83680000001 7 08430138003 0 71070987611 8 00041351685 7",
+        scheduled: Date.utc_today |> Date.add(3),
+        description: "never ending taxes",
+        tags: ["again"],
+    },
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using IssPayment structs, you can also pass each payment element in map format
+
+### Query ISS payments
+
+To search for ISS payments using filters, run:
+
+```elixir
+payments = StarkBank.IssPayment.query!(
+  tags: ["state", "government"]
+) |> Enum.take(10) |> IO.inspect
+```
+
+### Get ISS payment
+
+You can get a specific tax by its id:
+
+```elixir
+payment = StarkBank.IssPayment.get!("6619425641857024")
+  |> IO.inspect
+```
+
+### Get ISS payment PDF
+
+After its creation, a ISS payment PDF may also be retrieved by passing its id.
+
+```elixir
+pdf = StarkBank.IssPayment.pdf!("6619425641857024")
+
+file = File.open!("iss-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Delete ISS payment
+
+You can also cancel a ISS payment by its id.
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.IssPayment.delete!("6619425641857024")
+  |> IO.inspect
+```
+
+### Query ISS payment logs
+
+You can search for payments by specifying filters. Use this to understand the
+taxes life cycles.
+
+```elixir
+for log <- StarkBank.IssPayment.Log.query!(
+  payment_ids: ["6619425641857024", "5738969660653568"]
+) do
+  log |> IO.inspect
+end
+```
+
+### Get ISS payment log
+
+If you want to get a specific payment log by its id, just run:
+
+```elixir
+log = StarkBank.IssPayment.Log.get!("6197807794880512")
+  |> IO.inspect
+```
+
 ### Create transactions
 
 To send money between Stark Bank accounts, you can create transactions:
