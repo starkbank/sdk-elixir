@@ -24,6 +24,7 @@ defmodule StarkBank.Transfer do
 
   ## Parameters (optional):
     - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
+    - `:scheduled` [DateTime, default now]: datetime when the transfer will be processed. May be pushed to next business day if necessary. ex: ~U[2020-03-26 19:32:35.418698Z]
 
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
@@ -41,6 +42,7 @@ defmodule StarkBank.Transfer do
     :bank_code,
     :branch_code,
     :account_number,
+    :scheduled,
     :transaction_ids,
     :fee,
     :tags,
@@ -109,6 +111,31 @@ defmodule StarkBank.Transfer do
   @spec get!(binary, user: Project.t() | nil) :: Transfer.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
+  end
+
+  @doc """
+  Delete a list of Transfer entities previously created in the Stark Bank API
+
+  ## Parameters (required):
+    - `id` [string]: Boleto unique id. ex: "5656565656565656"
+
+  ## Options:
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+
+  ##  Return:
+    - deleted Transfer struct
+  """
+  @spec delete(binary, user: Project.t() | nil) :: {:ok, Transfer.t()} | {:error, [%Error{}]}
+  def delete(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
+  end
+
+  @doc """
+  Same as delete(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec delete!(binary, user: Project.t() | nil) :: Boleto.t()
+  def delete!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
   end
 
   @doc """
@@ -211,6 +238,7 @@ defmodule StarkBank.Transfer do
       bank_code: json[:bank_code],
       branch_code: json[:branch_code],
       account_number: json[:account_number],
+      scheduled: json[:scheduled] |> Check.datetime(),
       transaction_ids: json[:transaction_ids],
       fee: json[:fee],
       tags: json[:tags],
