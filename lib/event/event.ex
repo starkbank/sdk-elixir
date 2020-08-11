@@ -115,7 +115,7 @@ defmodule StarkBank.Event do
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
-    - deleted Event struct with updated attributes
+    - deleted Event struct
   """
   @spec delete(binary, user: Project.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do

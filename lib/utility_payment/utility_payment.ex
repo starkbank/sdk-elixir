@@ -194,7 +194,7 @@ defmodule StarkBank.UtilityPayment do
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
-    - deleted UtilityPayment with updated attributes
+    - deleted UtilityPayment struct
   """
   @spec delete(binary, user: Project.t() | nil) :: {:ok, UtilityPayment.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do

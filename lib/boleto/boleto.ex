@@ -230,7 +230,7 @@ defmodule StarkBank.Boleto do
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ##  Return:
-    - deleted Boleto struct with updated attributes
+    - deleted Boleto struct
   """
   @spec delete(binary, user: Project.t() | nil) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do

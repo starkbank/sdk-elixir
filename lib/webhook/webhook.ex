@@ -144,7 +144,7 @@ defmodule StarkBank.Webhook do
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
-    - deleted Webhook with updated attributes
+    - deleted Webhook struct
   """
   @spec delete(binary, user: Project.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
