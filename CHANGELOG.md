@@ -17,6 +17,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - transfer.scheduled parameter to allow Transfer scheduling
 - StarkBank.Transfer.delete to cancel scheduled Transfers
 - Transaction query by tags
+### Fixed
+- Event errors on unknown subscriptions
 
 ## [0.5.1] - 2020-06-09
 ### Fixed

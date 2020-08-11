@@ -336,11 +336,17 @@ defmodule StarkBank.Event do
   defp resource_maker(json) do
     %Event{
       id: json[:id],
-      log: json[:log] |> API.from_api_json(log_maker_by_subscription(json[:subscription])),
+      log: parse_log_json(json[:log], json[:subscription]),
       created: json[:created] |> Check.datetime(),
       is_delivered: json[:is_delivered],
       subscription: json[:subscription]
     }
+  end
+
+  defp parse_log_json(log, subscription) do
+    log |> API.from_api_json(log_maker_by_subscription(subscription))
+  rescue
+    CaseClauseError -> log
   end
 
   defp log_maker_by_subscription(subscription) do
