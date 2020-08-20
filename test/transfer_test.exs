@@ -52,7 +52,7 @@ defmodule StarkBankTest.Transfer do
   test "delete transfer" do
     created_transfer =
       StarkBank.Transfer.create!([example_transfer(true)]) |> hd
-    deleted_transfer = StarkBank.Transfer.delete!(created_transfer.id)
+    {:ok, deleted_transfer} = StarkBank.Transfer.delete(created_transfer.id)
     "canceled" = deleted_transfer.status
   end
 
@@ -60,7 +60,7 @@ defmodule StarkBankTest.Transfer do
   test "delete! transfer" do
     created_transfer =
       StarkBank.Transfer.create!([example_transfer(true)]) |> hd
-    {:ok, deleted_transfer} = StarkBank.Transfer.delete(created_transfer.id)
+    deleted_transfer = StarkBank.Transfer.delete!(created_transfer.id)
     "canceled" = deleted_transfer.status
   end
 
