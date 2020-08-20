@@ -118,6 +118,7 @@ defmodule StarkBank.Transaction do
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
@@ -128,6 +129,7 @@ defmodule StarkBank.Transaction do
           limit: integer,
           after: Date.t() | DateTime.t() | binary,
           before: Date.t() | DateTime.t() | binary,
+          tags: [binary],
           external_ids: [binary],
           user: Project.t()
         ) ::
@@ -148,6 +150,7 @@ defmodule StarkBank.Transaction do
           limit: integer,
           after: Date.t() | DateTime.t() | binary,
           before: Date.t() | DateTime.t() | binary,
+          tags: [binary],
           external_ids: [binary],
           user: Project.t()
         ) ::

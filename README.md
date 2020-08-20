@@ -300,6 +300,7 @@ transfers = StarkBank.Transfer.create!(
         account_number: "123456-7",
         tax_id: "012.345.678-90",
         name: "Jon Snow",
+        scheduled: Date.utc_today |> Date.add(3)
     }
 ]) |> IO.inspect
 ```
@@ -326,6 +327,15 @@ To get a single transfer by its id, run:
 
 ```elixir
 transfer = StarkBank.Transfer.get!("4882890932355072")
+  |> IO.inspect
+```
+
+### Cancel transfer
+
+To cancel a single scheduled transfer by its id, run:
+
+```elixir
+transfer = StarkBank.Transfer.delete!("4882890932355072")
   |> IO.inspect
 ```
 

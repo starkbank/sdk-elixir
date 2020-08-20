@@ -49,6 +49,22 @@ defmodule StarkBankTest.Transfer do
   end
 
   @tag :transfer
+  test "delete transfer" do
+    created_transfer =
+      StarkBank.Transfer.create!([example_transfer(true)]) |> hd
+    {:ok, deleted_transfer} = StarkBank.Transfer.delete(created_transfer.id)
+    "canceled" = deleted_transfer.status
+  end
+
+  @tag :transfer
+  test "delete! transfer" do
+    created_transfer =
+      StarkBank.Transfer.create!([example_transfer(true)]) |> hd
+    deleted_transfer = StarkBank.Transfer.delete!(created_transfer.id)
+    "canceled" = deleted_transfer.status
+  end
+
+  @tag :transfer
   test "pdf transfer" do
     transfer =
       StarkBank.Transfer.query!(status: "success")
@@ -71,7 +87,13 @@ defmodule StarkBankTest.Transfer do
     File.close(file)
   end
 
-  defp example_transfer() do
+  defp example_transfer(push_schedule \\ false)
+
+  defp example_transfer(push_schedule) when push_schedule do
+    %{example_transfer(false) | scheduled: Date.utc_today() |> Date.add(1)}
+  end
+
+  defp example_transfer(_push_schedule) do
     %StarkBank.Transfer{
       amount: 10,
       name: "João",
