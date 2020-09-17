@@ -176,6 +176,7 @@ defmodule StarkBank.Transfer do
     - `:tax_id` [string, default nil]: filter for transfers sent to the specified tax ID. ex: "012.345.678-90"
     - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
@@ -190,6 +191,7 @@ defmodule StarkBank.Transfer do
           tax_id: binary,
           sort: binary,
           tags: [binary],
+          ids: [binary],
           user: Project.t()
         ) ::
           ({:cont, {:ok, [Transfer.t()]}}
@@ -214,6 +216,7 @@ defmodule StarkBank.Transfer do
           tax_id: binary,
           sort: binary,
           tags: [binary],
+          ids: [binary],
           user: Project.t()
         ) ::
           ({:cont, [Transfer.t()]} | {:halt, any} | {:suspend, any}, any -> any)
