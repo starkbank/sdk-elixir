@@ -120,6 +120,7 @@ defmodule StarkBank.Transaction do
     - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
@@ -131,6 +132,7 @@ defmodule StarkBank.Transaction do
           before: Date.t() | DateTime.t() | binary,
           tags: [binary],
           external_ids: [binary],
+          ids: [binary],
           user: Project.t()
         ) ::
           ({:cont, {:ok, [Transaction.t()]}}
@@ -152,6 +154,7 @@ defmodule StarkBank.Transaction do
           before: Date.t() | DateTime.t() | binary,
           tags: [binary],
           external_ids: [binary],
+          ids: [binary],
           user: Project.t()
         ) ::
           ({:cont, [Transaction.t()]} | {:halt, any} | {:suspend, any}, any -> any)

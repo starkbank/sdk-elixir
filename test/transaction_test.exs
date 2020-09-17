@@ -29,6 +29,50 @@ defmodule StarkBankTest.Transaction do
   end
 
   @tag :transaction
+  test "query transaction ids" do
+    transactions_ids_expected =
+      StarkBank.Transaction.query(limit: 10)
+      |> Enum.take(100)
+      |> Enum.map(fn {:ok, transaction} -> transaction.id end)
+
+    assert length(transactions_ids_expected) <= 10
+
+    transactions_ids_result =
+      StarkBank.Transaction.query(ids: transactions_ids_expected)
+      |> Enum.take(100)
+      |> Enum.map(fn {:ok, transaction} -> transaction.id end)
+
+    assert length(transactions_ids_result) <= 10
+
+    transactions_ids_expected = Enum.sort(transactions_ids_expected)
+    transactions_ids_result = Enum.sort(transactions_ids_result)
+
+    assert transactions_ids_expected == transactions_ids_result
+  end
+
+  @tag :transaction
+  test "query! transaction ids" do
+    transactions_ids_expected =
+      StarkBank.Transaction.query!(limit: 10)
+      |> Enum.take(100)
+      |> Enum.map(fn transaction -> transaction.id end)
+
+    assert length(transactions_ids_expected) <= 10
+
+    transactions_ids_result =
+      StarkBank.Transaction.query!(ids: transactions_ids_expected)
+      |> Enum.take(100)
+      |> Enum.map(fn transaction -> transaction.id end)
+
+    assert length(transactions_ids_result) <= 10
+
+    transactions_ids_expected = Enum.sort(transactions_ids_expected)
+    transactions_ids_result = Enum.sort(transactions_ids_result)
+
+    assert transactions_ids_expected == transactions_ids_result
+  end
+
+  @tag :transaction
   test "get transaction" do
     transaction =
       StarkBank.Transaction.query!()

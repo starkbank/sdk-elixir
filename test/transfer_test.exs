@@ -29,6 +29,50 @@ defmodule StarkBankTest.Transfer do
   end
 
   @tag :transfer
+  test "query transfer ids" do
+    transfers_ids_expected =
+      StarkBank.Transfer.query(limit: 10)
+      |> Enum.take(100)
+      |> Enum.map(fn {:ok, transfer} -> transfer.id end)
+
+    assert length(transfers_ids_expected) <= 10
+
+    transfers_ids_result =
+      StarkBank.Transfer.query(ids: transfers_ids_expected)
+      |> Enum.take(100)
+      |> Enum.map(fn {:ok, transfer} -> transfer.id end)
+
+    assert length(transfers_ids_result) <= 10
+
+    transfers_ids_expected = Enum.sort(transfers_ids_expected)
+    transfers_ids_result = Enum.sort(transfers_ids_result)
+
+    assert transfers_ids_expected == transfers_ids_result
+  end
+
+  @tag :transfer
+  test "query! transfer ids" do
+    transfers_ids_expected =
+      StarkBank.Transfer.query!(limit: 10)
+      |> Enum.take(100)
+      |> Enum.map(fn transfer -> transfer.id end)
+
+    assert length(transfers_ids_expected) <= 10
+
+    transfers_ids_result =
+      StarkBank.Transfer.query!(ids: transfers_ids_expected)
+      |> Enum.take(100)
+      |> Enum.map(fn transfer -> transfer.id end)
+
+    assert length(transfers_ids_result) <= 10
+
+    transfers_ids_expected = Enum.sort(transfers_ids_expected)
+    transfers_ids_result = Enum.sort(transfers_ids_result)
+
+    assert transfers_ids_expected == transfers_ids_result
+  end
+
+  @tag :transfer
   test "get transfer" do
     transfer =
       StarkBank.Transfer.query!()
