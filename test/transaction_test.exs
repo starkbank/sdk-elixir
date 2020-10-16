@@ -92,7 +92,7 @@ defmodule StarkBankTest.Transaction do
     _transaction = StarkBank.Transaction.get!(transaction.id)
   end
 
-  defp example_transaction() do
+  def example_transaction() do
     %StarkBank.Transaction{
       amount: 1,
       receiver_id: "5768064935133184",

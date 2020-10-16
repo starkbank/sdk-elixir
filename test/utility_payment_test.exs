@@ -3,14 +3,14 @@ defmodule StarkBankTest.UtilityPayment do
 
   @tag :utility_payment
   test "create utility payment" do
-    {:ok, payments} = StarkBank.UtilityPayment.create([example_payment()])
+    {:ok, payments} = StarkBank.UtilityPayment.create([example_payment(0, true)])
     payment = payments |> hd
     assert !is_nil(payment)
   end
 
   @tag :utility_payment
   test "create! utility payment" do
-    payment = StarkBank.UtilityPayment.create!([example_payment()]) |> hd
+    payment = StarkBank.UtilityPayment.create!([example_payment(0, true)]) |> hd
     assert !is_nil(payment)
   end
 
@@ -73,19 +73,25 @@ defmodule StarkBankTest.UtilityPayment do
 
   @tag :utility_payment
   test "delete utility payment" do
-    payment = StarkBank.UtilityPayment.create!([example_payment(2)]) |> hd
+    payment = StarkBank.UtilityPayment.create!([example_payment(2, true)]) |> hd
     {:ok, deleted_payment} = StarkBank.UtilityPayment.delete(payment.id)
     assert !is_nil(deleted_payment)
   end
 
   @tag :utility_payment
   test "delete! utility payment" do
-    payment = StarkBank.UtilityPayment.create!([example_payment(2)]) |> hd
+    payment = StarkBank.UtilityPayment.create!([example_payment(2, true)]) |> hd
     deleted_payment = StarkBank.UtilityPayment.delete!(payment.id)
     assert !is_nil(deleted_payment)
   end
 
-  defp example_payment(schedule \\ 0) do
+  def example_payment(schedule \\ 0, push_schedule)
+
+  def example_payment(schedule, true) do
+    %{example_payment(schedule, false) | scheduled: Date.utc_today() |> Date.add(schedule)}
+  end
+
+  def example_payment(_, false) do
     bar_code_core =
       :crypto.rand_uniform(100, 100_000)
       |> to_string
@@ -93,7 +99,6 @@ defmodule StarkBankTest.UtilityPayment do
 
     %StarkBank.UtilityPayment{
       bar_code: "8366" <> bar_code_core <> "01380074119002551100010601813",
-      scheduled: Date.utc_today() |> Date.add(schedule),
       description: "pagando a conta",
       tags: ["my", "precious", "tags"]
     }

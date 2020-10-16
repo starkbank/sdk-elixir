@@ -85,12 +85,18 @@ defmodule StarkBankTest.BoletoPayment do
     assert !is_nil(deleted_payment)
   end
 
-  defp example_payment() do
+  def example_payment(push_schedule \\ false)
+
+  def example_payment(push_schedule) when push_schedule do
+    %{example_payment(false) | scheduled: Date.utc_today() |> Date.add(1)}
+  end
+
+
+  def example_payment(_push_schedule) do
     boleto = StarkBank.Boleto.create!([StarkBankTest.Boleto.example_boleto()]) |> hd
 
     %StarkBank.BoletoPayment{
       line: boleto.line,
-      scheduled: Date.utc_today() |> Date.add(1),
       description: "loading a random account",
       tax_id: boleto.tax_id
     }
