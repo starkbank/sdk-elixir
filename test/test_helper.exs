@@ -12,6 +12,7 @@ ExUnit.start(
     # :transfer,
     # :utility_payment_log,
     # :utility_payment,
+    # :payment_request,
     # :webhook,
     # :event
   ]

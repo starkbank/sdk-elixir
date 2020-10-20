@@ -131,13 +131,13 @@ defmodule StarkBankTest.Transfer do
     File.close(file)
   end
 
-  defp example_transfer(push_schedule \\ false)
+  def example_transfer(push_schedule \\ false)
 
-  defp example_transfer(push_schedule) when push_schedule do
+  def example_transfer(push_schedule) when push_schedule do
     %{example_transfer(false) | scheduled: Date.utc_today() |> Date.add(1)}
   end
 
-  defp example_transfer(_push_schedule) do
+  def example_transfer(_push_schedule) do
     %StarkBank.Transfer{
       amount: 10,
       name: "João",

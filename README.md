@@ -610,6 +610,53 @@ transaction = StarkBank.Transaction.get!("6677396233125888")
   |> IO.inspect
 ```
 
+### Create payment requests to be approved by authorized people in a cost center 
+
+You can also request payments that must pass through a specific cost center approval flow to be executed.
+In certain structures, this allows double checks for cash-outs and also gives time to load your account
+with the required amount before the payments take place.
+The approvals can be granted at our website and must be performed according to the rules
+specified in the cost center.
+
+**Note**: The value of the center\_id parameter can be consulted by logging into our website and going
+to the desired cost center page.
+
+```elixir
+requests = StarkBank.PaymentRequest.create!(
+  [
+    %StarkBank.PaymentRequest{
+        center_id: "5967314465849344",
+        due: Date.utc_today |> Date.add(30),
+        payment: %StarkBank.Transfer{
+            amount: 100,
+            bank_code: "01",
+            branch_code: "0001",
+            account_number: "10000-0",
+            tax_id: "012.345.678-90",
+            name: "Tony Stark",
+        },
+        tags: ["iron", "suit"],
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using PaymentRequest structs, you can also pass each payment request element in map format
+
+
+### Query payment requests
+
+To search for payment requests, run:
+
+```elixir
+requests = StarkBank.PaymentRequest.query!(
+  center_id: "5967314465849344",
+  after: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
 ### Create webhook subscription
 
 To create a webhook subscription and be notified whenever an event occurs, run:

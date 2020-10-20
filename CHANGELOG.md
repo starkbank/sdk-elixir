@@ -16,6 +16,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - ids parameter to Transaction.query
 - ids parameter to Transfer.query
+- PaymentRequest resource to pass payments through manual approval flow
 
 ## [0.6.0] - 2020-08-20
 ### Added
