@@ -91,7 +91,6 @@ defmodule StarkBankTest.BoletoPayment do
     %{example_payment(false) | scheduled: Date.utc_today() |> Date.add(1)}
   end
 
-
   def example_payment(_push_schedule) do
     boleto = StarkBank.Boleto.create!([StarkBankTest.Boleto.example_boleto()]) |> hd
 

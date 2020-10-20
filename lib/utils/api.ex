@@ -44,6 +44,10 @@ defmodule StarkBank.Utils.API do
     "#{datetime.year}-#{datetime.month}-#{datetime.day}"
   end
 
+  defp coerce_types(%{__struct__: _} = struct) do
+    api_json(struct)
+  end
+
   defp coerce_types(value) do
     value
   end
