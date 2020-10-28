@@ -67,9 +67,15 @@ defmodule StarkBank.Utils.API do
   end
 
   def last_name_plural(resource_name) do
-    resource_name
-    |> last_name()
-    |> (fn x -> x <> "s" end).()
+    word = resource_name |> last_name()
+
+    cond do
+      word |> String.ends_with?("s") ->
+        word
+      word |> String.ends_with?("y") ->
+        (word |> String.slice(0..-2)) <> "ies"
+      true -> word <> "s"
+    end
   end
 
   def last_name(resource_name) do

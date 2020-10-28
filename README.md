@@ -464,8 +464,71 @@ end
 You can also get a boleto payment log by specifying its id.
 
 ```elixir
-
 log = StarkBank.BoletoPayment.Log.get!("5391671273455616")
+  |> IO.inspect
+```
+
+### Investigate a boleto
+
+You can discover if a StarkBank boleto has been recently paid before we receive the response on the next day.
+This can be done by creating a BoletoHolmes object, which fetches the updated status of the corresponding
+Boleto object according to CIP to check, for example, whether it is still payable or not.
+
+```elixir
+holmes = StarkBank.BoletoHolmes.create!(
+  [
+    %StarkBank.BoletoHolmes{
+        boleto_id: "5656565656565656"
+    },
+    %StarkBank.BoletoHolmes{
+        boleto_id: "4848484848484848",
+        tags: ["elementary", "my", "dear", "watson"]
+    },
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using BoletoHolmes structs, you can also pass each payment element in map format
+
+### Get boleto holmes
+
+To get a single Holmes by its id, run:
+
+```elixir
+sherlock = StarkBank.BoletoHolmes.get!("5629412477239296")
+  |> IO.inspect
+```
+
+### Query boleto holmes
+
+You can search for boleto Holmes using filters.
+
+```elixir
+for sherlock <- StarkBank.BoletoHolmes.query!(
+  tags: ["#123", "test"],
+) do
+  sherlock |> IO.inspect
+end
+```
+
+### Query boleto holmes logs
+
+Searches are also possible with boleto holmes logs:
+
+```elixir
+for log <- StarkBank.BoletoHolmes.Log.query!(
+  holmes_ids: ["5629412477239296", "5199478290120704"],
+) do
+  log |> IO.inspect
+end
+```
+
+### Get boleto holmes log
+
+You can also get a boleto holmes log by specifying its id.
+
+```elixir
+log = StarkBank.BoletoHolmes.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
