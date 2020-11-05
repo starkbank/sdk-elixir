@@ -182,6 +182,129 @@ balance = StarkBank.Balance.get!()
 IO.puts(balance.amount / 100)
 ```
 
+### Create invoices
+
+You can create dynamic QR Code invoices to charge customers or to receive money from accounts
+you have in other banks.
+
+```elixir
+invoice = StarkBank.Invoice.create!(
+  [
+      %StarkBank.Invoice{
+      amount: 400000,
+      due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 30*24*60*60, :second)), "Z", "+00:00"),
+      tax_id: "012.345.678-90",
+      name: "Iron Bank S.A.",
+
+      expiration: 123456789,
+      fine: 2.5,
+      interest: 1.3,
+      discounts: [
+          %{
+              percentage: 10,
+              due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 20*24*60*60, :second)), "Z", "+00:00")
+          }
+      ],
+      tags: [
+              "War supply",
+              "Invoice #1234"
+      ],
+      descriptions: [
+          %{
+              key: "Field1",
+              value: "Something"
+          }
+      ]
+    }
+  ]
+) |> IO.inspect()
+```
+
+**Note**: Instead of using Invoice objects, you can also pass each invoice element in dictionary format
+
+### Get an invoice
+
+After its creation, information on an invoice may be retrieved by its id. 
+Its status indicates whether it's been paid.
+
+```elixir
+invoice = StarkBank.Invoice.get!("6750458353811456")
+  |> IO.inspect
+```
+
+### Get an invoice PDF (COMING SOON)
+
+After its creation, an invoice PDF may be retrieved by its id. 
+
+```elixir
+pdf = StarkBank.Invoice.pdf!("6750458353811456", layout: "default")
+
+file = File.open!("invoice.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Cancel an invoice
+
+You can also cancel an invoice by its id.
+Note that this is not possible if it has been paid already.
+
+```elixir
+invoice = StarkBank.Invoice.update!("6750458353811456", status: "canceled")
+  |> IO.inspect
+```
+
+### Update an invoice
+
+You can update an invoice's amount, due date and expiration by its id.
+Note that this is not possible if it has been paid already.
+
+```elixir
+invoice = StarkBank.Invoice.update!(
+  "6750458353811456", 
+  amount: 123456, 
+  due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 15*24*60*60, :second)), "Z", "+00:00"),
+  expiration: 123456789
+)
+  |> IO.inspect
+```
+
+### Query invoices
+
+You can get a list of created invoices given some filters.
+
+```elixir
+invoices = StarkBank.Invoice.query!(
+  after: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+### Query invoice logs
+
+Logs are pretty important to understand the life cycle of an invoice.
+
+```elixir
+for log <- StarkBank.Invoice.Log.query!(invoice_ids: ["6750458353811456"]) do
+  log |> IO.inspect
+end
+```
+
+### Get an invoice log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.Invoice.Log.get!("6288576484474880")
+  |> IO.inspect
+```
+
+
 ### Create boletos
 
 You can create boletos to charge customers or to receive money from accounts
