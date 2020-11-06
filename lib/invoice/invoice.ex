@@ -16,11 +16,11 @@ defmodule StarkBank.Invoice do
 
   ## Parameters (required):
     - `:amount` [integer]: Invoice value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
-    - `:due` [string, default today + 2 days]: Invoice due date in UTC ISO format. ex: "2020-11-29T17:59:26.249976+00:00"
     - `:tax_id` [string]: payer tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - `:name` [string]: payer name. ex: "Iron Bank S.A."
 
   ## Parameters (optional):
+    - `:due` [string, default today + 2 days]: Invoice due date in UTC ISO format. ex: "2020-11-29T17:59:26.249976+00:00"
     - `:expiration` [integer, default 5097600 (59 days)]: time interval in seconds between due date and expiration date. ex 123456789 or DateTime.diff(DateTime.add(DateTime.now!("Etc/UTC"), 123456789, :second),DateTime.now!("Etc/UTC"))
     - `:fine` [float, default 0.0]: Invoice fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Invoice monthly interest for overdue payment in %. ex: 5.2
@@ -41,7 +41,6 @@ defmodule StarkBank.Invoice do
   """
   @enforce_keys [
     :amount,
-    :due,
     :tax_id,
     :name,
   ]
