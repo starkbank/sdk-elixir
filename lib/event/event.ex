@@ -15,6 +15,7 @@ defmodule StarkBank.Event do
   alias StarkBank.Transfer.Log, as: TransferLog
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
+  alias StarkBank.Deposit.Log, as: DepositLog
 
   @moduledoc """
   Groups Webhook-Event related functions
@@ -357,6 +358,7 @@ defmodule StarkBank.Event do
       "boleto" -> &BoletoLog.resource_maker/1
       "boleto-payment" -> &BoletoPaymentLog.resource_maker/1
       "utility-payment" -> &UtilityPaymentLog.resource_maker/1
+      "deposit" -> &DepositLog.resource_maker/1
     end
   end
 end

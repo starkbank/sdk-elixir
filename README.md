@@ -316,6 +316,52 @@ log = StarkBank.Invoice.Log.get!("6288576484474880")
   |> IO.inspect
 ```
 
+### Query deposits
+
+You can get a list of created deposits given some filters.
+
+```elixir
+    for deposit <- StarkBank.Deposit.query!(
+      after: Date.utc_today |> Date.add(-30),
+      before: Date.utc_today |> Date.add(-1),
+      limit: 1
+    ) do
+      deposit |> IO.inspect
+    end
+```
+
+### Get a deposit
+
+After its creation, information on a deposit may be retrieved by its id. 
+
+```elixir
+deposit = StarkBank.Deposit.get!("5738709764800512")
+  |> IO.inspect
+```
+
+### Query deposit logs
+
+Logs are pretty important to understand the life cycle of a deposit.
+
+```elixir
+logs = StarkBank.Deposit.Log.query!(
+  limit: 10,
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1)
+  )
+|> Enum.take(10)
+|> IO.inspect
+```
+
+### Get a deposit log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.Deposit.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
 ### Create boletos
 
 You can create boletos to charge customers or to receive money from accounts

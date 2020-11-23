@@ -11,6 +11,8 @@ ExUnit.start(
     # :boleto_holmes_log,
     # :invoice,
     # :invoice_log,
+    # :deposit,
+    # :deposit_log,
     # :transaction,
     # :transfer,
     # :transfer_log,

@@ -19,7 +19,7 @@ defmodule StarkBankTest.Webhook do
     create_webhook =
       StarkBank.Webhook.create!(
         url: "https://webhook.site/a10b29fc-45cf-4a09-b743-b7dff8c9eea5",
-        subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
+        subscriptions: ["transfer", "deposit", "brcode-payment", "utility-payment"]
       )
 
     get_webhook = StarkBank.Webhook.get!(create_webhook.id)
