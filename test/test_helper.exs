@@ -11,6 +11,7 @@ ExUnit.start(
     # :boleto_holmes_log,
     # :invoice,
     # :invoice_log,
+    # :dict_key,
     # :deposit,
     # :deposit_log,
     # :transaction,

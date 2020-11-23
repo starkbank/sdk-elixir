@@ -74,6 +74,8 @@ defmodule StarkBank.Utils.API do
     cond do
       word |> String.ends_with?("s") ->
         word
+      word |> String.ends_with?("ey") ->
+        word <> "s"
       word |> String.ends_with?("y") ->
         (word |> String.slice(0..-2)) <> "ies"
       true -> word <> "s"

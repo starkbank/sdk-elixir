@@ -182,6 +182,27 @@ balance = StarkBank.Balance.get!()
 IO.puts(balance.amount / 100)
 ```
 
+### Get a DICT key
+
+You can get DICT (PIX) key's parameters by its id.
+
+```elixir
+dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
+  |> IO.inspect
+```
+
+### Query your DICT keys
+
+To take a look at the DICT keys linked to your workspace, just run the following:
+
+```elixir
+dict_key = StarkBank.DictKey.query!(
+  limit: 1,
+  status: "registered",
+  type: "evp"
+) |> Enum.take(1) |> IO.inspect
+```
+
 ### Create invoices
 
 You can create dynamic QR Code invoices to charge customers or to receive money from accounts
