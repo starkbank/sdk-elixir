@@ -480,14 +480,14 @@ log = StarkBank.Boleto.Log.get!("6288576484474880")
 
 ### Create transfers
 
-You can also create transfers in the SDK (TED/DOC).
+You can also create transfers in the SDK (TED/PIX).
 
 ```elixir
 transfers = StarkBank.Transfer.create!(
   [
     %StarkBank.Transfer{
         amount: 100,
-        bank_code: "01",
+        bank_code: "20018183",  # PIX
         branch_code: "0001",
         account_number: "10000-0",
         tax_id: "012.345.678-90",
@@ -496,7 +496,7 @@ transfers = StarkBank.Transfer.create!(
     },
     %StarkBank.Transfer{
         amount: 200,
-        bank_code: "341",
+        bank_code: "341",  # TED
         branch_code: "1234",
         account_number: "123456-7",
         tax_id: "012.345.678-90",
@@ -928,7 +928,7 @@ To create a webhook subscription and be notified whenever an event occurs, run:
 ```elixir
 webhook = StarkBank.Webhook.create!(
   url: "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
-  subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
+  subscriptions: ["transfer", "deposit", "brcode-payment", "utility-payment"]
 ) |> IO.inspect
 ```
 
