@@ -41,7 +41,9 @@ defmodule StarkBank.Utils.API do
   end
 
   defp coerce_types(%DateTime{} = datetime) do
-    "#{datetime.year}-#{datetime.month}-#{datetime.day}"
+    datetime
+    |> DateTime.to_iso8601()
+    |> String.replace("Z", "+00:00")
   end
 
   defp coerce_types(%{__struct__: _} = struct) do

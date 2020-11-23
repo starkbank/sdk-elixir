@@ -105,6 +105,21 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
+  def get_qrcode({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
+      {:ok, qrcode} -> {:ok, qrcode}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_qrcode!({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
+      {:ok, qrcode} -> qrcode
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
+
   def post({resource_name, resource_maker}, entities, options) do
     user = options[:user]
 
