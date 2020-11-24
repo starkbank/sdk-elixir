@@ -3,7 +3,7 @@ defmodule StarkBankTest.Transfer do
 
   @tag :transfer
   test "create transfer" do
-    {:ok, transfers} = StarkBank.Transfer.create([example_transfer()])
+    {:ok, transfers} = StarkBank.Transfer.create([example_transfer(true)])
     transfer = transfers |> hd
     assert !is_nil(transfer)
   end
@@ -134,7 +134,11 @@ defmodule StarkBankTest.Transfer do
   def example_transfer(push_schedule \\ false)
 
   def example_transfer(push_schedule) when push_schedule do
-    %{example_transfer(false) | scheduled: Date.utc_today() |> Date.add(1)}
+    rand = Enum.random(0..1)
+    cond do
+      rand == 0 -> %{example_transfer(false) | scheduled: Date.utc_today() |> Date.add(1)}
+      rand == 1 -> %{example_transfer(false) | scheduled: DateTime.utc_now() |> DateTime.add(86400, :second)}
+    end
   end
 
   def example_transfer(_push_schedule) do

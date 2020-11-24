@@ -30,7 +30,7 @@ defmodule StarkBank.PaymentRequest do
     - `:type` [string]: payment type, inferred from the payment parameter if it is not a map. ex: "transfer", "boleto-payment"
 
     ## Parameters (optional):
-    - `:due` [Date, DateTime, Time or string]: Payment target date in ISO format. ex: 2020-12-31
+    - `:due` [Date or string]: Payment target date in ISO format. ex: 2020-12-31
     - `:tags` [list of strings]: list of strings for tagging
 
     ## Attributes (return-only):
@@ -101,8 +101,8 @@ defmodule StarkBank.PaymentRequest do
 
     ## Options:
         - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-        - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-        - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+        - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+        - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
         - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "-created" or "-due".
         - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
         - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "boleto-payment"
@@ -115,8 +115,8 @@ defmodule StarkBank.PaymentRequest do
     """
     @spec query(
             limit: integer,
-            after: Date.t() | DateTime.t() | binary,
-            before: Date.t() | DateTime.t() | binary,
+            after: Date.t() | binary,
+            before: Date.t() | binary,
             sort: binary,
             status: binary,
             type: binary,
@@ -139,8 +139,8 @@ defmodule StarkBank.PaymentRequest do
     """
     @spec query!(
             limit: integer,
-            after: Date.t() | DateTime.t() | binary,
-            before: Date.t() | DateTime.t() | binary,
+            after: Date.t() | binary,
+            before: Date.t() | binary,
             sort: binary,
             status: binary,
             type: binary,

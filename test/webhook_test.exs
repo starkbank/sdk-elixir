@@ -5,7 +5,7 @@ defmodule StarkBankTest.Webhook do
   test "create, get and delete webhook" do
     {:ok, create_webhook} =
       StarkBank.Webhook.create(
-        url: "https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29",
+        url: "https://webhook.site/a10b29fc-45cf-4a09-b743-b7dff8c9eea5",
         subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
       )
 
@@ -18,8 +18,8 @@ defmodule StarkBankTest.Webhook do
   test "create!, get! and delete! webhook" do
     create_webhook =
       StarkBank.Webhook.create!(
-        url: "https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29",
-        subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
+        url: "https://webhook.site/a10b29fc-45cf-4a09-b743-b7dff8c9eea5",
+        subscriptions: ["transfer", "deposit", "brcode-payment", "utility-payment"]
       )
 
     get_webhook = StarkBank.Webhook.get!(create_webhook.id)

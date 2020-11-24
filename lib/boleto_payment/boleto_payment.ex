@@ -23,7 +23,7 @@ defmodule StarkBank.BoletoPayment do
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
 
   ## Parameters (optional):
-    - `:scheduled` [Date, DateTime or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
+    - `:scheduled` [Date or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
@@ -140,8 +140,8 @@ defmodule StarkBank.BoletoPayment do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
@@ -152,8 +152,8 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           tags: [binary],
           ids: [binary],
           status: binary,
@@ -174,8 +174,8 @@ defmodule StarkBank.BoletoPayment do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           tags: [binary],
           ids: [binary],
           status: binary,

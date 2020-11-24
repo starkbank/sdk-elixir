@@ -18,13 +18,13 @@ defmodule StarkBank.Transfer do
     - `:amount` [integer]: amount in cents to be transferred. ex: 1234 (= R$ 12.34)
     - `:name` [string]: receiver full name. ex: "Anthony Edward Stark"
     - `:tax_id` [string]: receiver tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
-    - `:bank_code` [string]: 1 to 3 digits of the receiver bank institution in Brazil. ex: "200" or "341"
+    - `:bank_code` [string]: code of the receiver bank institution in Brazil. If an ISPB (8 digits) is informed, a PIX transfer will be created, else a TED will be issued. ex: "20018183" or "341"
     - `:branch_code` [string]: receiver bank account branch. Use '-' in case there is a verifier digit. ex: "1357-9"
     - `:account_number` [string]: Receiver Bank Account number. Use '-' before the verifier digit. ex: "876543-2"
 
   ## Parameters (optional):
     - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
-    - `:scheduled` [DateTime, default now]: datetime when the transfer will be processed. May be pushed to next business day if necessary. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:scheduled` [Date, DateTime or string, default now]: date or datetime when the transfer will be processed. May be pushed to next business day if necessary. ex: ~U[2020-03-26 19:32:35.418698Z]
 
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
@@ -169,8 +169,8 @@ defmodule StarkBank.Transfer do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
     - `:transaction_ids` [list of strings, default nil]: list of transaction IDs linked to the desired transfers. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:tax_id` [string, default nil]: filter for transfers sent to the specified tax ID. ex: "012.345.678-90"
@@ -184,8 +184,8 @@ defmodule StarkBank.Transfer do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           transaction_ids: [binary],
           status: binary,
           tax_id: binary,
@@ -209,8 +209,8 @@ defmodule StarkBank.Transfer do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           transaction_ids: [binary],
           status: binary,
           tax_id: binary,

@@ -41,7 +41,9 @@ defmodule StarkBank.Utils.API do
   end
 
   defp coerce_types(%DateTime{} = datetime) do
-    "#{datetime.year}-#{datetime.month}-#{datetime.day}"
+    datetime
+    |> DateTime.to_iso8601()
+    |> String.replace("Z", "+00:00")
   end
 
   defp coerce_types(%{__struct__: _} = struct) do
@@ -72,6 +74,8 @@ defmodule StarkBank.Utils.API do
     cond do
       word |> String.ends_with?("s") ->
         word
+      word |> String.ends_with?("ey") ->
+        word <> "s"
       word |> String.ends_with?("y") ->
         (word |> String.slice(0..-2)) <> "ies"
       true -> word <> "s"

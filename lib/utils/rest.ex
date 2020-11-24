@@ -57,7 +57,6 @@ defmodule StarkBank.Utils.Rest do
 
   defp get_list_parameters(options, resource_name) do
     query = Enum.into(options |> Check.options(), %{})
-
     {
       make_getter(query[:user],resource_name),
       query |> Map.delete(:user) |> Map.put(:limit, query[:limit])
@@ -104,6 +103,21 @@ defmodule StarkBank.Utils.Rest do
       {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
+
+  def get_qrcode({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
+      {:ok, qrcode} -> {:ok, qrcode}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_qrcode!({resource_name, _resource_maker}, id, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
+      {:ok, qrcode} -> qrcode
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
 
   def post({resource_name, resource_maker}, entities, options) do
     user = options[:user]

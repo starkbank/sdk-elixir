@@ -182,6 +182,207 @@ balance = StarkBank.Balance.get!()
 IO.puts(balance.amount / 100)
 ```
 
+### Get a DICT key
+
+You can get DICT (PIX) key's parameters by its id.
+
+```elixir
+dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
+  |> IO.inspect
+```
+
+### Query your DICT keys
+
+To take a look at the DICT keys linked to your workspace, just run the following:
+
+```elixir
+dict_key = StarkBank.DictKey.query!(
+  limit: 1,
+  status: "registered",
+  type: "evp"
+) |> Enum.take(1) |> IO.inspect
+```
+
+### Create invoices
+
+You can create dynamic QR Code invoices to charge customers or to receive money from accounts
+you have in other banks.
+
+```elixir
+invoice = StarkBank.Invoice.create!(
+  [
+      %StarkBank.Invoice{
+      amount: 400000,
+      due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 30*24*60*60, :second)), "Z", "+00:00"),
+      tax_id: "012.345.678-90",
+      name: "Iron Bank S.A.",
+      expiration: 123456789,
+      fine: 2.5,
+      interest: 1.3,
+      discounts: [
+        %{
+          percentage: 10,
+          due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 20*24*60*60, :second)), "Z", "+00:00")
+        }
+      ],
+      tags: [
+        "War supply",
+        "Invoice #1234"
+      ],
+      descriptions: [
+        %{
+          key: "Field1",
+          value: "Something"
+        }
+      ]
+    }
+  ]
+) |> IO.inspect()
+```
+
+**Note**: Instead of using Invoice objects, you can also pass each invoice element in dictionary format
+
+### Get an invoice
+
+After its creation, information on an invoice may be retrieved by its id. 
+Its status indicates whether it's been paid.
+
+```elixir
+invoice = StarkBank.Invoice.get!("6750458353811456")
+  |> IO.inspect
+```
+
+### Get an invoice PDF
+
+After its creation, an invoice PDF may be retrieved by its id. 
+
+```elixir
+pdf = StarkBank.Invoice.pdf!("6750458353811456", layout: "default")
+
+file = File.open!("invoice.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Get an invoice QR Code 
+
+After its creation, an invoice QR Code png file may be retrieved by its id. 
+
+```elixir
+qrcode = StarkBank.Invoice.qrcode!("5443064852119552")
+
+file = File.open!("invoice.png", [:write])
+IO.binwrite(file, qrcode)
+File.close(file)
+```
+
+### Cancel an invoice
+
+You can also cancel an invoice by its id.
+Note that this is not possible if it has been paid already.
+
+```elixir
+invoice = StarkBank.Invoice.update!("6750458353811456", status: "canceled")
+  |> IO.inspect
+```
+
+### Update an invoice
+
+You can update an invoice's amount, due date and expiration by its id.
+Note that this is not possible if it has been paid already.
+
+```elixir
+invoice = StarkBank.Invoice.update!(
+  "6750458353811456", 
+  amount: 123456, 
+  due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 15*24*60*60, :second)), "Z", "+00:00"),
+  expiration: 123456789
+)
+  |> IO.inspect
+```
+
+### Query invoices
+
+You can get a list of created invoices given some filters.
+
+```elixir
+invoices = StarkBank.Invoice.query!(
+  after: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
+  status: "overdue",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+### Query invoice logs
+
+Logs are pretty important to understand the life cycle of an invoice.
+
+```elixir
+for log <- StarkBank.Invoice.Log.query!(invoice_ids: ["6750458353811456"]) do
+  log |> IO.inspect
+end
+```
+
+### Get an invoice log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.Invoice.Log.get!("6288576484474880")
+  |> IO.inspect
+```
+
+### Query deposits
+
+You can get a list of created deposits given some filters.
+
+```elixir
+    for deposit <- StarkBank.Deposit.query!(
+      after: Date.utc_today |> Date.add(-30),
+      before: Date.utc_today |> Date.add(-1),
+      limit: 1
+    ) do
+      deposit |> IO.inspect
+    end
+```
+
+### Get a deposit
+
+After its creation, information on a deposit may be retrieved by its id. 
+
+```elixir
+deposit = StarkBank.Deposit.get!("5738709764800512")
+  |> IO.inspect
+```
+
+### Query deposit logs
+
+Logs are pretty important to understand the life cycle of a deposit.
+
+```elixir
+logs = StarkBank.Deposit.Log.query!(
+  limit: 10,
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1)
+  )
+|> Enum.take(10)
+|> IO.inspect
+```
+
+### Get a deposit log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.Deposit.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
 ### Create boletos
 
 You can create boletos to charge customers or to receive money from accounts
@@ -279,14 +480,14 @@ log = StarkBank.Boleto.Log.get!("6288576484474880")
 
 ### Create transfers
 
-You can also create transfers in the SDK (TED/DOC).
+You can also create transfers in the SDK (TED/PIX).
 
 ```elixir
 transfers = StarkBank.Transfer.create!(
   [
     %StarkBank.Transfer{
         amount: 100,
-        bank_code: "01",
+        bank_code: "20018183",  # PIX
         branch_code: "0001",
         account_number: "10000-0",
         tax_id: "012.345.678-90",
@@ -295,7 +496,7 @@ transfers = StarkBank.Transfer.create!(
     },
     %StarkBank.Transfer{
         amount: 200,
-        bank_code: "341",
+        bank_code: "341",  # TED
         branch_code: "1234",
         account_number: "123456-7",
         tax_id: "012.345.678-90",
@@ -373,6 +574,107 @@ You can also get a specific log by its id.
 ```elixir
 log = StarkBank.Transfer.Log.get!("6610264099127296")
   |> IO.inspect
+```
+
+### Pay a BR Code
+
+Paying a BRCode is also simple. After extracting the BR Code encoded in the PIX QR Code, you can do the following:
+
+```elixir
+payments = StarkBank.BrcodePayment.create!(
+  [
+    %StarkBank.BrcodePayment{
+        brcode: "00020101021226860014br.gov.bcb.pix2564invoice-h.sandbox.starkbank.com/2b59521ba5a74a31b00efd4c6d2601a15204000053039865802BR5915Stark Bank S.A.6009Sao Paulo623605322b59521ba5a74a31b00efd4c6d2601a163046300",
+        tax_id: "012.345.678-90",
+        description: "paying the bill",
+        tags: ["invoice#123", "bills"],
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using BrcodePayment objects, you can also pass each payment element in dictionary format
+
+### Get a BR Code payment
+
+To get a single BR Code payment by its id, run:
+
+```elixir
+payment = StarkBank.BrcodePayment.get!("5629412477239296")
+  |> IO.inspect
+```
+
+### Get a BR Code payment PDF
+
+After its creation, a BR Code payment PDF may be retrieved by its id. 
+
+```elixir
+pdf = StarkBank.BrcodePayment.pdf!("5629412477239296")
+
+file = File.open!("brcode-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Cancel a BR Code payment
+
+You can cancel a BR Code payment by changing its status to "canceled".
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.BrcodePayment.update!(
+  "5629412477239296",
+  status: "canceled"
+)
+  |> IO.inspect
+```
+
+### Query BR Code payments
+
+You can search for BR Code payments using filters. 
+
+```elixir
+payments = StarkBank.BrcodePayment.query!(
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1),
+  limit: 2
+) |> Enum.take(2) |> IO.inspect
+```
+
+### Query BR Code payment logs
+
+Searches are also possible with BR Code payment logs:
+
+```elixir
+for log <- StarkBank.BrcodePayment.Log.query!(
+  payment_ids: ["6200426164649984"]
+) do
+  log |> IO.inspect
+end
+```
+
+### Get a BR Code payment log
+
+You can also get a BR Code payment log by specifying its id.
+
+```elixir
+log = StarkBank.BrcodePayment.Log.get!("5735810494103552")
+
+log |> IO.inspect
+```
+
+### Preview a BR Code payment
+
+You can confirm the information on the BR Code payment before creating it with this preview method:
+
+```elixir
+previews = StarkBank.BrcodePreview.query!(
+  brcodes: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
+) |> Enum.take(1) |> IO.inspect
 ```
 
 ### Pay a boleto
@@ -727,7 +1029,7 @@ To create a webhook subscription and be notified whenever an event occurs, run:
 ```elixir
 webhook = StarkBank.Webhook.create!(
   url: "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
-  subscriptions: ["transfer", "boleto", "boleto-payment", "utility-payment"]
+  subscriptions: ["transfer", "deposit", "brcode-payment", "utility-payment"]
 ) |> IO.inspect
 ```
 

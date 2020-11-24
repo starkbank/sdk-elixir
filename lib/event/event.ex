@@ -11,9 +11,12 @@ defmodule StarkBank.Event do
   alias StarkBank.Error
   alias StarkBank.Utils.Request
   alias StarkBank.Boleto.Log, as: BoletoLog
+  alias StarkBank.Invoice.Log, as: InvoiceLog
   alias StarkBank.Transfer.Log, as: TransferLog
+  alias StarkBank.BrcodePayment.Log, as: BrcodePaymentLog
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
+  alias StarkBank.Deposit.Log, as: DepositLog
 
   @moduledoc """
   Groups Webhook-Event related functions
@@ -65,8 +68,8 @@ defmodule StarkBank.Event do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:is_delivered` [bool, default nil]: filter successfully delivered events. ex: true or false
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
@@ -75,8 +78,8 @@ defmodule StarkBank.Event do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t()
         ) ::
@@ -95,8 +98,8 @@ defmodule StarkBank.Event do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t()
         ) ::
@@ -352,9 +355,12 @@ defmodule StarkBank.Event do
   defp log_maker_by_subscription(subscription) do
     case subscription do
       "transfer" -> &TransferLog.resource_maker/1
+      "invoice" -> &InvoiceLog.resource_maker/1
       "boleto" -> &BoletoLog.resource_maker/1
+      "brcode-payment" -> &BrcodePaymentLog.resource_maker/1
       "boleto-payment" -> &BoletoPaymentLog.resource_maker/1
       "utility-payment" -> &UtilityPaymentLog.resource_maker/1
+      "deposit" -> &DepositLog.resource_maker/1
     end
   end
 end

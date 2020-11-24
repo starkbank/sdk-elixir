@@ -116,8 +116,8 @@ defmodule StarkBank.Transaction do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date, DateTime or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
@@ -128,8 +128,8 @@ defmodule StarkBank.Transaction do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           tags: [binary],
           external_ids: [binary],
           ids: [binary],
@@ -150,8 +150,8 @@ defmodule StarkBank.Transaction do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           tags: [binary],
           external_ids: [binary],
           ids: [binary],

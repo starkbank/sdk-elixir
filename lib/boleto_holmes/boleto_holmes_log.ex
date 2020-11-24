@@ -58,8 +58,8 @@ defmodule StarkBank.BoletoHolmes.Log do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:after` [Date, DateTime or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
-    - `:before` [Date, DateTime or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter for log event types. ex: "paid" or "registered"
     - `:holmes_ids` [list of strings, default nil]: list of BoletoHolmes ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
@@ -69,8 +69,8 @@ defmodule StarkBank.BoletoHolmes.Log do
   """
   @spec query(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           types: [binary],
           holmes_ids: [binary],
           user: Project.t()
@@ -90,8 +90,8 @@ defmodule StarkBank.BoletoHolmes.Log do
   """
   @spec query!(
           limit: integer,
-          after: Date.t() | DateTime.t() | binary,
-          before: Date.t() | DateTime.t() | binary,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
           types: [binary],
           holmes_ids: [binary],
           user: Project.t()
