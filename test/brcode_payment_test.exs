@@ -50,20 +50,18 @@ defmodule StarkBankTest.BrcodePayment do
 
   @tag :brcode_payment
   test "pdf brcode payment" do
-    payment =
-      StarkBank.BrcodePayment.query!(status: "success")
-      |> Enum.take(1)
-      |> hd()
+    payment = StarkBank.BrcodePayment.query!(status: "success")
+    |> Enum.take(1)
+    |> hd()
 
     {:ok, _pdf} = StarkBank.BrcodePayment.pdf(payment.id)
   end
 
   @tag :brcode_payment
   test "pdf! brcode payment" do
-    payment =
-      StarkBank.BrcodePayment.query!(status: "success")
-      |> Enum.take(1)
-      |> hd()
+    payment = StarkBank.BrcodePayment.query!(status: "success")
+    |> Enum.take(1)
+    |> hd()
 
     pdf = StarkBank.BrcodePayment.pdf!(payment.id)
     file = File.open!("tmp/brcode-payment.pdf", [:write])

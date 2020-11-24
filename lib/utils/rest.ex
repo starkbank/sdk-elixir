@@ -57,7 +57,6 @@ defmodule StarkBank.Utils.Rest do
 
   defp get_list_parameters(options, resource_name) do
     query = Enum.into(options |> Check.options(), %{})
-
     {
       make_getter(query[:user],resource_name),
       query |> Map.delete(:user) |> Map.put(:limit, query[:limit])

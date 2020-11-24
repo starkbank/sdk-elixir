@@ -30,6 +30,7 @@ defmodule StarkBank.DictKey do
     - `:created` [DateTime, default null]: creation datetime for the DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
   defstruct [
+    :id,
     :type,
     :name,
     :tax_id,

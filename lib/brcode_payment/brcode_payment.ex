@@ -227,7 +227,7 @@ defmodule StarkBank.BrcodePayment do
   @doc false
   def resource_maker(json) do
     %BrcodePayment{
-      brcode: json[:bar_code],
+      brcode: json[:brcode],
       tax_id: json[:tax_id],
       description: json[:description],
       amount: json[:amount],

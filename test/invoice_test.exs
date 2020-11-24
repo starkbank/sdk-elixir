@@ -126,7 +126,7 @@ defmodule StarkBankTest.Invoice do
   @tag :invoice
   test "pdf invoice" do
     payment =
-      StarkBank.Invoice.query!(status: "success")
+      StarkBank.Invoice.query!(status: "created")
       |> Enum.take(1)
       |> hd()
 
@@ -136,7 +136,7 @@ defmodule StarkBankTest.Invoice do
   @tag :invoice
   test "pdf! invoice" do
     payment =
-      StarkBank.Invoice.query!(status: "success")
+      StarkBank.Invoice.query!(status: "created")
       |> Enum.take(1)
       |> hd()
 
