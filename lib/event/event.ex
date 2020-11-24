@@ -13,6 +13,7 @@ defmodule StarkBank.Event do
   alias StarkBank.Boleto.Log, as: BoletoLog
   alias StarkBank.Invoice.Log, as: InvoiceLog
   alias StarkBank.Transfer.Log, as: TransferLog
+  alias StarkBank.BrcodePayment.Log, as: BrcodePaymentLog
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
   alias StarkBank.Deposit.Log, as: DepositLog
@@ -356,6 +357,7 @@ defmodule StarkBank.Event do
       "transfer" -> &TransferLog.resource_maker/1
       "invoice" -> &InvoiceLog.resource_maker/1
       "boleto" -> &BoletoLog.resource_maker/1
+      "brcode-payment" -> &BrcodePaymentLog.resource_maker/1
       "boleto-payment" -> &BoletoPaymentLog.resource_maker/1
       "utility-payment" -> &UtilityPaymentLog.resource_maker/1
       "deposit" -> &DepositLog.resource_maker/1

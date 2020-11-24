@@ -576,6 +576,107 @@ log = StarkBank.Transfer.Log.get!("6610264099127296")
   |> IO.inspect
 ```
 
+### Pay a BR Code
+
+Paying a BRCode is also simple. After extracting the BR Code encoded in the PIX QR Code, you can do the following:
+
+```elixir
+payments = StarkBank.BrcodePayment.create!(
+  [
+    %StarkBank.BrcodePayment{
+        brcode: "00020101021226860014br.gov.bcb.pix2564invoice-h.sandbox.starkbank.com/2b59521ba5a74a31b00efd4c6d2601a15204000053039865802BR5915Stark Bank S.A.6009Sao Paulo623605322b59521ba5a74a31b00efd4c6d2601a163046300",
+        tax_id: "012.345.678-90",
+        description: "paying the bill",
+        tags: ["invoice#123", "bills"],
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using BrcodePayment objects, you can also pass each payment element in dictionary format
+
+### Get a BR Code payment
+
+To get a single BR Code payment by its id, run:
+
+```elixir
+payment = StarkBank.BrcodePayment.get!("5629412477239296")
+  |> IO.inspect
+```
+
+### Get a BR Code payment PDF
+
+After its creation, a BR Code payment PDF may be retrieved by its id. 
+
+```elixir
+pdf = StarkBank.BrcodePayment.pdf!("5629412477239296")
+
+file = File.open!("brcode-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Cancel a BR Code payment
+
+You can cancel a BR Code payment by changing its status to "canceled".
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.BrcodePayment.update!(
+  "5629412477239296",
+  status: "canceled"
+)
+  |> IO.inspect
+```
+
+### Query BR Code payments
+
+You can search for BR Code payments using filters. 
+
+```elixir
+payments = StarkBank.BrcodePayment.query!(
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1),
+  limit: 2
+) |> Enum.take(2) |> IO.inspect
+```
+
+### Query BR Code payment logs
+
+Searches are also possible with BR Code payment logs:
+
+```elixir
+for log <- StarkBank.BrcodePayment.Log.query!(
+  payment_ids: ["6200426164649984"]
+) do
+  log |> IO.inspect
+end
+```
+
+### Get a BR Code payment log
+
+You can also get a BR Code payment log by specifying its id.
+
+```elixir
+log = StarkBank.BrcodePayment.Log.get!("5735810494103552")
+
+log |> IO.inspect
+```
+
+### Preview a BR Code payment
+
+You can confirm the information on the BR Code payment before creating it with this preview method:
+
+```elixir
+previews = StarkBank.BrcodePreview.query!(
+  brcodes: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
+) |> Enum.take(1) |> IO.inspect
+```
+
 ### Pay a boleto
 
 Paying a boleto is also simple.
