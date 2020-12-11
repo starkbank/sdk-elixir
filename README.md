@@ -92,7 +92,7 @@ IF16ZoTVt1FzZ8WkYQ3XomRD4HS13A==
 -----END EC PRIVATE KEY-----
 "
 
-user = StarkBank.project(
+project = StarkBank.project(
     id: "5671398416568321",
     environment: :sandbox,
     private_key: private_key_content
@@ -173,6 +173,56 @@ Here are a few examples on how to use the SDK. If you have any doubts, use the b
 
 **Note**: Almost all SDK functions also provide a bang (!) version. To simplify the examples, they will be used the most throughout this README.
 
+
+### Create transactions
+
+To send money between Stark Bank accounts, you can create transactions:
+
+```elixir
+transactions = StarkBank.Transaction.create!(
+  [
+    %StarkBank.Transaction{
+        amount: 100,  # (R$ 1.00)
+        receiver_id: "5768064935133184",
+        description: "Transaction to dear provider",
+        external_id: "12345",  # so we can block anything you send twice by mistake
+        tags: ["provider"]
+    },
+    %StarkBank.Transaction{
+        amount: 234,  # (R$ 2.34)
+        receiver_id: "5768064935133184",
+        description: "Transaction to the other provider",
+        external_id: "12346",  # so we can block anything you send twice by mistake
+        tags: ["provider"]
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using Transaction structs, you can also pass each transaction element in map format
+
+### Query transactions
+
+To understand your balance changes (bank statement), you can query
+transactions. Note that our system creates transactions for you when
+you receive boleto payments, pay a bill or make transfers, for example.
+
+```elixir
+transactions = StarkBank.Transaction.query!(
+  after: "2020-03-20",
+  before: "2020-03-30"
+) |> Enum.take(10) |> IO.inspect
+```
+
+### Get transaction
+
+You can get a specific transaction by its id:
+
+```elixir
+transaction = StarkBank.Transaction.get!("6677396233125888")
+  |> IO.inspect
+```
+
 ### Get balance
 
 To know how much money you have in your workspace, run:
@@ -182,25 +232,102 @@ balance = StarkBank.Balance.get!()
 IO.puts(balance.amount / 100)
 ```
 
-### Get a DICT key
+### Create transfers
 
-You can get DICT (PIX) key's parameters by its id.
+You can also create transfers in the SDK (TED/PIX).
 
 ```elixir
-dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
+transfers = StarkBank.Transfer.create!(
+  [
+    %StarkBank.Transfer{
+        amount: 100,
+        bank_code: "20018183",  # PIX
+        branch_code: "0001",
+        account_number: "10000-0",
+        tax_id: "012.345.678-90",
+        name: "Tony Stark",
+        tags: ["iron", "suit"]
+    },
+    %StarkBank.Transfer{
+        amount: 200,
+        bank_code: "341",  # TED
+        branch_code: "1234",
+        account_number: "123456-7",
+        tax_id: "012.345.678-90",
+        name: "Jon Snow",
+        scheduled: "2020-11-01"
+    }
+]) |> IO.inspect
+```
+
+**Note**: Instead of using Transfer structs, you can also pass each transfer element in map format
+
+### Query transfers
+
+You can query multiple transfers according to filters.
+
+```elixir
+for transfer <- StarkBank.Transfer.query!(
+  after: "2020-11-15",
+  before: "2020-12-01",
+  limit: 10
+) do
+  transfer |> IO.inspect
+end
+```
+
+### Get transfer
+
+To get a single transfer by its id, run:
+
+```elixir
+transfer = StarkBank.Transfer.get!("4882890932355072")
   |> IO.inspect
 ```
 
-### Query your DICT keys
+### Cancel transfer
 
-To take a look at the DICT keys linked to your workspace, just run the following:
+To cancel a single scheduled transfer by its id, run:
 
 ```elixir
-dict_key = StarkBank.DictKey.query!(
-  limit: 1,
-  status: "registered",
-  type: "evp"
-) |> Enum.take(1) |> IO.inspect
+transfer = StarkBank.Transfer.delete!("4882890932355072")
+  |> IO.inspect
+```
+
+### Get transfer PDF
+
+A transfer PDF may also be retrieved by passing its id.
+This operation is only valid for transfers with "processing" or "success" status.
+
+```elixir
+pdf = StarkBank.Transfer.pdf!("4882890932355072")
+
+file = File.open!("transfer.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Query transfer logs
+
+You can query transfer logs to better understand transfer life cycles.
+
+```elixir
+logs = StarkBank.Transfer.Log.query!(limit: 50)
+  |> Enum.take(50)
+  |> IO.inspect
+```
+
+### Get a transfer log
+
+You can also get a specific log by its id.
+
+```elixir
+log = StarkBank.Transfer.Log.get!("6610264099127296")
+  |> IO.inspect
 ```
 
 ### Create invoices
@@ -213,7 +340,7 @@ invoice = StarkBank.Invoice.create!(
   [
       %StarkBank.Invoice{
       amount: 400000,
-      due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 30*24*60*60, :second)), "Z", "+00:00"),
+      due: "2020-06-25T23:00:08.338233+00:00",
       tax_id: "012.345.678-90",
       name: "Iron Bank S.A.",
       expiration: 123456789,
@@ -222,7 +349,7 @@ invoice = StarkBank.Invoice.create!(
       discounts: [
         %{
           percentage: 10,
-          due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 20*24*60*60, :second)), "Z", "+00:00")
+          due: "2020-06-21T23:00:08.338233+00:00"
         }
       ],
       tags: [
@@ -299,7 +426,7 @@ Note that this is not possible if it has been paid already.
 invoice = StarkBank.Invoice.update!(
   "6750458353811456", 
   amount: 123456, 
-  due: String.replace(DateTime.to_iso8601(DateTime.add(DateTime.utc_now), 15*24*60*60, :second)), "Z", "+00:00"),
+  due: "2020-08-25T23:00:08.338233+00:00",
   expiration: 123456789
 )
   |> IO.inspect
@@ -343,8 +470,8 @@ You can get a list of created deposits given some filters.
 
 ```elixir
     for deposit <- StarkBank.Deposit.query!(
-      after: Date.utc_today |> Date.add(-30),
-      before: Date.utc_today |> Date.add(-1),
+      after: "2020-10-01",
+      before: "2020-10-10",
       limit: 1
     ) do
       deposit |> IO.inspect
@@ -367,8 +494,8 @@ Logs are pretty important to understand the life cycle of a deposit.
 ```elixir
 logs = StarkBank.Deposit.Log.query!(
   limit: 10,
-  after: Date.utc_today |> Date.add(-30),
-  before: Date.utc_today |> Date.add(-1)
+  after: "2020-11-01",
+  before: "2020-11-02"
   )
 |> Enum.take(10)
 |> IO.inspect
@@ -401,7 +528,7 @@ boletos = StarkBank.Boleto.create!(
         city: "São Paulo",
         state_code: "SP",
         zip_code: "01310-000",
-        due: Date.utc_today |> Date.add(30),
+        due: "2020-10-05",
         fine: 5,  # 5%
         interest: 2.5,  # 2.5% per month
     }
@@ -453,8 +580,8 @@ You can get a stream of created boletos given some filters.
 
 ```elixir
 boletos = StarkBank.Boleto.query!(
-  after: Date.utc_today |> Date.add(-2),
-  before: Date.utc_today |> Date.add(-1),
+  after: "2020-09-01",
+  before: "2020-09-02",
   limit: 10
 ) |> Enum.take(10) |> IO.inspect
 ```
@@ -478,102 +605,78 @@ log = StarkBank.Boleto.Log.get!("6288576484474880")
   |> IO.inspect
 ```
 
-### Create transfers
+### Investigate a boleto
 
-You can also create transfers in the SDK (TED/PIX).
+You can discover if a StarkBank boleto has been recently paid before we receive the response on the next day.
+This can be done by creating a BoletoHolmes object, which fetches the updated status of the corresponding
+Boleto object according to CIP to check, for example, whether it is still payable or not.
 
 ```elixir
-transfers = StarkBank.Transfer.create!(
+holmes = StarkBank.BoletoHolmes.create!(
   [
-    %StarkBank.Transfer{
-        amount: 100,
-        bank_code: "20018183",  # PIX
-        branch_code: "0001",
-        account_number: "10000-0",
-        tax_id: "012.345.678-90",
-        name: "Tony Stark",
-        tags: ["iron", "suit"]
+    %StarkBank.BoletoHolmes{
+        boleto_id: "5656565656565656"
     },
-    %StarkBank.Transfer{
-        amount: 200,
-        bank_code: "341",  # TED
-        branch_code: "1234",
-        account_number: "123456-7",
-        tax_id: "012.345.678-90",
-        name: "Jon Snow",
-        scheduled: Date.utc_today |> Date.add(3)
-    }
-]) |> IO.inspect
+    %StarkBank.BoletoHolmes{
+        boleto_id: "4848484848484848",
+        tags: ["elementary", "my", "dear", "watson"]
+    },
+  ]
+) |> IO.inspect
 ```
 
-**Note**: Instead of using Transfer structs, you can also pass each transfer element in map format
+**Note**: Instead of using BoletoHolmes structs, you can also pass each payment element in map format
 
-### Query transfers
+### Get boleto holmes
 
-You can query multiple transfers according to filters.
+To get a single Holmes by its id, run:
 
 ```elixir
-for transfer <- StarkBank.Transfer.query!(
-  after: Date.utc_today |> Date.add(-2),
-  before: Date.utc_today |> Date.add(-1),
-  limit: 10
+sherlock = StarkBank.BoletoHolmes.get!("5629412477239296")
+  |> IO.inspect
+```
+
+### Query boleto holmes
+
+You can search for boleto Holmes using filters.
+
+```elixir
+for sherlock <- StarkBank.BoletoHolmes.query!(
+  tags: ["#123", "test"],
 ) do
-  transfer |> IO.inspect
+  sherlock |> IO.inspect
 end
 ```
 
-### Get transfer
+### Query boleto holmes logs
 
-To get a single transfer by its id, run:
+Searches are also possible with boleto holmes logs:
 
 ```elixir
-transfer = StarkBank.Transfer.get!("4882890932355072")
+for log <- StarkBank.BoletoHolmes.Log.query!(
+  holmes_ids: ["5629412477239296", "5199478290120704"],
+) do
+  log |> IO.inspect
+end
+```
+
+### Get boleto holmes log
+
+You can also get a boleto holmes log by specifying its id.
+
+```elixir
+log = StarkBank.BoletoHolmes.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
-### Cancel transfer
+### Preview a BR Code payment
 
-To cancel a single scheduled transfer by its id, run:
-
-```elixir
-transfer = StarkBank.Transfer.delete!("4882890932355072")
-  |> IO.inspect
-```
-
-### Get transfer PDF
-
-A transfer PDF may also be retrieved by passing its id.
-This operation is only valid for transfers with "processing" or "success" status.
+You can confirm the information on the BR Code payment before creating it with this preview method:
 
 ```elixir
-pdf = StarkBank.Transfer.pdf!("4882890932355072")
-
-file = File.open!("transfer.pdf", [:write])
-IO.binwrite(file, pdf)
-File.close(file)
-```
-
-Be careful not to accidentally enforce any encoding on the raw pdf content,
-as it may yield abnormal results in the final file, such as missing images
-and strange characters.
-
-### Query transfer logs
-
-You can query transfer logs to better understand transfer life cycles.
-
-```elixir
-logs = StarkBank.Transfer.Log.query!(limit: 50)
-  |> Enum.take(50)
-  |> IO.inspect
-```
-
-### Get a transfer log
-
-You can also get a specific log by its id.
-
-```elixir
-log = StarkBank.Transfer.Log.get!("6610264099127296")
-  |> IO.inspect
+previews = StarkBank.BrcodePreview.query!(
+  brcodes: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
+) |> Enum.take(1) |> IO.inspect
 ```
 
 ### Pay a BR Code
@@ -639,8 +742,8 @@ You can search for BR Code payments using filters.
 
 ```elixir
 payments = StarkBank.BrcodePayment.query!(
-  after: Date.utc_today |> Date.add(-30),
-  before: Date.utc_today |> Date.add(-1),
+  after: "2020-11-01",
+  before: "2020-11-02",
   limit: 2
 ) |> Enum.take(2) |> IO.inspect
 ```
@@ -667,16 +770,6 @@ log = StarkBank.BrcodePayment.Log.get!("5735810494103552")
 log |> IO.inspect
 ```
 
-### Preview a BR Code payment
-
-You can confirm the information on the BR Code payment before creating it with this preview method:
-
-```elixir
-previews = StarkBank.BrcodePreview.query!(
-  brcodes: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
-) |> Enum.take(1) |> IO.inspect
-```
-
 ### Pay a boleto
 
 Paying a boleto is also simple.
@@ -687,14 +780,14 @@ payments = StarkBank.BoletoPayment.create!(
     %StarkBank.BoletoPayment{
         line: "34191.09008 64694.017308 71444.640008 1 96610000014500",
         tax_id: "012.345.678-90",
-        scheduled: Date.utc_today |> Date.add(10),
+        scheduled: "2020-11-01",
         description: "take my money",
         tags: ["take", "my", "money"],
     },
     %StarkBank.BoletoPayment{
         bar_code: "34191972300000289001090064694197307144464000",
         tax_id: "012.345.678-90",
-        scheduled: Date.utc_today |> Date.add(40),
+        scheduled: "2020-11-05",
         description: "take my money one more time",
         tags: ["again"],
     },
@@ -770,70 +863,6 @@ log = StarkBank.BoletoPayment.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
-### Investigate a boleto
-
-You can discover if a StarkBank boleto has been recently paid before we receive the response on the next day.
-This can be done by creating a BoletoHolmes object, which fetches the updated status of the corresponding
-Boleto object according to CIP to check, for example, whether it is still payable or not.
-
-```elixir
-holmes = StarkBank.BoletoHolmes.create!(
-  [
-    %StarkBank.BoletoHolmes{
-        boleto_id: "5656565656565656"
-    },
-    %StarkBank.BoletoHolmes{
-        boleto_id: "4848484848484848",
-        tags: ["elementary", "my", "dear", "watson"]
-    },
-  ]
-) |> IO.inspect
-```
-
-**Note**: Instead of using BoletoHolmes structs, you can also pass each payment element in map format
-
-### Get boleto holmes
-
-To get a single Holmes by its id, run:
-
-```elixir
-sherlock = StarkBank.BoletoHolmes.get!("5629412477239296")
-  |> IO.inspect
-```
-
-### Query boleto holmes
-
-You can search for boleto Holmes using filters.
-
-```elixir
-for sherlock <- StarkBank.BoletoHolmes.query!(
-  tags: ["#123", "test"],
-) do
-  sherlock |> IO.inspect
-end
-```
-
-### Query boleto holmes logs
-
-Searches are also possible with boleto holmes logs:
-
-```elixir
-for log <- StarkBank.BoletoHolmes.Log.query!(
-  holmes_ids: ["5629412477239296", "5199478290120704"],
-) do
-  log |> IO.inspect
-end
-```
-
-### Get boleto holmes log
-
-You can also get a boleto holmes log by specifying its id.
-
-```elixir
-log = StarkBank.BoletoHolmes.Log.get!("5391671273455616")
-  |> IO.inspect
-```
-
 ### Create utility payment
 
 It's also simple to pay utility bills (such as electricity and water bills) in the SDK.
@@ -843,13 +872,13 @@ payments = StarkBank.UtilityPayment.create!(
   [
     %StarkBank.UtilityPayment{
         bar_code: "83600000001522801380037107172881100021296561",
-        scheduled: Date.utc_today |> Date.add(2),
+        scheduled: "2020-11-05",
         description: "paying some bills",
         tags: ["take", "my", "money"],
     },
     %StarkBank.UtilityPayment{
         line: "83680000001 7 08430138003 0 71070987611 8 00041351685 7",
-        scheduled: Date.utc_today |> Date.add(3),
+        scheduled: "2020-11-09",
         description: "never ending bills",
         tags: ["again"],
     },
@@ -904,7 +933,7 @@ payment = StarkBank.UtilityPayment.delete!("6619425641857024")
   |> IO.inspect
 ```
 
-### Query utility bill payment logs
+### Query utility payment logs
 
 You can search for payments by specifying filters. Use this to understand the
 bills life cycles.
@@ -917,61 +946,12 @@ for log <- StarkBank.UtilityPayment.Log.query!(
 end
 ```
 
-### Get utility bill payment log
+### Get utility payment log
 
 If you want to get a specific payment log by its id, just run:
 
 ```elixir
 log = StarkBank.UtilityPayment.Log.get!("6197807794880512")
-  |> IO.inspect
-```
-
-### Create transactions
-
-To send money between Stark Bank accounts, you can create transactions:
-
-```elixir
-transactions = StarkBank.Transaction.create!(
-  [
-    %StarkBank.Transaction{
-        amount: 100,  # (R$ 1.00)
-        receiver_id: "5768064935133184",
-        description: "Transaction to dear provider",
-        external_id: "12345",  # so we can block anything you send twice by mistake
-        tags: ["provider"]
-    },
-    %StarkBank.Transaction{
-        amount: 234,  # (R$ 2.34)
-        receiver_id: "5768064935133184",
-        description: "Transaction to the other provider",
-        external_id: "12346",  # so we can block anything you send twice by mistake
-        tags: ["provider"]
-    }
-  ]
-) |> IO.inspect
-```
-
-**Note**: Instead of using Transaction structs, you can also pass each transaction element in map format
-
-### Query transactions
-
-To understand your balance changes (bank statement), you can query
-transactions. Note that our system creates transactions for you when
-you receive boleto payments, pay a bill or make transfers, for example.
-
-```elixir
-transactions = StarkBank.Transaction.query!(
-  after: "2020-03-20",
-  before: "2020-03-30"
-) |> Enum.take(10) |> IO.inspect
-```
-
-### Get transaction
-
-You can get a specific transaction by its id:
-
-```elixir
-transaction = StarkBank.Transaction.get!("6677396233125888")
   |> IO.inspect
 ```
 
@@ -991,7 +971,7 @@ requests = StarkBank.PaymentRequest.create!(
   [
     %StarkBank.PaymentRequest{
         center_id: "5967314465849344",
-        due: Date.utc_today |> Date.add(30),
+        due: "2020-10-01",
         payment: %StarkBank.Transfer{
             amount: 100,
             bank_code: "01",
@@ -1016,8 +996,8 @@ To search for payment requests, run:
 ```elixir
 requests = StarkBank.PaymentRequest.query!(
   center_id: "5967314465849344",
-  after: Date.utc_today |> Date.add(-2),
-  before: Date.utc_today |> Date.add(-1),
+  after: "2020-10-09",
+  before: "2020-10-10",
   limit: 10
 ) |> Enum.take(10) |> IO.inspect
 ```
@@ -1133,6 +1113,28 @@ With this function, you can manually set events retrieved from the API as
 event = StarkBank.Event.update!("5764442407043072", is_delivered: true)
   |> IO.inspect
 ```
+
+### Get a DICT key
+
+You can get DICT (PIX) key's parameters by its id.
+
+```elixir
+dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
+  |> IO.inspect
+```
+
+### Query your DICT keys
+
+To take a look at the DICT keys linked to your workspace, just run the following:
+
+```elixir
+dict_key = StarkBank.DictKey.query!(
+  limit: 1,
+  status: "registered",
+  type: "evp"
+) |> Enum.take(1) |> IO.inspect
+```
+
 
 ## Handling errors
 
