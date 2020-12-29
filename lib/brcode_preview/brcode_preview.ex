@@ -47,7 +47,7 @@ defmodule StarkBank.BrcodePreview do
 
   ## Options:
     - `:brcodes` [list of strings, default nil]: List of brcodes to preview. ex: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of BrcodePreview structs with updated attributes

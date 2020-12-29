@@ -79,12 +79,12 @@ defmodule StarkBank.Invoice do
     - `invoices` [list of Invoice structs]: list of Invoice structs to be created in the API
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - list of Invoice structs with updated attributes
   """
-  @spec create([Invoice.t() | map()], user: Project.t() | nil) ::
+  @spec create([Invoice.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Invoice.t()]} | {:error, [Error.t()]}
   def create(invoices, options \\ []) do
     Rest.post(
@@ -97,7 +97,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Invoice.t() | map()], user: Project.t() | nil) :: any
+  @spec create!([Invoice.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(invoices, options \\ []) do
     Rest.post!(
       resource(),
@@ -113,12 +113,12 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Invoice struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, Invoice.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Invoice.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -126,7 +126,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: Invoice.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Invoice.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -138,12 +138,12 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Invoice QR Code png file content
   """
-  @spec qrcode(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec qrcode(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def qrcode(id, options \\ []) do
     Rest.get_qrcode(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -151,7 +151,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Same as qrcode(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec qrcode!(binary, user: Project.t() | nil) :: binary
+  @spec qrcode!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def qrcode!(id, options \\ []) do
     Rest.get_qrcode!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -163,12 +163,12 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Invoice pdf file content
   """
-  @spec pdf(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
     Rest.get_pdf(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -176,7 +176,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, user: Project.t() | nil) :: binary
+  @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
     Rest.get_pdf!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -191,7 +191,7 @@ defmodule StarkBank.Invoice do
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "created", "paid", "canceled" or "overdue"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Invoice structs with updated attributes
@@ -243,12 +243,12 @@ defmodule StarkBank.Invoice do
     - `:amount` [string]: Nominal amount charge by the invoice. ex: 100 (R$1.00)
     - `:due` [DateTime or string]: Invoice due date in UTC ISO format. ex: ~U[2021-03-26 19:32:35.418698Z]
     - `:expiration` [integer]: time interval in seconds between due date and expiration date. ex 123456789
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - target Invoice with updated attributes
   """
-  @spec update(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | nil) ::
+  @spec update(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | Organization.t() | nil) ::
           {:ok, Invoice.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
     Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
@@ -257,7 +257,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | nil) :: Invoice.t()
+  @spec update!(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | Organization.t() | nil) :: Invoice.t()
   def update!(id, parameters \\ []) do
     Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end

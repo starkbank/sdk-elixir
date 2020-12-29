@@ -16,4 +16,8 @@ defmodule StarkBank.User.Project do
       allowed_ips: allowed_ips
     }
   end
+
+  def access_id() do
+    "project/#{:id}"
+  end
 end

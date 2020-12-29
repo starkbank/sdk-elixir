@@ -29,12 +29,12 @@ defmodule StarkBank.Balance do
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Balance struct with updated attributes
   """
-  @spec get(user: Project.t() | nil) :: {:ok, Balance.t()} | {:error, [Error]}
+  @spec get(user: Project.t() | Organization.t() | nil) :: {:ok, Balance.t()} | {:error, [Error]}
   def get(options \\ []) do
     case Rest.get_list(resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
@@ -45,7 +45,7 @@ defmodule StarkBank.Balance do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(user: Project.t() | nil) :: Balance.t()
+  @spec get!(user: Project.t() | Organization.t() | nil) :: Balance.t()
   def get!(options \\ []) do
     Rest.get_list!(resource(), options) |> Enum.take(1) |> hd()
   end

@@ -59,12 +59,12 @@ defmodule StarkBank.Transaction do
     - `transactions` [list of Transaction entities]: list of Transaction entities to be created in the API
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - list of Transaction structs with updated attributes
   """
-  @spec create([Transaction.t() | map()], user: Project.t() | nil) ::
+  @spec create([Transaction.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Transaction.t()]} | {:error, [Error.t()]}
   def create(transactions, options \\ []) do
     Rest.post(
@@ -77,7 +77,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Transaction.t() | map()], user: Project.t() | nil) :: any
+  @spec create!([Transaction.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(transactions, options \\ []) do
     Rest.post!(
       resource(),
@@ -93,12 +93,12 @@ defmodule StarkBank.Transaction do
     - `id` [string]: entity unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Transaction struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Transaction.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -106,7 +106,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: Transaction.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Transaction.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -121,7 +121,7 @@ defmodule StarkBank.Transaction do
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:external_ids` [list of strings, default nil]: list of external ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Transaction structs with updated attributes

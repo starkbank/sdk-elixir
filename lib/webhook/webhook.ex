@@ -34,12 +34,12 @@ defmodule StarkBank.Webhook do
     - `:subscriptions` [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "boleto-payment"]
 
   ## Parameters (optional):
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Webhook struct with updated attributes
   """
-  @spec create(user: Project.t() | nil, url: binary, subscriptions: [binary]) ::
+  @spec create(user: Project.t() | Organization.t() | nil, url: binary, subscriptions: [binary]) ::
           {:ok, Webhook.t()} | {:error, [Error.t()]}
   def create(parameters \\ []) do
     %{user: user, url: url, subscriptions: subscriptions} =
@@ -58,7 +58,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(user: Project.t() | nil, url: binary, subscriptions: [binary]) :: any
+  @spec create!(user: Project.t() | Organization.t() | nil, url: binary, subscriptions: [binary]) :: any
   def create!(parameters \\ []) do
     %{user: user, url: url, subscriptions: subscriptions} =
       Enum.into(
@@ -80,12 +80,12 @@ defmodule StarkBank.Webhook do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Webhook struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -93,7 +93,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: Webhook.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Webhook.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -103,7 +103,7 @@ defmodule StarkBank.Webhook do
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Webhook structs with updated attributes
@@ -141,12 +141,12 @@ defmodule StarkBank.Webhook do
     - `id` [string]: Webhook unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - deleted Webhook struct
   """
-  @spec delete(binary, user: Project.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -154,7 +154,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(binary, user: Project.t() | nil) :: Webhook.t()
+  @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Webhook.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end

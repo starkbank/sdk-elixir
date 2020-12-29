@@ -7,7 +7,7 @@ defmodule StarkBank do
   alias StarkBank.Utils.Check
 
   @doc """
-  The Project struct is the main authentication entity for the SDK.
+  The Organization or Project struct is the main authentication entity for the SDK.
   All requests to the Stark Bank API must be authenticated via a project,
   which must have been previously created at the Stark Bank website
   [https://sandbox.web.starkbank.com] or [https://web.starkbank.com]

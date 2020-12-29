@@ -66,12 +66,12 @@ defmodule StarkBank.PaymentRequest do
     - `payment_requests` [list of PaymentRequest structs]: list of PaymentRequest objects to be created in the API
 
     ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
     ## Return:
     - list of PaymentRequest structs with updated attributes
     """
-    @spec create([PaymentRequest.t() | map()], user: Project.t() | nil) ::
+    @spec create([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) ::
             {:ok, [PaymentRequest.t()]} | {:error, [Error.t()]}
     def create(payment_requests, options \\ []) do
         case Rest.post(
@@ -87,7 +87,7 @@ defmodule StarkBank.PaymentRequest do
     @doc """
     Same as create(), but it will unwrap the error tuple and raise in case of errors.
     """
-    @spec create!([PaymentRequest.t() | map()], user: Project.t() | nil) :: any
+    @spec create!([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) :: any
     def create!(payment_requests, options \\ []) do
         Rest.post!(
             resource(),
@@ -108,7 +108,7 @@ defmodule StarkBank.PaymentRequest do
         - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "boleto-payment"
         - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
         - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-        - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+        - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
     ## Return:
         - stream of PaymentRequest structs with updated attributes

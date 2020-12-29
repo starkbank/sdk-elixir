@@ -36,12 +36,12 @@ defmodule StarkBank.BrcodePayment.Log do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Log struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, Log.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Log.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -49,7 +49,7 @@ defmodule StarkBank.BrcodePayment.Log do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: Log.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Log.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -63,7 +63,7 @@ defmodule StarkBank.BrcodePayment.Log do
     - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "processing" or "success"
     - `:payment_ids` [list of strings, default nil]: list of BrcodePayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Log structs with updated attributes

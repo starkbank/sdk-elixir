@@ -45,12 +45,12 @@ defmodule StarkBank.Event do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Event struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -58,7 +58,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: Event.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Event.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -71,7 +71,7 @@ defmodule StarkBank.Event do
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:is_delivered` [bool, default nil]: filter successfully delivered events. ex: true or false
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - stream of Event structs with updated attributes
@@ -115,12 +115,12 @@ defmodule StarkBank.Event do
     - `id` [string]: Event unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - deleted Event struct
   """
-  @spec delete(binary, user: Project.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -128,7 +128,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(binary, user: Project.t() | nil) :: Event.t()
+  @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Event.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end
@@ -142,12 +142,12 @@ defmodule StarkBank.Event do
     - `:is_delivered` [bool]: If true and event hasn't been delivered already, event will be set as delivered. ex: true
 
   ## Parameters (optional):
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - target Event with updated attributes
   """
-  @spec update(binary, is_delivered: bool, user: Project.t() | nil) ::
+  @spec update(binary, is_delivered: bool, user: Project.t() | Organization.t() | nil) ::
           {:ok, Event.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
     Rest.patch_id(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
@@ -156,7 +156,7 @@ defmodule StarkBank.Event do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(binary, is_delivered: bool, user: Project.t() | nil) :: Event.t()
+  @spec update!(binary, is_delivered: bool, user: Project.t() | Organization.t() | nil) :: Event.t()
   def update!(id, parameters \\ []) do
     Rest.patch_id!(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
   end
@@ -172,7 +172,7 @@ defmodule StarkBank.Event do
 
   ## Parameters (optional):
     - `cache_pid` [PID, default nil]: PID of the process that holds the public key cache, returned on previous parses. If not provided, a new cache process will be generated.
-    - `user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
 
   ## Return:
     - Event struct with updated attributes
