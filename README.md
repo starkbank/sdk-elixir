@@ -209,8 +209,8 @@ you receive boleto payments, pay a bill or make transfers, for example.
 
 ```elixir
 transactions = StarkBank.Transaction.query!(
-  after: "2020-03-20",
-  before: "2020-03-30"
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1)
 ) |> Enum.take(10) |> IO.inspect
 ```
 
@@ -255,7 +255,7 @@ transfers = StarkBank.Transfer.create!(
         account_number: "123456-7",
         tax_id: "012.345.678-90",
         name: "Jon Snow",
-        scheduled: "2020-11-01"
+        scheduled: Date.utc_today |> Date.add(30)
     }
 ]) |> IO.inspect
 ```
@@ -268,8 +268,7 @@ You can query multiple transfers according to filters.
 
 ```elixir
 for transfer <- StarkBank.Transfer.query!(
-  after: "2020-11-15",
-  before: "2020-12-01",
+  after: Date.utc_today |> Date.add(-30),
   limit: 10
 ) do
   transfer |> IO.inspect
@@ -338,9 +337,9 @@ you have in other banks.
 ```elixir
 invoice = StarkBank.Invoice.create!(
   [
-      %StarkBank.Invoice{
+    %StarkBank.Invoice{
       amount: 400000,
-      due: "2020-06-25T23:00:08.338233+00:00",
+      due: DateTime.utc_now |> DateTime.add(24 * 3600 * 3),
       tax_id: "012.345.678-90",
       name: "Iron Bank S.A.",
       expiration: 123456789,
@@ -349,7 +348,7 @@ invoice = StarkBank.Invoice.create!(
       discounts: [
         %{
           percentage: 10,
-          due: "2020-06-21T23:00:08.338233+00:00"
+          due: DateTime.utc_now |> DateTime.add(24 * 3600 * 2)
         }
       ],
       tags: [
@@ -426,7 +425,7 @@ Note that this is not possible if it has been paid already.
 invoice = StarkBank.Invoice.update!(
   "6750458353811456", 
   amount: 123456, 
-  due: "2020-08-25T23:00:08.338233+00:00",
+  due: DateTime.utc_now |> DateTime.add(10),
   expiration: 123456789
 )
   |> IO.inspect
@@ -528,7 +527,7 @@ boletos = StarkBank.Boleto.create!(
         city: "São Paulo",
         state_code: "SP",
         zip_code: "01310-000",
-        due: "2020-10-05",
+        due: Date.utc_today |> Date.add(2),
         fine: 5,  # 5%
         interest: 2.5,  # 2.5% per month
     }
@@ -1009,7 +1008,7 @@ To create a webhook subscription and be notified whenever an event occurs, run:
 ```elixir
 webhook = StarkBank.Webhook.create!(
   url: "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
-  subscriptions: ["transfer", "deposit", "brcode-payment", "utility-payment"]
+  subscriptions: ["transfer", "deposit", "invoice", "brcode-payment", "utility-payment"]
 ) |> IO.inspect
 ```
 
