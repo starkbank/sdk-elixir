@@ -5,7 +5,7 @@ defmodule StarkBank.PaymentRequest do
     alias StarkBank.Utils.API
     alias StarkBank.User.Project
     alias StarkBank.Error
-    alias StarkBank.Boleto, as: Boleto
+    alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer
     alias StarkBank.Transaction, as: Transaction
     alias StarkBank.BoletoPayment, as: BoletoPayment
@@ -157,6 +157,7 @@ defmodule StarkBank.PaymentRequest do
         case resource do
             %Transfer{} -> "transfer"
             %Transaction{} -> "transaction"
+            %BrcodePayment{} -> "brcode-payment"
             %BoletoPayment{} -> "boleto-payment"
             %UtilityPayment{} -> "utility-payment"
         end
@@ -179,7 +180,7 @@ defmodule StarkBank.PaymentRequest do
         case subscription do
             "transfer" -> &Transfer.resource_maker/1
             "transaction" -> &Transaction.resource_maker/1
-            "boleto" -> &Boleto.resource_maker/1
+            "brcode-payment" -> &BrcodePayment.resource_maker/1
             "boleto-payment" -> &BoletoPayment.resource_maker/1
             "utility-payment" -> &UtilityPayment.resource_maker/1
         end
