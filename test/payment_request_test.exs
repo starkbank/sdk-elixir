@@ -56,16 +56,18 @@ defmodule StarkBankTest.PaymentRequest do
             %StarkBank.Transfer{} -> get_days()
             %StarkBank.BoletoPayment{} -> get_days()
             %StarkBank.UtilityPayment{} -> get_days()
+            %StarkBank.BrcodePayment{} -> get_days()
             %StarkBank.Transaction{} -> nil
         end
     end
 
     defp create_payment() do
-        case Enum.random(0..3) do
+        case Enum.random(0..4) do
             0 -> StarkBankTest.Transfer.example_transfer(false)
             1 -> StarkBankTest.Transaction.example_transaction()
             2 -> StarkBankTest.BoletoPayment.example_payment(false)
             3 -> StarkBankTest.UtilityPayment.example_payment(false)
+            4 -> StarkBankTest.BrcodePayment.example_payment(false)
         end
     end
 end
