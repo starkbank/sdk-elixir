@@ -24,6 +24,7 @@ ExUnit.start(
     # :utility_payment_log,
     # :payment_request,
     # :webhook,
-    # :event
+    # :event,
+    # :workspace,
   ]
 )
