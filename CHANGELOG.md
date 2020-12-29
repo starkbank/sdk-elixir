@@ -17,6 +17,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - Missing brcode-payment in payment request processing
 ### Added
 - Organization user
+- Workspace resource
 
 ## [2.2.0] - 2020-11-24
 ### Added
