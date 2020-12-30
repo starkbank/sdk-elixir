@@ -2,6 +2,7 @@ defmodule StarkBank.BrcodePreview do
   alias StarkBank.Utils.Rest
   alias StarkBank.BrcodePreview
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -54,7 +55,7 @@ defmodule StarkBank.BrcodePreview do
   """
   @spec query(
           brcodes: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BrcodePreview.t()]}}
            | {:error, [Error.t()]}
@@ -71,7 +72,7 @@ defmodule StarkBank.BrcodePreview do
   """
   @spec query!(
           brcodes: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BrcodePreview.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

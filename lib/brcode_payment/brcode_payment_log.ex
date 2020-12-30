@@ -5,6 +5,7 @@ defmodule StarkBank.BrcodePayment.Log do
   alias StarkBank.Utils.API
   alias StarkBank.BrcodePayment
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -74,7 +75,7 @@ defmodule StarkBank.BrcodePayment.Log do
           before: Date.t() | binary,
           types: [binary],
           payment_ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Log.t()]}}
            | {:error, [Error.t()]}
@@ -95,7 +96,7 @@ defmodule StarkBank.BrcodePayment.Log do
           before: Date.t() | binary,
           types: [binary],
           payment_ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

@@ -3,6 +3,7 @@ defmodule StarkBank.Deposit do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -99,7 +100,7 @@ defmodule StarkBank.Deposit do
           sort: binary,
           tags: [binary],
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Deposit.t()]}}
            | {:error, [Error.t()]}
@@ -122,7 +123,7 @@ defmodule StarkBank.Deposit do
           sort: binary,
           tags: [binary],
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Deposit.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

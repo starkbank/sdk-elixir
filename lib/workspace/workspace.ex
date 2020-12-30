@@ -3,6 +3,7 @@ defmodule StarkBank.Workspace do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -80,7 +81,7 @@ defmodule StarkBank.Workspace do
   ## Return:
     - Workspace struct with updated attributes
   """
-  @spec get(binary, user: Organization.t() | Project.t() | nil) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -88,7 +89,7 @@ defmodule StarkBank.Workspace do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Organization.t() | Project.t() | nil) :: Workspace.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Workspace.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -109,7 +110,7 @@ defmodule StarkBank.Workspace do
           limit: integer,
           username: binary,
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Workspace.t()]}}
            | {:error, [Error.t()]}
@@ -128,7 +129,7 @@ defmodule StarkBank.Workspace do
           limit: integer,
           username: binary,
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Workspace.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

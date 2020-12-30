@@ -3,6 +3,7 @@ defmodule StarkBank.BoletoPayment do
   alias StarkBank.Utils.Check
   alias StarkBank.BoletoPayment
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -157,7 +158,7 @@ defmodule StarkBank.BoletoPayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BoletoPayment.t()]}}
            | {:error, [Error.t()]}
@@ -179,7 +180,7 @@ defmodule StarkBank.BoletoPayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

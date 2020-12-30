@@ -3,6 +3,7 @@ defmodule StarkBank.Utils.Check do
 
   alias EllipticCurve.PrivateKey
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
 
   def environment(environment) do
     case environment do

@@ -4,6 +4,7 @@ defmodule StarkBank.PaymentRequest do
     alias StarkBank.Utils.Check
     alias StarkBank.Utils.API
     alias StarkBank.User.Project
+    alias StarkBank.User.Organization
     alias StarkBank.Error
     alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer
@@ -122,7 +123,7 @@ defmodule StarkBank.PaymentRequest do
             type: binary,
             tags: [binary],
             ids: [binary],
-            user: Project.t()
+            user: Project.t() | Organization.t()
             ) ::
             ({:cont, {:ok, [PaymentRequest.t()]}}
             | {:error, [Error.t()]}
@@ -146,7 +147,7 @@ defmodule StarkBank.PaymentRequest do
             type: binary,
             tags: [binary],
             ids: [binary],
-            user: Project.t()
+            user: Project.t() | Organization.t()
             ) ::
             ({:cont, [PaymentRequest.t()]} | {:halt, any} | {:suspend, any}, any -> any)
     def query!(options \\ []) do

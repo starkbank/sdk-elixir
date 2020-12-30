@@ -5,6 +5,7 @@ defmodule StarkBank.Boleto.Log do
   alias StarkBank.Utils.API
   alias StarkBank.Boleto
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -95,7 +96,7 @@ defmodule StarkBank.Boleto.Log do
           before: Date.t() | binary,
           types: [binary],
           boleto_ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

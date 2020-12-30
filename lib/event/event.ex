@@ -8,6 +8,7 @@ defmodule StarkBank.Event do
   alias StarkBank.Utils.JSON
   alias StarkBank.Utils.API
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
   alias StarkBank.Utils.Request
   alias StarkBank.Boleto.Log, as: BoletoLog
@@ -81,7 +82,7 @@ defmodule StarkBank.Event do
           after: Date.t() | binary,
           before: Date.t() | binary,
           is_delivered: boolean,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Event.t()]}}
            | {:error, [Error.t()]}
@@ -101,7 +102,7 @@ defmodule StarkBank.Event do
           after: Date.t() | binary,
           before: Date.t() | binary,
           is_delivered: boolean,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
@@ -182,7 +183,7 @@ defmodule StarkBank.Event do
           content: binary,
           signature: binary,
           cache_pid: PID,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           {:ok, {Event.t(), binary}} | {:error, [Error.t()]}
   def parse(parameters) do
@@ -202,7 +203,7 @@ defmodule StarkBank.Event do
           content: binary,
           signature: binary,
           cache_pid: PID,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           {Event.t(), any}
   def parse!(parameters) do

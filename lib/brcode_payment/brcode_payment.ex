@@ -3,6 +3,7 @@ defmodule StarkBank.BrcodePayment do
   alias StarkBank.Utils.Check
   alias StarkBank.BrcodePayment
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -160,7 +161,7 @@ defmodule StarkBank.BrcodePayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BrcodePayment.t()]}}
            | {:error, [Error.t()]}
@@ -182,7 +183,7 @@ defmodule StarkBank.BrcodePayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BrcodePayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

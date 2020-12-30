@@ -5,6 +5,7 @@ defmodule StarkBank.Transfer.Log do
   alias StarkBank.Utils.API
   alias StarkBank.Transfer
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -73,7 +74,7 @@ defmodule StarkBank.Transfer.Log do
           before: Date.t() | binary,
           types: [binary],
           transfer_ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Log.t()]}}
            | {:error, [Error.t()]}
@@ -94,7 +95,7 @@ defmodule StarkBank.Transfer.Log do
           before: Date.t() | binary,
           types: [binary],
           transfer_ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

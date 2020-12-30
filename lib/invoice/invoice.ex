@@ -3,6 +3,7 @@ defmodule StarkBank.Invoice do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -203,7 +204,7 @@ defmodule StarkBank.Invoice do
           status: binary,
           tags: [binary],
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Invoice.t()]}}
            | {:error, [Error.t()]}
@@ -225,7 +226,7 @@ defmodule StarkBank.Invoice do
           status: binary,
           tags: [binary],
           ids: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Invoice.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

@@ -3,6 +3,7 @@ defmodule StarkBank.DictKey do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -94,7 +95,7 @@ defmodule StarkBank.DictKey do
           before: Date.t() | binary,
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [DictKey.t()]}}
            | {:error, [Error.t()]}
@@ -116,7 +117,7 @@ defmodule StarkBank.DictKey do
           before: Date.t() | binary,
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [DictKey.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

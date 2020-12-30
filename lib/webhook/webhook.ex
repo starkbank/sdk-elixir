@@ -3,6 +3,7 @@ defmodule StarkBank.Webhook do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -110,7 +111,7 @@ defmodule StarkBank.Webhook do
   """
   @spec query(
           limit: integer,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Webhook.t()]}}
            | {:error, [Error.t()]}
@@ -127,7 +128,7 @@ defmodule StarkBank.Webhook do
   """
   @spec query!(
           limit: integer,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [Webhook.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
