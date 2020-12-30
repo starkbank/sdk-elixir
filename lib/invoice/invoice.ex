@@ -80,7 +80,7 @@ defmodule StarkBank.Invoice do
     - `invoices` [list of Invoice structs]: list of Invoice structs to be created in the API
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - list of Invoice structs with updated attributes
@@ -114,7 +114,7 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Invoice struct with updated attributes
@@ -139,7 +139,7 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Invoice QR Code png file content
@@ -164,7 +164,7 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Invoice pdf file content
@@ -192,7 +192,7 @@ defmodule StarkBank.Invoice do
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "created", "paid", "canceled" or "overdue"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of Invoice structs with updated attributes
@@ -244,7 +244,7 @@ defmodule StarkBank.Invoice do
     - `:amount` [string]: Nominal amount charge by the invoice. ex: 100 (R$1.00)
     - `:due` [DateTime or string]: Invoice due date in UTC ISO format. ex: ~U[2021-03-26 19:32:35.418698Z]
     - `:expiration` [integer]: time interval in seconds between due date and expiration date. ex 123456789
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - target Invoice with updated attributes

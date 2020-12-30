@@ -36,7 +36,7 @@ defmodule StarkBank.Deposit.Log do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Log struct with updated attributes
@@ -63,7 +63,7 @@ defmodule StarkBank.Deposit.Log do
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter retrieved structs by types. ex: "success" or "failed"
     - `:deposit_ids` [list of strings, default nil]: list of Deposit ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of Log structs with updated attributes

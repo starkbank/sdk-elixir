@@ -92,7 +92,7 @@ defmodule StarkBank.Boleto do
     - `boletos` [list of Boleto structs]: list of Boleto structs to be created in the API
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - list of Boleto structs with updated attributes
@@ -126,7 +126,7 @@ defmodule StarkBank.Boleto do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Boleto struct with updated attributes
@@ -152,7 +152,7 @@ defmodule StarkBank.Boleto do
 
   ## Options:
     - `:layout` [string]: Layout specification. Available options are "default" and "booklet".
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Boleto pdf file content
@@ -180,7 +180,7 @@ defmodule StarkBank.Boleto do
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of Boleto structs with updated attributes
@@ -228,7 +228,7 @@ defmodule StarkBank.Boleto do
     - `id` [string]: Boleto unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ##  Return:
     - deleted Boleto struct

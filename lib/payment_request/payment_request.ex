@@ -67,7 +67,7 @@ defmodule StarkBank.PaymentRequest do
     - `payment_requests` [list of PaymentRequest structs]: list of PaymentRequest objects to be created in the API
 
     ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
     ## Return:
     - list of PaymentRequest structs with updated attributes
@@ -109,7 +109,7 @@ defmodule StarkBank.PaymentRequest do
         - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "boleto-payment"
         - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
         - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-        - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+        - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
     ## Return:
         - stream of PaymentRequest structs with updated attributes

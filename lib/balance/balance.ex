@@ -30,7 +30,7 @@ defmodule StarkBank.Balance do
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Balance struct with updated attributes

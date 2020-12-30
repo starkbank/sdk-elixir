@@ -37,7 +37,7 @@ defmodule StarkBank.BoletoPayment.Log do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Log struct with updated attributes
@@ -64,7 +64,7 @@ defmodule StarkBank.BoletoPayment.Log do
     - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
     - `:types` [list of strings, default nil]: filter retrieved entities by event types. ex: "processing" or "success"
     - `:payment_ids` [list of strings, default nil]: list of BoletoPayment ids to filter retrieved entities. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of Log structs with updated attributes
