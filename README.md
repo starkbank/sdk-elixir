@@ -71,7 +71,7 @@ You can interact directly with our API using two types of users: Projects and Or
 - **Projects** are workspace-specific users, that is, they are bound to the workspaces they are created in.
 One workspace can have multiple Projects.
 - **Organizations** are general users that control your entire organization.
-They can control all your Workspaces and even create new ones. The Organization is bound to your company's tax-ID only.
+They can control all your Workspaces and even create new ones. The Organization is bound to your company's tax ID only.
 Since this user is unique in your entire organization, only one credential can be linked to it.
 
 3.1 To create a Project in Sandbox:
@@ -107,7 +107,7 @@ project = StarkBank.project(
 )
 ```
 
-3.2 While this feature is in beta, to register your Organization's public key, a legal representative of your organization must send an e-mail with the desired public key to developers@starkbank.com. Don`t worry, this flow will soon be integrated with our website. Here is an example on how to handle your Organization in the SDK:
+3.2 To register your Organization's public key, a legal representative of your organization must send an e-mail with the desired public key to developers@starkbank.com. This flow will soon be integrated with our website, where you'll be able to do the entire process quicker and independently. Here is an example on how to handle your Organization in the SDK:
 
 NOTE 1: Never hard-code your private key. Get it from an environment variable or an encrypted database.
 
@@ -138,24 +138,24 @@ organization = StarkBank.Organization(
 )
 
 # To dynamically use your organization credentials in a specific workspace_id,
-# you can use the Organization.with_workspace() method:
-StarkBank.Balance.get!(user: organization.with_workspace("4848484848484848"))
+# you can use the Organization.replace() method:
+StarkBank.Balance.get!(user: organization |> StarkBank.Organization.replace("4848484848484848"))
   |> IO.inspect()
 ```
 
 ### 4. Setting up the user
 
-There are two kinds of users that can access our API: **Project** and **Member**.
+There are three kinds of users that can access our API: **Organization**, **Project** and **Member**.
 
+- `Project` and `Organization` are designed for integrations and are the ones meant for our SDKs.
 - `Member` is the one you use when you log into our webpage with your e-mail.
-- `Project` is designed for integrations and is the one meant for our SDK.
 
 There are two ways to inform the user to the SDK:
  
 4.1 Passing the user as argument in all functions using the `user` keyword:
 
 ```elixir
-balance = StarkBank.Balance.get!(user: user)
+balance = StarkBank.Balance.get!(user: project)  # or organization
 ```
 
 4.2 Set it as a default user in the `config/config.exs` file:
@@ -171,7 +171,21 @@ config :starkbank,
   ]
 ```
 
-Just select the way of passing the project user that is more convenient to you.
+or
+
+```elixir
+import Config
+
+config :starkbank,
+  organization: [
+    environment: :sandbox,
+    id: "9999999999999999",
+    private_key: private_key_content,
+    workspace_id: "8888888888888888" # or nil
+  ]
+```
+
+Just select the way of passing the user that is more convenient to you.
 On all following examples we will assume a default user has been set in the configs.
 
 
@@ -192,13 +206,13 @@ Language options are "en-US" for english and "pt-BR" for brazilian portuguese. E
 ## Testing in Sandbox
 
 Your initial balance is zero. For many operations in Stark Bank, you'll need funds
-in your account, which can be added to your balance by creating a Boleto.
+in your account, which can be added to your balance by creating an Invoice or a Boleto. 
 
-In the Sandbox environment, 90% of the created Boletos will be automatically paid,
+In the Sandbox environment, most of the created Invoices and Boletos will be automatically paid,
 so there's nothing else you need to do to add funds to your account. Just create
-a few and wait around a bit.
+a few Invoices and wait around a bit.
 
-In Production, you (or one of your clients) will need to actually pay this Boleto
+In Production, you (or one of your clients) will need to actually pay this Invoice or Boleto
 for the value to be credited to your account.
 
 
@@ -251,7 +265,7 @@ transactions = StarkBank.Transaction.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get transaction
+### Get a transaction
 
 You can get a specific transaction by its id:
 
@@ -260,7 +274,7 @@ transaction = StarkBank.Transaction.get!("6677396233125888")
   |> IO.inspect
 ```
 
-### Get balance
+### Get your balance
 
 To know how much money you have in your workspace, run:
 
@@ -271,14 +285,14 @@ IO.puts(balance.amount / 100)
 
 ### Create transfers
 
-You can also create transfers in the SDK (TED/PIX).
+You can also create transfers in the SDK (TED/Pix).
 
 ```elixir
 transfers = StarkBank.Transfer.create!(
   [
     %StarkBank.Transfer{
         amount: 100,
-        bank_code: "20018183",  # PIX
+        bank_code: "20018183",  # Pix
         branch_code: "0001",
         account_number: "10000-0",
         tax_id: "012.345.678-90",
@@ -312,7 +326,7 @@ for transfer <- StarkBank.Transfer.query!(
 end
 ```
 
-### Get transfer
+### Get a transfer
 
 To get a single transfer by its id, run:
 
@@ -321,7 +335,7 @@ transfer = StarkBank.Transfer.get!("4882890932355072")
   |> IO.inspect
 ```
 
-### Cancel transfer
+### Cancel a transfer
 
 To cancel a single scheduled transfer by its id, run:
 
@@ -330,7 +344,7 @@ transfer = StarkBank.Transfer.delete!("4882890932355072")
   |> IO.inspect
 ```
 
-### Get transfer PDF
+### Get a transfer PDF
 
 A transfer PDF may also be retrieved by passing its id.
 This operation is only valid for transfers with "processing" or "success" status.
@@ -574,7 +588,7 @@ boletos = StarkBank.Boleto.create!(
 
 **Note**: Instead of using Boleto structs, you can also pass each boleto element in map format
 
-### Get boleto
+### Get a boleto
 
 After its creation, information on a boleto may be retrieved by passing its id.
 Its status indicates whether it's been paid.
@@ -584,7 +598,7 @@ boleto = StarkBank.Boleto.get!("6750458353811456")
   |> IO.inspect
 ```
 
-### Get boleto PDF
+### Get a boleto PDF
 
 After its creation, a boleto PDF may be retrieved by passing its id.
 
@@ -600,7 +614,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete boleto
+### Delete a boleto
 
 You can also cancel a boleto by its id.
 Note that this is not possible if it has been processed already.
@@ -663,7 +677,7 @@ holmes = StarkBank.BoletoHolmes.create!(
 
 **Note**: Instead of using BoletoHolmes structs, you can also pass each payment element in map format
 
-### Get boleto holmes
+### Get a boleto holmes
 
 To get a single Holmes by its id, run:
 
@@ -696,7 +710,7 @@ for log <- StarkBank.BoletoHolmes.Log.query!(
 end
 ```
 
-### Get boleto holmes log
+### Get a boleto holmes log
 
 You can also get a boleto holmes log by specifying its id.
 
@@ -717,7 +731,7 @@ previews = StarkBank.BrcodePreview.query!(
 
 ### Pay a BR Code
 
-Paying a BRCode is also simple. After extracting the BR Code encoded in the PIX QR Code, you can do the following:
+Paying a BR Code is also simple. After extracting the BR Code encoded in the Pix QR Code, you can do the following:
 
 ```elixir
 payments = StarkBank.BrcodePayment.create!(
@@ -833,7 +847,7 @@ payments = StarkBank.BoletoPayment.create!(
 
 **Note**: Instead of using BoletoPayment structs, you can also pass each payment element in map format
 
-### Get boleto payment
+### Get a boleto payment
 
 To get a single boleto payment by its id, run:
 
@@ -842,7 +856,7 @@ payment = StarkBank.BoletoPayment.get!("5629412477239296")
   |> IO.inspect
 ```
 
-### Get boleto payment PDF
+### Get a boleto payment PDF
 
 After its creation, a boleto payment PDF may be retrieved by passing its id.
 
@@ -858,7 +872,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete boleto payment
+### Delete a boleto payment
 
 You can also cancel a boleto payment by its id.
 Note that this is not possible if it has been processed already.
@@ -890,7 +904,7 @@ for log <- StarkBank.BoletoPayment.Log.query!(
 end
 ```
 
-### Get boleto payment log
+### Get a boleto payment log
 
 You can also get a boleto payment log by specifying its id.
 
@@ -899,7 +913,7 @@ log = StarkBank.BoletoPayment.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
-### Create utility payment
+### Create a utility payment
 
 It's also simple to pay utility bills (such as electricity and water bills) in the SDK.
 
@@ -934,7 +948,7 @@ payments = StarkBank.UtilityPayment.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get utility payment
+### Get a utility payment
 
 You can get a specific bill by its id:
 
@@ -943,7 +957,7 @@ payment = StarkBank.UtilityPayment.get!("6619425641857024")
   |> IO.inspect
 ```
 
-### Get utility payment PDF
+### Get a utility payment PDF
 
 After its creation, a utility payment PDF may also be retrieved by passing its id.
 
@@ -959,7 +973,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete utility payment
+### Delete a utility payment
 
 You can also cancel a utility payment by its id.
 Note that this is not possible if it has been processed already.
@@ -982,7 +996,7 @@ for log <- StarkBank.UtilityPayment.Log.query!(
 end
 ```
 
-### Get utility payment log
+### Get a utility payment log
 
 If you want to get a specific payment log by its id, just run:
 
@@ -1038,14 +1052,14 @@ requests = StarkBank.PaymentRequest.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Create webhook subscription
+### Create a webhook subscription
 
 To create a webhook subscription and be notified whenever an event occurs, run:
 
 ```elixir
 webhook = StarkBank.Webhook.create!(
   url: "https://webhook.site/dd784f26-1d6a-4ca6-81cb-fda0267761ec",
-  subscriptions: ["transfer", "deposit", "invoice", "brcode-payment", "utility-payment"]
+  subscriptions: ["transfer", "deposit", "invoice", "brcode-payment", "utility-payment", "boleto", "boleto-payment"]
 ) |> IO.inspect
 ```
 
@@ -1059,7 +1073,7 @@ for webhook <- StarkBank.Webhook.query!() do
 end
 ```
 
-### Get webhook
+### Get a webhook subscription
 
 You can get a specific webhook by its id.
 
@@ -1068,7 +1082,7 @@ webhook = StarkBank.Webhook.get!("6178044066660352")
   |> IO.inspect
 ```
 
-### Delete webhook
+### Delete a webhook subscription
 
 You can also delete a specific webhook by its id.
 
@@ -1121,7 +1135,7 @@ events = StarkBank.Event.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get webhook event
+### Get a webhook event
 
 You can get a specific webhook event by its id.
 
@@ -1130,7 +1144,7 @@ event = StarkBank.Event.get!("4568139664719872")
   |> IO.inspect
 ```
 
-### Delete webhook event
+### Delete a webhook event
 
 You can also delete a specific webhook event by its id.
 
@@ -1152,7 +1166,7 @@ event = StarkBank.Event.update!("5764442407043072", is_delivered: true)
 
 ### Get a DICT key
 
-You can get DICT (PIX) key's parameters by its id.
+You can get DICT (Pix) key's parameters by its id.
 
 ```elixir
 dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
@@ -1171,7 +1185,7 @@ dict_key = StarkBank.DictKey.query!(
 ) |> Enum.take(1) |> IO.inspect
 ```
 
-### Create new Workspaces
+### Create a Workspace
 
 The Organization user allows you to create new Workspaces (bank accounts) under your organization.
 Workspaces have independent balances, statements, operations and users.
@@ -1181,13 +1195,9 @@ The only link between your Workspaces is the Organization that controls them.
 
 ```elixir
 workspace = StarkBank.Workspace.create!(
-  [
-      %StarkBank.Workspace{
-        username: "starkbankworkspace",
-        name: "Stark Bank Workspace",
-      }
-  ])
-  |> IO.inspect
+  username: "starkbank-workspace",
+  name: "Stark Bank Workspace"
+) |> IO.inspect
 ```
 
 ### List your Workspaces

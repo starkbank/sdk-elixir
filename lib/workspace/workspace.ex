@@ -35,37 +35,49 @@ defmodule StarkBank.Workspace do
   @type t() :: %__MODULE__{}
 
   @doc """
-  Send a list of Workspace structs for creation in the Stark Bank API
+  Send a single Workspace for creation in the Stark Bank API
 
   ## Parameters (required):
     - `:username` [string]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
     - `:name` [string]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
 
   ## Options:
-    - `:user` [Organization]: Organization struct. Only necessary if default project has not been set in configs.
+    - `:user` [Organization]: Organization struct with nil workspace_id. Only necessary if default organization has not been set in configs.
 
   ## Return:
-    - list of Workspace structs with updated attributes
+    - Workspace struct with updated attributes
   """
-  @spec create([Workspace.t() | map()], user: Organization.t() | nil) ::
-          {:ok, [Workspace.t()]} | {:error, [Error.t()]}
-  def create(Workspaces, options \\ []) do
-    Rest.post(
+  @spec create(user: Organization.t() | nil, username: binary, name: binary) ::
+          {:ok, Workspace.t()} | {:error, [Error.t()]}
+  def create(parameters \\ []) do
+    %{user: user, username: username, name: name} =
+      Enum.into(
+        parameters |> Check.enforced_keys([:username, :name]),
+        %{user: nil}
+      )
+
+    Rest.post_single(
       resource(),
-      Workspaces,
-      options
+      %Workspace{username: username, name: name},
+      %{user: user}
     )
   end
 
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([Workspace.t() | map()], user: Organization.t() | nil) :: any
-  def create!(Workspaces, options \\ []) do
-    Rest.post!(
+  @spec create!(user: Organization.t() | nil, username: binary, name: binary) :: any
+  def create!(parameters \\ []) do
+    %{user: user, username: username, name: name} =
+      Enum.into(
+        parameters |> Check.enforced_keys([:username, :name]),
+        %{user: nil, username: nil, name: nil}
+      )
+
+    Rest.post_single!(
       resource(),
-      Workspaces,
-      options
+      %Workspace{username: username, name: name},
+      %{user: user}
     )
   end
 
@@ -76,7 +88,7 @@ defmodule StarkBank.Workspace do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct. Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct. Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Workspace struct with updated attributes
@@ -101,7 +113,7 @@ defmodule StarkBank.Workspace do
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:username` [string]: query by the simplified name that defines the workspace URL. This name is always unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of Workspace structs with updated attributes

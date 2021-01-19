@@ -1,23 +1,18 @@
-defmodule StarkBank.User.Project do
+defmodule StarkBank.Project do
   alias __MODULE__, as: Project
   alias StarkBank.User
 
   @moduledoc false
-  defstruct [:environment, :access_id, :private_key, :name, :allowed_ips]
+  defstruct [:environment, :id, :access_id, :private_key]
 
-  def validate(environment, id, private_key, name \\ "", allowed_ips \\ []) do
-    {environment, access_id, private_key} = User.validate("project", id, private_key, environment)
+  def validate(environment, id, private_key) do
+    {environment, private_key} = User.validate(private_key, environment)
 
     %Project{
       environment: environment,
-      access_id: access_id,
+      id: id,
+      access_id: "project/#{id}",
       private_key: private_key,
-      name: name,
-      allowed_ips: allowed_ips
     }
-  end
-
-  def access_id() do
-    "project/#{:id}"
   end
 end

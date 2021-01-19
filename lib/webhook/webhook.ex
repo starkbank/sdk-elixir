@@ -32,7 +32,7 @@ defmodule StarkBank.Webhook do
 
   ## Parameters (required):
     - `:url` [string]: url to which notification events will be sent to. ex: "https://webhook.site/60e9c18e-4b5c-4369-bda1-ab5fcd8e1b29"
-    - `:subscriptions` [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "boleto-payment"]
+    - `:subscriptions` [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "brcode-payment"]
 
   ## Parameters (optional):
     - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.

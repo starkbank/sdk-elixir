@@ -18,14 +18,14 @@ defmodule StarkBank.PaymentRequest do
 
     @doc """
     A PaymentRequest is an indirect request to access a specific cash-out service
-    (such as Transfer, BoletoPayments, etc.) which goes through the cost center
+    (such as Transfer, BrcodePayments, etc.) which goes through the cost center
     approval flow on our web banking. To emit a PaymentRequest, you must direct it to
     a specific cost center by its ID, which can be retrieved on our web banking at the
     cost center page.
 
     ## Parameters (required):
     - `:center_id` [string]: target cost center ID. ex: "5656565656565656"
-    - `:payment` [Transfer, BoletoPayment, UtilityPayment, Transaction or map]: payment entity that should be approved and executed.
+    - `:payment` [Transfer, BrcodePayments, BoletoPayment, UtilityPayment, Transaction or map]: payment entity that should be approved and executed.
 
     ## Parameters (conditionally required):
     - `:type` [string]: payment type, inferred from the payment parameter if it is not a map. ex: "transfer", "boleto-payment"
@@ -106,7 +106,7 @@ defmodule StarkBank.PaymentRequest do
         - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
         - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "-created" or "-due".
         - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
-        - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "boleto-payment"
+        - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "brcode-payment"
         - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
         - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
         - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
