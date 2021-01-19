@@ -3,6 +3,7 @@ defmodule StarkBank.BoletoPayment do
   alias StarkBank.Utils.Check
   alias StarkBank.BoletoPayment
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -57,12 +58,12 @@ defmodule StarkBank.BoletoPayment do
     - `payments` [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - list of BoletoPayment structs with updated attributes
   """
-  @spec create([BoletoPayment.t() | map()], user: Project.t() | nil) ::
+  @spec create([BoletoPayment.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [BoletoPayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
     Rest.post(
@@ -75,7 +76,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([BoletoPayment.t() | map()], user: Project.t() | nil) :: any
+  @spec create!([BoletoPayment.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(payments, options \\ []) do
     Rest.post!(
       resource(),
@@ -91,12 +92,12 @@ defmodule StarkBank.BoletoPayment do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - BoletoPayment struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -104,7 +105,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: BoletoPayment.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: BoletoPayment.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -117,12 +118,12 @@ defmodule StarkBank.BoletoPayment do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - BoletoPayment pdf file content
   """
-  @spec pdf(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
     Rest.get_pdf(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -130,7 +131,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, user: Project.t() | nil) :: binary
+  @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
     Rest.get_pdf!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -145,7 +146,7 @@ defmodule StarkBank.BoletoPayment do
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of BoletoPayment structs with updated attributes
@@ -157,7 +158,7 @@ defmodule StarkBank.BoletoPayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BoletoPayment.t()]}}
            | {:error, [Error.t()]}
@@ -179,7 +180,7 @@ defmodule StarkBank.BoletoPayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BoletoPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
@@ -193,12 +194,12 @@ defmodule StarkBank.BoletoPayment do
     - `id` [string]: BoletoPayment unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - deleted BoletoPayment struct
   """
-  @spec delete(binary, user: Project.t() | nil) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
+  @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, BoletoPayment.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
     Rest.delete_id(resource(), id, options)
   end
@@ -206,7 +207,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec delete!(binary, user: Project.t() | nil) :: BoletoPayment.t()
+  @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: BoletoPayment.t()
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end

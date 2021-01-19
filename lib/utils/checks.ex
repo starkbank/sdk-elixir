@@ -2,7 +2,8 @@ defmodule StarkBank.Utils.Check do
   @moduledoc false
 
   alias EllipticCurve.PrivateKey
-  alias StarkBank.User.Project
+  alias StarkBank.Project
+  alias StarkBank.Organization
 
   def environment(environment) do
     case environment do
@@ -84,12 +85,23 @@ defmodule StarkBank.Utils.Check do
   def user(user) when is_nil(user) do
     case Application.fetch_env(:starkbank, :project) do
       {:ok, project_info} -> project_info |> StarkBank.project()
-      :error -> raise "no default user was located in configs and no user was passed in the request"
+      :error -> organization_user()
     end
   end
 
   def user(user = %Project{}) do
     user
+  end
+
+  def user(user = %Organization{}) do
+    user
+  end
+
+  defp organization_user() do
+    case Application.fetch_env(:starkbank, :organization) do
+      {:ok, organization_info} -> organization_info |> StarkBank.organization()
+      :error -> raise "no default user was located in configs and no user was passed in the request"
+    end
   end
 
   def language() do

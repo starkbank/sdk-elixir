@@ -3,6 +3,7 @@ defmodule StarkBank.BrcodePayment do
   alias StarkBank.Utils.Check
   alias StarkBank.BrcodePayment
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -61,12 +62,12 @@ defmodule StarkBank.BrcodePayment do
     - `payments` [list of BrcodePayment structs]: list of BrcodePayment structs to be created in the API
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - list of BrcodePayment structs with updated attributes
   """
-  @spec create([BrcodePayment.t() | map()], user: Project.t() | nil) ::
+  @spec create([BrcodePayment.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [BrcodePayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
     Rest.post(
@@ -79,7 +80,7 @@ defmodule StarkBank.BrcodePayment do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([BrcodePayment.t() | map()], user: Project.t() | nil) :: any
+  @spec create!([BrcodePayment.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(payments, options \\ []) do
     Rest.post!(
       resource(),
@@ -95,12 +96,12 @@ defmodule StarkBank.BrcodePayment do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - BrcodePayment struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, BrcodePayment.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, BrcodePayment.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -108,7 +109,7 @@ defmodule StarkBank.BrcodePayment do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: BrcodePayment.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: BrcodePayment.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -120,12 +121,12 @@ defmodule StarkBank.BrcodePayment do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - BrcodePayment pdf file content
   """
-  @spec pdf(binary, user: Project.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
     Rest.get_pdf(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -133,7 +134,7 @@ defmodule StarkBank.BrcodePayment do
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, user: Project.t() | nil) :: binary
+  @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
     Rest.get_pdf!(resource(), id, options |> Keyword.delete(:user), options[:user])
   end
@@ -148,7 +149,7 @@ defmodule StarkBank.BrcodePayment do
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
     - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of BrcodePayment structs with updated attributes
@@ -160,7 +161,7 @@ defmodule StarkBank.BrcodePayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BrcodePayment.t()]}}
            | {:error, [Error.t()]}
@@ -182,7 +183,7 @@ defmodule StarkBank.BrcodePayment do
           tags: [binary],
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BrcodePayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
@@ -197,12 +198,12 @@ defmodule StarkBank.BrcodePayment do
 
   ## Parameters (optional):
     - `:status` [string]: You may cancel the BrcodePayment by passing "canceled" in the status
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - target BrcodePayment with updated attributes
   """
-  @spec update(binary, status: binary, user: Project.t() | nil) ::
+  @spec update(binary, status: binary, user: Project.t() | Organization.t() | nil) ::
           {:ok, BrcodePayment.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
     Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
@@ -211,7 +212,7 @@ defmodule StarkBank.BrcodePayment do
   @doc """
   Same as update(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec update!(binary, status: binary, user: Project.t() | nil) :: BrcodePayment.t()
+  @spec update!(binary, status: binary, user: Project.t() | Organization.t() | nil) :: BrcodePayment.t()
   def update!(id, parameters \\ []) do
     Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end

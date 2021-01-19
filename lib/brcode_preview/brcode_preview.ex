@@ -2,6 +2,7 @@ defmodule StarkBank.BrcodePreview do
   alias StarkBank.Utils.Rest
   alias StarkBank.BrcodePreview
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -47,14 +48,14 @@ defmodule StarkBank.BrcodePreview do
 
   ## Options:
     - `:brcodes` [list of strings, default nil]: List of brcodes to preview. ex: ["00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"]
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of BrcodePreview structs with updated attributes
   """
   @spec query(
           brcodes: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BrcodePreview.t()]}}
            | {:error, [Error.t()]}
@@ -71,7 +72,7 @@ defmodule StarkBank.BrcodePreview do
   """
   @spec query!(
           brcodes: [binary],
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BrcodePreview.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

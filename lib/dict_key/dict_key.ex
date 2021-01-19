@@ -3,6 +3,7 @@ defmodule StarkBank.DictKey do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
+  alias StarkBank.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -54,12 +55,12 @@ defmodule StarkBank.DictKey do
     - `:id` [string]: DictKey object unique id and PIX key itself. ex: "tony@starkbank.com", "722.461.430-04", "20.018.183/0001-80", "+5511988887777", "b6295ee1-f054-47d1-9e90-ee57b74f60d9"
 
   ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - DictKey struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | nil) :: {:ok, DictKey.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, DictKey.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -67,7 +68,7 @@ defmodule StarkBank.DictKey do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | nil) :: DictKey.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: DictKey.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
@@ -82,7 +83,7 @@ defmodule StarkBank.DictKey do
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "registered"
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - stream of DictKey structs with updated attributes
@@ -94,7 +95,7 @@ defmodule StarkBank.DictKey do
           before: Date.t() | binary,
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [DictKey.t()]}}
            | {:error, [Error.t()]}
@@ -116,7 +117,7 @@ defmodule StarkBank.DictKey do
           before: Date.t() | binary,
           ids: [binary],
           status: binary,
-          user: Project.t()
+          user: Project.t() | Organization.t()
         ) ::
           ({:cont, [DictKey.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do

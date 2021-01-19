@@ -4,6 +4,7 @@ defmodule StarkBank.PaymentRequest do
     alias StarkBank.Utils.Check
     alias StarkBank.Utils.API
     alias StarkBank.User.Project
+    alias StarkBank.User.Organization
     alias StarkBank.Error
     alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer
@@ -17,14 +18,14 @@ defmodule StarkBank.PaymentRequest do
 
     @doc """
     A PaymentRequest is an indirect request to access a specific cash-out service
-    (such as Transfer, BoletoPayments, etc.) which goes through the cost center
+    (such as Transfer, BrcodePayments, etc.) which goes through the cost center
     approval flow on our web banking. To emit a PaymentRequest, you must direct it to
     a specific cost center by its ID, which can be retrieved on our web banking at the
     cost center page.
 
     ## Parameters (required):
     - `:center_id` [string]: target cost center ID. ex: "5656565656565656"
-    - `:payment` [Transfer, BoletoPayment, UtilityPayment, Transaction or map]: payment entity that should be approved and executed.
+    - `:payment` [Transfer, BrcodePayments, BoletoPayment, UtilityPayment, Transaction or map]: payment entity that should be approved and executed.
 
     ## Parameters (conditionally required):
     - `:type` [string]: payment type, inferred from the payment parameter if it is not a map. ex: "transfer", "boleto-payment"
@@ -66,12 +67,12 @@ defmodule StarkBank.PaymentRequest do
     - `payment_requests` [list of PaymentRequest structs]: list of PaymentRequest objects to be created in the API
 
     ## Options:
-    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+    - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
     ## Return:
     - list of PaymentRequest structs with updated attributes
     """
-    @spec create([PaymentRequest.t() | map()], user: Project.t() | nil) ::
+    @spec create([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) ::
             {:ok, [PaymentRequest.t()]} | {:error, [Error.t()]}
     def create(payment_requests, options \\ []) do
         case Rest.post(
@@ -87,7 +88,7 @@ defmodule StarkBank.PaymentRequest do
     @doc """
     Same as create(), but it will unwrap the error tuple and raise in case of errors.
     """
-    @spec create!([PaymentRequest.t() | map()], user: Project.t() | nil) :: any
+    @spec create!([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) :: any
     def create!(payment_requests, options \\ []) do
         Rest.post!(
             resource(),
@@ -105,10 +106,10 @@ defmodule StarkBank.PaymentRequest do
         - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
         - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "-created" or "-due".
         - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
-        - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "boleto-payment"
+        - `:type` [string, default nil]: payment type, inferred from the payment parameter if it is not a dictionary. ex: "transfer", "brcode-payment"
         - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
         - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-        - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project has not been set in configs.
+        - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
     ## Return:
         - stream of PaymentRequest structs with updated attributes
@@ -122,7 +123,7 @@ defmodule StarkBank.PaymentRequest do
             type: binary,
             tags: [binary],
             ids: [binary],
-            user: Project.t()
+            user: Project.t() | Organization.t()
             ) ::
             ({:cont, {:ok, [PaymentRequest.t()]}}
             | {:error, [Error.t()]}
@@ -146,7 +147,7 @@ defmodule StarkBank.PaymentRequest do
             type: binary,
             tags: [binary],
             ids: [binary],
-            user: Project.t()
+            user: Project.t() | Organization.t()
             ) ::
             ({:cont, [PaymentRequest.t()]} | {:halt, any} | {:suspend, any}, any -> any)
     def query!(options \\ []) do
