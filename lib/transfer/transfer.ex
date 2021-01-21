@@ -21,11 +21,13 @@ defmodule StarkBank.Transfer do
     - `:tax_id` [string]: receiver tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - `:bank_code` [string]: code of the receiver bank institution in Brazil. If an ISPB (8 digits) is informed, a PIX transfer will be created, else a TED will be issued. ex: "20018183" or "341"
     - `:branch_code` [string]: receiver bank account branch. Use '-' in case there is a verifier digit. ex: "1357-9"
-    - `:account_number` [string]: Receiver Bank Account number. Use '-' before the verifier digit. ex: "876543-2"
+    - `:account_number` [string]: Receiver bank account number. Use '-' before the verifier digit. ex: "876543-2"
 
   ## Parameters (optional):
-    - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
+    - `:account_type` [string, default "checking"]: Receiver bank account type. This parameter only has effect on Pix Transfers. ex: "checking", "savings" or "salary"
+    - `:external_id` [string, default null]: url safe string that must be unique among all your transfers. Duplicated external_ids will cause failures. By default, this parameter will block any transfer that repeats amount and receiver information on the same date. ex: "my-internal-id-123456"
     - `:scheduled` [Date, DateTime or string, default now]: date or datetime when the transfer will be processed. May be pushed to next business day if necessary. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
 
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
@@ -43,6 +45,8 @@ defmodule StarkBank.Transfer do
     :bank_code,
     :branch_code,
     :account_number,
+    :account_type,
+    :external_id,
     :scheduled,
     :transaction_ids,
     :fee,
@@ -242,6 +246,8 @@ defmodule StarkBank.Transfer do
       bank_code: json[:bank_code],
       branch_code: json[:branch_code],
       account_number: json[:account_number],
+      account_type: json[:account_type],
+      external_id: json[:external_id],
       scheduled: json[:scheduled] |> Check.datetime(),
       transaction_ids: json[:transaction_ids],
       fee: json[:fee],
