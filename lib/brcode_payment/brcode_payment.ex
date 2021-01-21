@@ -31,7 +31,7 @@ defmodule StarkBank.BrcodePayment do
     - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
     - `:name` [string, default nil]: receiver name. ex: "Jon Snow"
     - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
-    - `:type` [string, default null]: brcode type. ex: "static" or "dynamic"
+    - `:type` [string, default nil]: brcode type. ex: "static" or "dynamic"
     - `:fee` [integer, default nil]: fee charged when a brcode payment is created. ex: 200 (= R$ 2.00)
     - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:updated` [DateTime, default nil]: latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
@@ -147,7 +147,7 @@ defmodule StarkBank.BrcodePayment do
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
     - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 

@@ -20,7 +20,7 @@ defmodule StarkBank.Workspace do
     - `:name` [string]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
 
   ## Attributes (return-only):
-    - `:id` [string, default None]: unique id returned when the workspace is created. ex: "5656565656565656"
+    - `:id` [string, default nil]: unique id returned when the workspace is created. ex: "5656565656565656"
   """
   @enforce_keys [
     :username,

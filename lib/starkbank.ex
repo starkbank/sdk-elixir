@@ -59,7 +59,7 @@ defmodule StarkBank do
     - `:private_key` [EllipticCurve.Organization()]: PEM string of the private key linked to the organization. ex: "-----BEGIN PUBLIC KEY-----\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEyTIHK6jYuik6ktM9FIF3yCEYzpLjO5X/\ntqDioGM+R2RyW0QEo+1DG8BrUf4UXHSvCjtQ0yLppygz23z0yPZYfw==\n-----END PUBLIC KEY-----"
 
   ## Parameters (optional):
-    - `:workspace_id` [string]: unique id of the accessed Workspace, if any. ex: None or "4848484848484848"
+    - `:workspace_id` [string]: unique id of the accessed Workspace, if any. ex: nil or "4848484848484848"
   """
   @spec organization(
           environment: :production | :sandbox,
