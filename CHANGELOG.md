@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+
+## [2.4.0] - 2021-01-21
 ### Added
 - Transfer.account_type property to allow "checking", "salary" or "savings" account specification
 - Transfer.external_id property to allow users to take control over duplication filters
