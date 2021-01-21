@@ -27,8 +27,8 @@ defmodule StarkBank.DictKey do
     - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "saving" e "salary"
     - `:status` [string, default nil]: current DICT key status. ex: "created", "registered", "canceled" or "failed"
     - `:account_created` [datetime.datetime, default nil]: creation datetime of the bank account associated with the DICT key. ex: datetime.date(2020, 1, 12, 11, 14, 8)
-    - `:owned` [DateTime, default null]: datetime since when the current owner hold this DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
-    - `:created` [DateTime, default null]: creation datetime for the DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
+    - `:owned` [DateTime, default nil]: datetime since when the current owner hold this DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
+    - `:created` [DateTime, default nil]: creation datetime for the DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
   defstruct [
     :id,
@@ -81,7 +81,7 @@ defmodule StarkBank.DictKey do
     - `:type` [string, default nil]: DictKey type. ex: "cpf", "cnpj", "phone", "email" or "evp"
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
-    - `:ids` [list of strings, default null]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: "registered"
     - `:user` [Organization/Project]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
