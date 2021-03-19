@@ -28,10 +28,10 @@ defmodule StarkBank.Utils.URL do
     list =
       for {k, v} <- query |> API.cast_json_to_api_format(),
           !is_nil(v),
-          do: "#{k |> query_key}=#{v |> query_argument}"
+          do: {k |> query_key, v |> query_argument}
 
     if length(list) > 0 do
-      endpoint ++ to_charlist("?" <> String.replace(Enum.join(list, "&"), " ", "%20"))
+      endpoint ++ '?' ++ to_charlist(URI.encode_query(list))
     else
       endpoint
     end

@@ -13,6 +13,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Fixed
+- "+" character bug in BrcodePreview
 
 ## [2.4.0] - 2021-01-21
 ### Added
