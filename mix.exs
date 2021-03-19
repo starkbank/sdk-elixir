@@ -5,7 +5,7 @@ defmodule StarkBank.MixProject do
     [
       app: :starkbank,
       name: :starkbank,
-      version: "2.4.0",
+      version: "2.4.1",
       homepage_url: "https://starkbank.com",
       source_url: "https://github.com/starkbank/sdk-elixir",
       description: description(),
