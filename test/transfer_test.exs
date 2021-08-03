@@ -156,7 +156,7 @@ defmodule StarkBankTest.Transfer do
         |> to_string
         |> String.pad_leading(5, "0")
         |> (fn s -> s <> "-#{:crypto.rand_uniform(0, 9)}" end).(),
-      account_type: ["checking", "savings", "salary"] |> Enum.random(),
+      account_type: ["checking", "savings", "salary", "payment"] |> Enum.random(),
       external_id: "elixir-#{:crypto.rand_uniform(0, 9999999999)}"
     }
   end
