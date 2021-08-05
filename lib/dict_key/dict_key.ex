@@ -21,6 +21,7 @@ defmodule StarkBank.DictKey do
     - `:name` [string, default nil]: key owner full name. ex: "Tony Stark"
     - `:tax_id` [string, default nil]: key owner tax ID (CNPJ or masked CPF). ex: "***.345.678-**" or "20.018.183/0001-80"
     - `:owner_type` [string, default nil]: DICT key owner type. ex "naturalPerson" or "legalPerson"
+    - `:bank_name` [string, default nil]: bank name associated with the DICT key. ex: "Stark Bank"
     - `:ispb` [string, default nil]: bank ISPB associated with the DICT key. ex: "20018183"
     - `:branch_code` [string, default nil]: bank account branch code associated with the DICT key. ex: "9585"
     - `:account_number` [string, default nil]: bank account number associated with the DICT key. ex: "9828282578010513"
@@ -36,6 +37,7 @@ defmodule StarkBank.DictKey do
     :name,
     :tax_id,
     :owner_type,
+    :bank_name,
     :ispb,
     :branch_code,
     :account_number,
@@ -140,6 +142,7 @@ defmodule StarkBank.DictKey do
       name: json[:name],
       tax_id: json[:tax_id],
       owner_type: json[:owner_type],
+      bank_name: json[:bank_name],
       ispb: json[:ispb],
       branch_code: json[:branch_code],
       account_number: json[:account_number],

@@ -34,8 +34,9 @@ defmodule StarkBank.Event do
     - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:is_delivered` [bool]: true if the event has been successfully delivered to the user url. ex: false
     - `:subscription` [string]: service that triggered this event. ex: "transfer", "utility-payment"
+    - `workspace_id` [string]: ID of the Workspace that generated this event. Mostly used when multiple Workspaces have Webhooks registered to the same endpoint. ex: "4545454545454545"
   """
-  defstruct [:id, :log, :created, :is_delivered, :subscription]
+  defstruct [:id, :log, :created, :is_delivered, :subscription, :workspace_id]
 
   @type t() :: %__MODULE__{}
 
@@ -343,7 +344,8 @@ defmodule StarkBank.Event do
       log: parse_log_json(json[:log], json[:subscription]),
       created: json[:created] |> Check.datetime(),
       is_delivered: json[:is_delivered],
-      subscription: json[:subscription]
+      subscription: json[:subscription],
+      workspace_id: json[:workspace_id]
     }
   end
 

@@ -31,6 +31,7 @@ defmodule StarkBank.Invoice do
 
   ## Attributes (return-only):
     - `:pdf` [string, default nil]: public Invoice PDF URL. ex: "https://invoice.starkbank.com/pdf/d454fa4e524441c1b0c1a729457ed9d8"
+    - `:link` [string, default nil]: public Invoice webpage URL. ex: "https://my-workspace.sandbox.starkbank.com/invoicelink/d454fa4e524441c1b0c1a729457ed9d8"
     - `:nominal_amount` [integer, default nil]: Invoice emission value in cents (will change if invoice is updated, but not if it's paid). ex: 400000
     - `:fine_amount` [integer, default nil]: Invoice fine value calculated over nominal_amount. ex: 20000
     - `:interest_amount` [integer, default nil]: Invoice interest value calculated over nominal_amount. ex: 10000
@@ -39,6 +40,7 @@ defmodule StarkBank.Invoice do
     - `:brcode` [string, default nil]: BR Code for the Invoice payment. ex: "00020101021226800014br.gov.bcb.pix2558invoice.starkbank.com/f5333103-3279-4db2-8389-5efe335ba93d5204000053039865802BR5913Arya Stark6009Sao Paulo6220051656565656565656566304A9A0"
     - `:status` [string, default nil]: current Invoice status. ex: "created", "paid", "canceled" or "overdue"
     - `:fee` [integer, default nil]: fee charged by this Invoice. ex: 65 (= R$ 0.65)
+    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
     - `:created` [DateTime, default nil]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:updated` [DateTime, default nil]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
@@ -59,6 +61,7 @@ defmodule StarkBank.Invoice do
     :tags,
     :descriptions,
     :pdf,
+    :link,
     :nominal_amount,
     :fine_amount,
     :interest_amount,
@@ -67,6 +70,7 @@ defmodule StarkBank.Invoice do
     :brcode,
     :status,
     :fee,
+    :transaction_ids,
     :created,
     :updated
   ]
@@ -286,6 +290,7 @@ defmodule StarkBank.Invoice do
       tags: json[:tags],
       descriptions: json[:descriptions],
       pdf: json[:pdf],
+      link: json[:link],
       nominal_amount: json[:nominal_amount],
       fine_amount: json[:fine_amount],
       interest_amount: json[:interest_amount],
@@ -294,6 +299,7 @@ defmodule StarkBank.Invoice do
       brcode: json[:brcode],
       status: json[:status],
       fee: json[:fee],
+      transaction_ids: json[:transaction_ids],
       created: json[:created] |> Check.datetime(),
       updated: json[:updated] |> Check.datetime()
     }

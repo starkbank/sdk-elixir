@@ -7,6 +7,7 @@ defmodule StarkBankTest.Workspace do
     {:ok, workspace} = StarkBank.Workspace.create(
       username: workspace_info.username,
       name: workspace_info.name,
+      allowed_tax_ids: workspace_info.allowed_tax_ids,
       user: organization()
     )
     assert not is_nil(workspace.id)
@@ -105,7 +106,8 @@ defmodule StarkBankTest.Workspace do
     id = Enum.random(0..100_000_000_000) |> Integer.to_string
     %StarkBank.Workspace{
       username: "starkv2-" <> id,
-      name: "Stark V2: " <> id
+      name: "Stark V2: " <> id,
+      allowed_tax_ids: ["20.018.183/0001-80"]
     }
   end
 

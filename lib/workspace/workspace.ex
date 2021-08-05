@@ -19,6 +19,9 @@ defmodule StarkBank.Workspace do
     - `:username` [string]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
     - `:name` [string]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
 
+  ## Parameters (optional):
+    - `:allowed_tax_ids` [list of strings, default []]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
+
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when the workspace is created. ex: "5656565656565656"
   """
@@ -29,6 +32,7 @@ defmodule StarkBank.Workspace do
   defstruct [
     :username,
     :name,
+    :allowed_tax_ids,
     :id,
   ]
 
@@ -161,6 +165,7 @@ defmodule StarkBank.Workspace do
     %Workspace{
       username: json[:username],
       name: json[:name],
+      allowed_tax_ids: json[:allowed_tax_ids],
       id: json[:id]
     }
   end
