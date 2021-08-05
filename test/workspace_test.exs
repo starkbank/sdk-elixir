@@ -2,7 +2,7 @@ defmodule StarkBankTest.Workspace do
   use ExUnit.Case
 
   @tag :workspace
-  test "create workspace" do
+  test "create and update workspace" do
     workspace_info = example_workspace()
     {:ok, workspace} = StarkBank.Workspace.create(
       username: workspace_info.username,
@@ -11,17 +11,42 @@ defmodule StarkBankTest.Workspace do
       user: organization()
     )
     assert not is_nil(workspace.id)
+
+    update = example_workspace()
+    {:ok, updated_workspace} = StarkBank.Workspace.update(
+      workspace.id,
+      username: update.username,
+      name: update.name,
+      allowed_tax_ids: update.allowed_tax_ids,
+      user: organization() |> StarkBank.Organization.replace(workspace.id)
+    )
+    assert updated_workspace.username == update.username
+    assert updated_workspace.name == update.name
+    assert updated_workspace.allowed_tax_ids == update.allowed_tax_ids
   end
 
   @tag :workspace
-  test "create! workspace" do
+  test "create! and update! workspace" do
     workspace_info = example_workspace()
     workspace = StarkBank.Workspace.create!(
       username: workspace_info.username,
       name: workspace_info.name,
+      allowed_tax_ids: workspace_info.allowed_tax_ids,
       user: organization()
     )
     assert not is_nil(workspace.username)
+
+    update = example_workspace()
+    updated_workspace = StarkBank.Workspace.update!(
+      workspace.id,
+      username: update.username,
+      name: update.name,
+      allowed_tax_ids: update.allowed_tax_ids,
+      user: organization() |> StarkBank.Organization.replace(workspace.id)
+    )
+    assert updated_workspace.username == update.username
+    assert updated_workspace.name == update.name
+    assert updated_workspace.allowed_tax_ids == update.allowed_tax_ids
   end
 
   @tag :workspace

@@ -51,10 +51,10 @@ defmodule StarkBank.Workspace do
   ## Return:
     - Workspace struct with updated attributes
   """
-  @spec create(user: Organization.t() | nil, username: binary, name: binary) ::
+  @spec create(user: Organization.t() | nil, username: binary, name: binary, allowed_tax_ids: [binary]) ::
           {:ok, Workspace.t()} | {:error, [Error.t()]}
   def create(parameters \\ []) do
-    %{user: user, username: username, name: name} =
+    %{user: user, username: username, name: name, allowed_tax_ids: allowed_tax_ids} =
       Enum.into(
         parameters |> Check.enforced_keys([:username, :name]),
         %{user: nil}
@@ -62,7 +62,7 @@ defmodule StarkBank.Workspace do
 
     Rest.post_single(
       resource(),
-      %Workspace{username: username, name: name},
+      %Workspace{username: username, name: name, allowed_tax_ids: allowed_tax_ids},
       %{user: user}
     )
   end
@@ -70,9 +70,9 @@ defmodule StarkBank.Workspace do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!(user: Organization.t() | nil, username: binary, name: binary) :: any
+  @spec create!(user: Organization.t() | nil, username: binary, name: binary, allowed_tax_ids: [binary]) :: any
   def create!(parameters \\ []) do
-    %{user: user, username: username, name: name} =
+    %{user: user, username: username, name: name, allowed_tax_ids: allowed_tax_ids} =
       Enum.into(
         parameters |> Check.enforced_keys([:username, :name]),
         %{user: nil, username: nil, name: nil}
@@ -80,7 +80,7 @@ defmodule StarkBank.Workspace do
 
     Rest.post_single!(
       resource(),
-      %Workspace{username: username, name: name},
+      %Workspace{username: username, name: name, allowed_tax_ids: allowed_tax_ids},
       %{user: user}
     )
   end
@@ -92,7 +92,7 @@ defmodule StarkBank.Workspace do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
-    - `:user` [Organization/Project]: Organization or Project struct. Only necessary if default project or organization has not been set in configs.
+    - `:user` [Organization/Project, default nil]: Organization or Project struct. Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - Workspace struct with updated attributes
@@ -150,6 +150,34 @@ defmodule StarkBank.Workspace do
           ({:cont, [Workspace.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
+  end
+
+  @doc """
+  Update a Workspace by passing its ID.
+
+  ## Parameters (required):
+    - `:id` [string]: Invoice id. ex: '5656565656565656'
+
+  ## Parameters (optional):
+    - `:username` [string, default nil]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbank-workspace"
+    - `:name` [string, default nil]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
+    - `:allowed_tax_ids` [list of strings, default nil]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - target Workspace with updated attributes
+  """
+  @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
+  def update(id, parameters \\ []) do
+    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+  end
+
+  @doc """
+  Same as update(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec update!(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: Workspace.t()
+  def update!(id, parameters \\ []) do
+    Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc false

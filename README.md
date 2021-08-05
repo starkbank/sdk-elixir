@@ -1234,6 +1234,20 @@ workspace = StarkBank.Workspace.get!("10827361982368179")
   |> IO.inspect
 ```
 
+### Update a Workspace
+
+You can update a specific Workspace by its id.
+
+```elixir
+
+workspace = StarkBank.Workspace.update!(
+  "10827361982368179",
+  username: "new-username-test",
+  name: "Updated workspace test",
+  allowedTaxIds: ["359.536.680-82", "20.018.183/0001-80"]
+) |> IO.inspect
+```
+
 ## Handling errors
 
 The SDK may raise or return errors as the StarkBank.Error struct, which contains the "code" and "message" attributes.
