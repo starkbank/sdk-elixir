@@ -42,8 +42,10 @@ defmodule StarkBank.Boleto do
     - `:fee` [integer, default nil]: fee charged when Boleto is paid. ex: 200 (= R$ 2.00)
     - `:line` [string, default nil]: generated Boleto line for payment. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
     - `:bar_code` [string, default nil]: generated Boleto bar-code for payment. ex: "34195819600000000621090063571277307144464000"
+    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
     - `:status` [string, default nil]: current Boleto status. ex: "registered" or "paid"
     - `:created` [DateTime, default nil]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:our_number` [string, default nil]: reference number registered at the settlement bank. ex: "10131474"
   """
   @enforce_keys [
     :amount,
@@ -79,8 +81,10 @@ defmodule StarkBank.Boleto do
     :fee,
     :line,
     :bar_code,
+    :transaction_ids,
     :status,
-    :created
+    :created,
+    :our_number
   ]
 
   @type t() :: %__MODULE__{}
@@ -279,8 +283,10 @@ defmodule StarkBank.Boleto do
       fee: json[:fee],
       line: json[:line],
       bar_code: json[:bar_code],
+      transaction_ids: json[:transaction_ids],
       status: json[:status],
-      created: json[:created] |> Check.datetime()
+      created: json[:created] |> Check.datetime(),
+      our_number: json[:our_number]
     }
   end
 end
