@@ -1188,6 +1188,25 @@ event = StarkBank.Event.update!("5764442407043072", is_delivered: true)
   |> IO.inspect
 ```
 
+### Query failed webhook event delivery attempts information
+
+You can also get information on failed webhook event delivery attempts.
+
+```elixir
+for attempt <- StarkBank.Event.Attempt.query!(after: "2020-03-20") do
+  attempt |> IO.inspect attempt
+end
+```
+
+### Get a failed webhook event delivery attempt information
+
+To retrieve information on a single attempt, use the following function:
+
+```elixir
+attempt = StarkBank::Event::Attempt.get("1616161616161616")
+  |> IO.inspect
+```
+
 ### Get a DICT key
 
 You can get DICT (Pix) key's parameters by its id.

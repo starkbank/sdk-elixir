@@ -18,6 +18,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - missing parameters to Boleto, BrcodePayment, DictKey, Event, Invoice, Transfer and Workspace resources
 - Workspace.update() to allow parameter updates
 - Invoice.Payment sub-resource to allow retrieval of invoice payment information
+- Event.Attempt sub-resource to allow retrieval of information on failed webhook event delivery attempts
 
 ## [2.4.1] - 2021-03-19
 ### Fixed
