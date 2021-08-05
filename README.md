@@ -529,6 +529,15 @@ log = StarkBank.Invoice.Log.get!("6288576484474880")
   |> IO.inspect
 ```
 
+### Get an invoice payment information
+
+Once an invoice has been paid, you can get the payment information using the Invoice.Payment sub-resource:
+
+```elixir
+payment_information = StarkBank.Invoice.payment!("5155165527080960")
+  |> IO.inspect
+```
+
 ### Query deposits
 
 You can get a list of created deposits given some filters.

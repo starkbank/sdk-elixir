@@ -51,6 +51,26 @@ defmodule StarkBankTest.Invoice do
   end
 
   @tag :invoice
+  test "get payment" do
+    invoice =
+      StarkBank.Invoice.query!(status: "paid")
+      |> Enum.take(1)
+      |> hd()
+    {:ok, payment} = StarkBank.Invoice.payment(invoice.id)
+    assert !is_nil(payment)
+  end
+
+  @tag :invoice
+  test "get payment!" do
+    invoice =
+      StarkBank.Invoice.query!(status: "paid")
+      |> Enum.take(1)
+      |> hd()
+    payment = StarkBank.Invoice.payment!(invoice.id)
+    assert !is_nil(payment)
+  end
+
+  @tag :invoice
   test "update invoice status" do
     invoice =
       StarkBank.Invoice.query!(status: "created")
