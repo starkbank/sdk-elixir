@@ -5,6 +5,7 @@ defmodule StarkBank.Invoice do
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
+  alias StarkBank.Invoice.Payment
 
   @moduledoc """
   Groups Invoice related functions
@@ -267,6 +268,31 @@ defmodule StarkBank.Invoice do
     Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end
 
+  @doc """
+  Receive the Invoice.Payment sub-resource associated with a paid Invoice.
+
+  ## Parameters (required):
+    - `:id` [string]: Invoice id. ex: '5656565656565656'
+
+  ## Parameters (optional):
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - Invoice.Payment sub-resource
+  """
+  @spec payment(binary, user: Project.t() | Organization.t() | nil) ::
+          {:ok, Payment.t()} | {:error, [%Error{}]}
+  def payment(id, options \\ []) do
+    Rest.get_sub_resource(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
+  end
+
+  @doc """
+  Same as payment(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec payment!(binary, user: Project.t() | Organization.t() | nil) :: Payment.t()
+  def payment!(id, options \\ []) do
+    Rest.get_sub_resource!(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
+  end
 
   @doc false
   def resource() do

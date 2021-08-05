@@ -196,6 +196,25 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
+  def get_sub_resource(resource_name, {sub_resource_name, sub_resource_maker}, id, options) do
+    case Request.fetch(
+      :get,
+      "#{API.endpoint(resource_name)}/#{id}/#{API.endpoint(sub_resource_name)}",
+      query: options |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      user: options[:user]
+    ) do
+      {:ok, response} -> {:ok, process_single_response(response, sub_resource_name, sub_resource_maker)}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_sub_resource!(resource_name, {sub_resource_name, sub_resource_maker}, id, options) do
+    case get_sub_resource(resource_name, {sub_resource_name, sub_resource_maker}, id, options) do
+      {:ok, entity} -> entity
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
   defp prepare_payload(resource_name, entities) do
     Map.put(
       %{},
