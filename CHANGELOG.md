@@ -19,6 +19,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - Workspace.update() to allow parameter updates
 - Invoice.Payment sub-resource to allow retrieval of invoice payment information
 - Event.Attempt sub-resource to allow retrieval of information on failed webhook event delivery attempts
+- pdf method for retrieving PDF receipts from reversed invoice logs
 
 ## [2.4.1] - 2021-03-19
 ### Fixed
