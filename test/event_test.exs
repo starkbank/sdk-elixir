@@ -35,6 +35,30 @@ defmodule StarkBankTest.WebhookEvent do
   end
 
   @tag :event
+  test "query and attempt" do
+    for event <- StarkBank.Event.query!(limit: 2, is_delivered: false) |> Enum.take(2) do
+      {:ok, query_attempt} =
+        StarkBank.Event.Attempt.query(event_ids: [event.id], limit: 1)
+        |> Enum.take(1)
+        |> hd
+      {:ok, get_attempt} = StarkBank.Event.Attempt.get(query_attempt.id)
+      assert get_attempt.id == query_attempt.id
+    end
+  end
+
+  @tag :event
+  test "query! and attempt!" do
+    for event <- StarkBank.Event.query!(limit: 2, is_delivered: false) |> Enum.take(2) do
+      query_attempt =
+        StarkBank.Event.Attempt.query!(event_ids: [event.id], limit: 1)
+        |> Enum.take(1)
+        |> hd
+      get_attempt = StarkBank.Event.Attempt.get!(query_attempt.id)
+      assert get_attempt.id == query_attempt.id
+    end
+  end
+
+  @tag :event
   test "query webhook event" do
     StarkBank.Event.query(limit: 5)
     |> Enum.take(5)

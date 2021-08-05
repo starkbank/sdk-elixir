@@ -66,6 +66,7 @@ defmodule StarkBank.Utils.API do
     resource_name
     |> Case.camel_to_kebab()
     |> String.replace("-log", "/log")
+    |> String.replace("-attempt", "/attempt")
   end
 
   def last_name_plural(resource_name) do
