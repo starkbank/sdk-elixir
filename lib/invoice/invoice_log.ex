@@ -103,6 +103,31 @@ defmodule StarkBank.Invoice.Log do
     Rest.get_list!(resource(), options)
   end
 
+  @doc """
+  Receive a single Invoice.Log pdf file generated in the Stark Bank API by passing its id.
+
+  ## Parameters (required):
+    - `:id` [string]: struct unique id. ex: "5656565656565656"
+
+  ## Options:
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - Invoice.Log pdf file content
+  """
+  @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  def pdf(id, options \\ []) do
+    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+  end
+
+  @doc """
+  Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
+  def pdf!(id, options \\ []) do
+    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+  end
+
   @doc false
   def resource() do
     {

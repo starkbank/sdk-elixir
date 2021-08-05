@@ -90,34 +90,19 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
-  def get_pdf({resource_name, _resource_maker}, id, options, user) do
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", query: options, user: user) do
-      {:ok, pdf} -> {:ok, pdf}
+  def get_content({resource_name, _resource_maker}, id, sub_resource_name, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/#{sub_resource_name}", query: options, user: user) do
+      {:ok, content} -> {:ok, content}
       {:error, errors} -> {:error, errors}
     end
   end
 
-  def get_pdf!({resource_name, _resource_maker}, id, options, user) do
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/pdf", query: options, user: user) do
-      {:ok, pdf} -> pdf
+  def get_content!({resource_name, _resource_maker}, id, sub_resource_name, options, user) do
+    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/#{sub_resource_name}", query: options, user: user) do
+      {:ok, content} -> content
       {:error, errors} -> raise API.errors_to_string(errors)
     end
   end
-
-  def get_qrcode({resource_name, _resource_maker}, id, options, user) do
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
-      {:ok, qrcode} -> {:ok, qrcode}
-      {:error, errors} -> {:error, errors}
-    end
-  end
-
-  def get_qrcode!({resource_name, _resource_maker}, id, options, user) do
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/qrcode", query: options, user: user) do
-      {:ok, qrcode} -> qrcode
-      {:error, errors} -> raise API.errors_to_string(errors)
-    end
-  end
-
 
   def post({resource_name, resource_maker}, entities, options) do
     user = options[:user]

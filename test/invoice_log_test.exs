@@ -45,4 +45,27 @@ defmodule StarkBankTest.InvoiceLog do
 
     _log = StarkBank.Invoice.Log.get!(log.id)
   end
+
+  @tag :invoice_log
+  test "pdf log" do
+    payment =
+      StarkBank.Invoice.Log.query!(types: "reversed")
+      |> Enum.take(1)
+      |> hd()
+
+    {:ok, _pdf} = StarkBank.Invoice.Log.pdf(payment.id)
+  end
+
+  @tag :invoice_log
+  test "pdf! log" do
+    payment =
+      StarkBank.Invoice.Log.query!(types: "reversed")
+      |> Enum.take(1)
+      |> hd()
+
+    pdf = StarkBank.Invoice.Log.pdf!(payment.id)
+    file = File.open!("tmp/invoice-log.pdf", [:write])
+    IO.binwrite(file, pdf)
+    File.close(file)
+  end
 end
