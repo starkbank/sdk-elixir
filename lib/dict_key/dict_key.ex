@@ -24,7 +24,7 @@ defmodule StarkBank.DictKey do
     - `:ispb` [string, default nil]: bank ISPB associated with the DICT key. ex: "20018183"
     - `:branch_code` [string, default nil]: bank account branch code associated with the DICT key. ex: "9585"
     - `:account_number` [string, default nil]: bank account number associated with the DICT key. ex: "9828282578010513"
-    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "saving" e "salary"
+    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "saving", "salary" or "payment"
     - `:status` [string, default nil]: current DICT key status. ex: "created", "registered", "canceled" or "failed"
     - `:account_created` [datetime.datetime, default nil]: creation datetime of the bank account associated with the DICT key. ex: datetime.date(2020, 1, 12, 11, 14, 8)
     - `:owned` [DateTime, default nil]: datetime since when the current owner hold this DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
