@@ -16,6 +16,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - "payment" account type for Pix related resources
 - missing parameters to Boleto, BrcodePayment, DictKey, Event, Invoice, Transfer and Workspace resources
+- Workspace.update() to allow parameter updates
 
 ## [2.4.1] - 2021-03-19
 ### Fixed
