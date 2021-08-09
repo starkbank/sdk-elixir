@@ -23,6 +23,7 @@ ExUnit.start(
     # :utility_payment,
     # :utility_payment_log,
     # :payment_request,
+    # :institution,
     # :webhook,
     # :event,
     # :workspace,
