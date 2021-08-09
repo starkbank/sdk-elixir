@@ -435,6 +435,14 @@ log = StarkBank.Transfer.Log.get!("6610264099127296")
   |> IO.inspect
 ```
 
+### Query Bacen institutions
+
+You can query institutions registered by the Brazilian Central Bank for Pix and TED transactions.
+
+```elixir
+institutions = StarkBank.Institution.query(search: "stark") |> IO.inspect
+```
+
 ### Create invoices
 
 You can create dynamic QR Code invoices to charge customers or to receive money from accounts
