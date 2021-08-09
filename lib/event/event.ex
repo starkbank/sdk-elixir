@@ -17,6 +17,7 @@ defmodule StarkBank.Event do
   alias StarkBank.BrcodePayment.Log, as: BrcodePaymentLog
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
+  alias StarkBank.TaxPayment.Log, as: TaxPaymentLog
   alias StarkBank.Deposit.Log, as: DepositLog
 
   @moduledoc """
@@ -30,7 +31,7 @@ defmodule StarkBank.Event do
 
   ## Attributes:
     - `:id` [string]: unique id returned when the event is created. ex: "5656565656565656"
-    - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log or UtilityPayment.Log)
+    - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log, UtilityPayment.Log or TaxPayment.Log)
     - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:is_delivered` [bool]: true if the event has been successfully delivered to the user url. ex: false
     - `:subscription` [string]: service that triggered this event. ex: "transfer", "utility-payment"
@@ -407,6 +408,7 @@ defmodule StarkBank.Event do
       "brcode-payment" -> &BrcodePaymentLog.resource_maker/1
       "boleto-payment" -> &BoletoPaymentLog.resource_maker/1
       "utility-payment" -> &UtilityPaymentLog.resource_maker/1
+      "tax-payment" -> &TaxPaymentLog.resource_maker/1
       "deposit" -> &DepositLog.resource_maker/1
     end
   end

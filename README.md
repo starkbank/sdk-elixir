@@ -1094,6 +1094,91 @@ log = StarkBank.UtilityPayment.Log.get!("6197807794880512")
   |> IO.inspect
 ```
 
+### Create tax payments
+
+It is also simple to pay taxes (such as ISS and DAS) using this SDK.
+
+```elixir
+payments = StarkBank.TaxPayment.create!(
+  [
+    %StarkBank.TaxPayment{
+      bar_code: "85660000001549403280074119002551100010601813",
+      description: "fix the road",
+      tags: ["take", "my", "money"],
+      scheduled: '2020-08-13'
+    },
+    %StarkBank.TaxPayment{
+      line: "85800000003 0 28960328203 1 56072020190 5 22109674804 0",
+      description: "build the hospital, hopefully",
+      tags: ["expensive"],
+      scheduled: '2020-08-13'
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using TaxPayment objects, you can also pass each payment element in dictionary format
+
+### Query tax payments
+
+To search for tax payments using filters, run:
+
+```elixir
+payments = StarkBank.TaxPayment.query(limit: 5) |> IO.inspect
+```
+
+### Get a tax payment
+
+You can get a specific tax payment by its id:
+
+```elixir
+payment = StarkBank.TaxPayment.get!("5155165527080960") |> IO.inspect
+```
+
+### Get a tax payment PDF
+
+After its creation, a tax payment PDF may also be retrieved by its id.
+
+```elixir
+pdf = StarkBank.TaxPayment.pdf!("5155165527080960")
+file = File.open!("tmp/tax-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+### Cancel a tax payment
+
+You can also cancel a tax payment by its id.
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.TaxPayment.delete!("5155165527080960") |> IO.inspect
+```
+
+### Query tax payment logs
+
+You can search for payment logs by specifying filters. Use this to understand each payment life cycle.
+
+```elixir
+logs = StarkBank.TaxPayment.Log.query!(limit: 5) |> IO.inspect
+```
+
+### Get a tax payment log
+
+If you want to get a specific payment log by its id, just run:
+
+```elixir
+log = StarkBank.TaxPayment.Log.get!("1902837198237992") |> IO.inspect
+```
+
+**Note**: Some taxes can't be payed with bar codes. Since they have specific parameters, each one of them has its own
+resource and routes, which are all analogous to the TaxPayment resource. The ones we currently support are:
+- DarfPayment, for DARFs
+
 ### Create payment requests to be approved by authorized people in a cost center 
 
 You can also request payments that must pass through a specific cost center approval flow to be executed.
