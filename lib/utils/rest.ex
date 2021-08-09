@@ -7,6 +7,30 @@ defmodule StarkBank.Utils.Rest do
   alias StarkBank.Utils.API
   alias StarkBank.Utils.JSON
 
+  def get_page({resource_name, resource_maker}, options) do
+    case Request.fetch(
+      :get, 
+      "#{API.endpoint(resource_name)}", 
+      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      user: options[:user]
+    ) do
+      {:ok, response} -> {:ok, process_page_response(resource_name, resource_maker, response)}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def get_page!({resource_name, resource_maker}, options) do
+    case Request.fetch(
+      :get, 
+      "#{API.endpoint(resource_name)}", 
+      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(), 
+      user: options[:user]
+    ) do
+      {:ok, response} -> process_page_response(resource_name, resource_maker, response)
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
   def get_list({resource_name, resource_maker}, options) do
     {getter, query} = get_list_parameters(options, resource_name)
 
@@ -216,5 +240,14 @@ defmodule StarkBank.Utils.Rest do
   defp process_response(resource_name, resource_maker, response) do
     JSON.decode!(response)[API.last_name_plural(resource_name)]
     |> Enum.map(fn json -> API.from_api_json(json, resource_maker) end)
+  end
+
+  defp process_page_response(resource_name, resource_maker, response) do
+    decoded_response = JSON.decode!(response)
+    {
+      decoded_response["cursor"],
+      decoded_response[API.last_name_plural(resource_name)]
+        |> Enum.map(&(API.from_api_json(&1, resource_maker))) 
+    }
   end
 end

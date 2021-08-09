@@ -59,6 +59,30 @@ defmodule StarkBankTest.WebhookEvent do
   end
 
   @tag :event
+  test "page event attempt" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Event.Attempt.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :event
+  test "page! event attempt" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Event.Attempt.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :event
+  test "page event" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Event.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :event
+  test "page! event" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Event.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :event
   test "query webhook event" do
     StarkBank.Event.query(limit: 5)
     |> Enum.take(5)

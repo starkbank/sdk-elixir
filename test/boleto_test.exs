@@ -29,6 +29,18 @@ defmodule StarkBankTest.Boleto do
   end
 
   @tag :boleto
+  test "page boleto" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Boleto.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :boleto
+  test "page! boleto" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Boleto.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :boleto
   test "get boleto" do
     boleto =
       StarkBank.Boleto.query!()

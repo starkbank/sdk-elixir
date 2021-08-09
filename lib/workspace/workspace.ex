@@ -153,6 +153,47 @@ defmodule StarkBank.Workspace do
   end
 
   @doc """
+  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:username` [string]: query by the simplified name that defines the workspace URL. This name is always unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Project]: Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Workspace structs with updated attributes and cursor to retrieve the next page of Workspace objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          username: binary,
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          username: binary,
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Workspace.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
   Update a Workspace by passing its ID.
 
   ## Parameters (required):

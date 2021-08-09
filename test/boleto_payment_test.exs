@@ -29,6 +29,18 @@ defmodule StarkBankTest.BoletoPayment do
   end
 
   @tag :boleto_payment
+  test "page boleto payment" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.BoletoPayment.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :boleto_payment
+  test "page! boleto payment" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.BoletoPayment.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :boleto_payment
   test "get boleto payment" do
     payment =
       StarkBank.BoletoPayment.query!()

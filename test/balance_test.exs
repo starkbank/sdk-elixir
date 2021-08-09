@@ -26,6 +26,6 @@ defmodule StarkBankTest.Balance do
     )
 
     {:error, errors} = StarkBank.Balance.get(user: project)
-    assert hd(errors).code == "invalidCredentials"
+    assert hd(errors).code == "invalidProject"
   end
 end

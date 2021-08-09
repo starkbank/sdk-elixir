@@ -27,6 +27,18 @@ defmodule StarkBankTest.InvoiceLog do
   end
 
   @tag :invoice_log
+  test "page invoice log" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Invoice.Log.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :invoice_log
+  test "page! invoice log" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Invoice.Log.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :invoice_log
   test "get invoice log" do
     log =
       StarkBank.Invoice.Log.query!()

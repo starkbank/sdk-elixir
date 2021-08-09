@@ -20,6 +20,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - Invoice.Payment sub-resource to allow retrieval of invoice payment information
 - Event.Attempt sub-resource to allow retrieval of information on failed webhook event delivery attempts
 - pdf method for retrieving PDF receipts from reversed invoice logs
+- page functions as a manual-pagination alternative to queries
 
 ## [2.4.1] - 2021-03-19
 ### Fixed

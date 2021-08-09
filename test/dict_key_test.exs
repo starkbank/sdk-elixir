@@ -30,4 +30,16 @@ defmodule StarkBankTest.DictKey do
     |> Enum.take(200)
     |> (fn list -> assert length(list) <= 1 end).()
   end
+
+  @tag :dict_key
+  test "page dict_key" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.DictKey.page/1, 1, limit: 1)
+    assert length(ids) == 1
+  end
+
+  @tag :dict_key
+  test "page! dict_key" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.DictKey.page!/1, 1, limit: 1)
+    assert length(ids) == 1
+  end
 end

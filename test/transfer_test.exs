@@ -73,6 +73,18 @@ defmodule StarkBankTest.Transfer do
   end
 
   @tag :transfer
+  test "page transfer" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Transfer.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transfer
+  test "page! transfer" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Transfer.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transfer
   test "get transfer" do
     transfer =
       StarkBank.Transfer.query!()
@@ -148,16 +160,16 @@ defmodule StarkBankTest.Transfer do
       tax_id: "01234567890",
       bank_code: "01",
       branch_code:
-        :crypto.rand_uniform(0, 9999)
+        :rand.uniform(9999)
         |> to_string
         |> String.pad_leading(4, "0"),
       account_number:
-        :crypto.rand_uniform(0, 99999)
+        :rand.uniform(99999)
         |> to_string
         |> String.pad_leading(5, "0")
-        |> (fn s -> s <> "-#{:crypto.rand_uniform(0, 9)}" end).(),
+        |> (fn s -> s <> "-#{:rand.uniform(9)}" end).(),
       account_type: ["checking", "savings", "salary", "payment"] |> Enum.random(),
-      external_id: "elixir-#{:crypto.rand_uniform(0, 9999999999)}"
+      external_id: "elixir-#{:rand.uniform(9999999999)}"
     }
   end
 end

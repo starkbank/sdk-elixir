@@ -231,6 +231,65 @@ defmodule StarkBank.Transfer do
     Rest.get_list!(resource(), options)
   end
 
+  @doc """
+  Receive a list of up to 100 Transfer objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
+    - `:transaction_ids` [list of strings, default nil]: list of transaction IDs linked to the desired transfers. ex: ["5656565656565656", "4545454545454545"]
+    - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid" or "registered"
+    - `:tax_id` [string, default nil]: filter for transfers sent to the specified tax ID. ex: "012.345.678-90"
+    - `:sort` [string, default "-created"]: sort order considered in response. Valid options are "created", "-created", "updated" or "-updated".
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Transfer structs with updated attributes and cursor to retrieve the next page of Transfer objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          transaction_ids: [binary],
+          status: binary,
+          tax_id: binary,
+          sort: binary,
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Transfer.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          transaction_ids: [binary],
+          status: binary,
+          tax_id: binary,
+          sort: binary,
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Transfer.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
   @doc false
   def resource() do
     {

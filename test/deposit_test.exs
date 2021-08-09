@@ -60,6 +60,18 @@ defmodule StarkBankTest.Deposit do
   end
 
   @tag :deposit
+  test "page deposit" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Deposit.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :deposit
+  test "page! deposit" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Deposit.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :deposit
   test "get deposit" do
     deposit =
       StarkBank.Deposit.query!()
