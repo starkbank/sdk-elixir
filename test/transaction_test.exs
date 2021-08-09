@@ -73,6 +73,18 @@ defmodule StarkBankTest.Transaction do
   end
 
   @tag :transaction
+  test "page transaction" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Transaction.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transaction
+  test "page! transaction" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Transaction.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transaction
   test "get transaction" do
     transaction =
       StarkBank.Transaction.query!()

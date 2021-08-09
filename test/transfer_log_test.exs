@@ -28,6 +28,18 @@ defmodule StarkBankTest.TransferLog do
   end
 
   @tag :transfer_log
+  test "page transfer log" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Transfer.Log.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transfer_log
+  test "page! transfer log" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Transfer.Log.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :transfer_log
   test "get transfer log" do
     log =
       StarkBank.Transfer.Log.query!()

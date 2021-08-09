@@ -111,6 +111,50 @@ defmodule StarkBank.Event do
   end
 
   @doc """
+  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:is_delivered` [bool, default nil]: filter successfully delivered events. ex: true or false
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Event structs with updated attributes and cursor to retrieve the next page of Event objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          is_delivered: boolean,
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          is_delivered: boolean,
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Event.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
   Delete a list of notification Event entities previously created in the Stark Bank API
 
   ## Parameters (required):

@@ -40,4 +40,17 @@ defmodule StarkBankTest.Webhook do
     |> Enum.take(5)
     |> (fn list -> assert length(list) <= 5 end).()
   end
+
+  @tag :webhook
+  test "page webhook" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Webhook.page/1, 2, limit: 2)
+    assert length(ids) <= 4
+  end
+
+  @tag :webhook
+  test "page! webhook" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Webhook.page!/1, 2, limit: 2)
+    assert length(ids) <= 4
+  end
+
 end

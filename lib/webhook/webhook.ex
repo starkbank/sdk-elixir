@@ -134,6 +134,41 @@ defmodule StarkBank.Webhook do
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
+  
+  @doc """
+  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Webhook structs with updated attributes and cursor to retrieve the next page of Webhook objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Webhook.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
 
   @doc """
   Delete a Webhook subscription entity previously created in the Stark Bank API

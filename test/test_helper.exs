@@ -28,3 +28,5 @@ ExUnit.start(
     # :workspace,
   ]
 )
+
+Code.require_file("./test/utils/page.exs")

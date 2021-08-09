@@ -239,6 +239,56 @@ defmodule StarkBank.Invoice do
   end
 
   @doc """
+  Receive a list of up to 100 Invoice objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:status` [string, default nil]: filter for status of retrieved structs. ex: "created", "paid", "canceled" or "overdue"
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Invoice structs with updated attributes and cursor to retrieve the next page of Invoice objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: binary,
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Invoice.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: binary,
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Invoice.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
   Update an Invoice by passing id, if it hasn't been paid yet.
 
   ## Parameters (required):

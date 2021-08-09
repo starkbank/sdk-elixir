@@ -188,6 +188,56 @@ defmodule StarkBank.BoletoPayment do
   end
 
   @doc """
+  Receive a list of up to 100 BoletoPayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved objects. ex: ["5656565656565656", "4545454545454545"]
+    - `:status` [string, default nil]: filter for status of retrieved structs. ex: "paid"
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of BoletoPayment structs with updated attributes and cursor to retrieve the next page of BoletoPayment objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          tags: [binary],
+          ids: [binary],
+          status: binary,
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [BoletoPayment.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          tags: [binary],
+          ids: [binary],
+          status: binary,
+          user: Project.t() | Organization.t()
+          ) :: 
+            [BoletoPayment.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
   Delete a BoletoPayment entity previously created in the Stark Bank API
 
   ## Parameters (required):

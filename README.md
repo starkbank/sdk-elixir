@@ -215,6 +215,46 @@ config :starkbank,
 
 Language options are "en-US" for english and "pt-BR" for brazilian portuguese. English is default
 
+### 6. Resource listing and manual pagination
+
+Almost all SDK resources provide a `query` and a `page` function.
+
+- The `query` function provides a straight forward way to efficiently iterate through all results that match the filters you inform,
+seamlessly retrieving the next batch of elements from the API only when you reach the end of the current batch.
+If you are not worried about data volume or processing time, this is the way to go.
+
+```elixir
+transactions = StarkBank.Transaction.query!(
+  after: Date.utc_today |> Date.add(-30),
+  before: Date.utc_today |> Date.add(-1)
+) |> Enum.take(10) |> IO.inspect
+```
+
+- The `page` function gives you full control over the API pagination. With each function call, you receive up to
+100 results and the cursor to retrieve the next batch of elements. This allows you to stop your queries and
+pick up from where you left off whenever it is convenient. When there are no more elements to be retrieved, the returned cursor will be `nil`.
+
+```elixir
+defmodule CursorRecursion do
+  def get!(iterations \\ 1, cursor \\ nil)  
+
+  def get!(iterations, cursor) when iterations > 0 do
+    {new_cursor, new_entities} = StarkBank.Transaction.page!(cursor: cursor)
+    new_entities ++ get!(
+      iterations - 1,
+      new_cursor
+    )
+  end
+
+  def get!(iterations, _cursor) do
+    []
+  end
+end
+
+transactions = CursorRecursion.get!(3) |> IO.inspect
+```
+
+To simplify the following SDK examples, we will only use the `query` function, but feel free to use `page` instead.
 
 ## Testing in Sandbox
 

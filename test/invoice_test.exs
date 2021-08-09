@@ -1,5 +1,4 @@
 defmodule StarkBankTest.Invoice do
-
   use ExUnit.Case
 
   @tag :invoice
@@ -28,6 +27,18 @@ defmodule StarkBankTest.Invoice do
     StarkBank.Invoice.query!(limit: 101, before: DateTime.utc_now())
     |> Enum.take(200)
     |> (fn list -> assert length(list) <= 101 end).()
+  end
+
+  @tag :invoice
+  test "page invoice" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Invoice.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :invoice
+  test "page! invoice" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Invoice.page!/1, 2, limit: 5)
+    assert length(ids) == 10
   end
 
   @tag :invoice

@@ -104,6 +104,53 @@ defmodule StarkBank.Invoice.Log do
   end
 
   @doc """
+  Receive a list of up to 100 Invoice.Log objects previously created in the Stark Bank API and the cursor to the next page. 
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:types` [list of strings, default nil]: filter for log event types. ex: "created", "paid", "canceled" or "overdue"
+    - `:invoice_ids` [list of strings, default nil]: list of Invoice ids to filter logs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of Invoice.Log structs with updated attributes and cursor to retrieve the next page of Invoice.Log objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          types: [binary],
+          invoice_ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          types: [binary],
+          invoice_ids: [binary],
+          user: Project.t() | Organization.t()
+          ) :: 
+            [Log.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
   Receive a single Invoice.Log pdf file generated in the Stark Bank API by passing its id.
 
   ## Parameters (required):

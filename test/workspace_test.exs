@@ -108,6 +108,18 @@ defmodule StarkBankTest.Workspace do
   end
 
   @tag :workspace
+  test "page workspace" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Workspace.page/1, 2, user: organization(), limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :workspace
+  test "page! workspace" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Workspace.page!/1, 2, user: organization(), limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :workspace
   test "get workspace" do
     workspace =
       StarkBank.Workspace.query!(user: organization())

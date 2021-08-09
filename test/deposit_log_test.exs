@@ -27,6 +27,18 @@ defmodule StarkBankTest.DepositLog do
   end
 
   @tag :deposit_log
+  test "page deposit log" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Deposit.Log.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :deposit_log
+  test "page! deposit log" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Deposit.Log.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :deposit_log
   test "get deposit log" do
     log = StarkBank.Deposit.Log.query!()
     |> Enum.take(1)

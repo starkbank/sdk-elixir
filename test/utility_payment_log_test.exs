@@ -28,6 +28,18 @@ defmodule StarkBankTest.UtilityPaymentLog do
   end
 
   @tag :utility_payment_log
+  test "page utility payment log" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.UtilityPayment.Log.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :utility_payment_log
+  test "page! utility payment log" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.UtilityPayment.Log.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :utility_payment_log
   test "get utility payment log" do
     log =
       StarkBank.UtilityPayment.Log.query!()

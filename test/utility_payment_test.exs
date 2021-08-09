@@ -29,6 +29,18 @@ defmodule StarkBankTest.UtilityPayment do
   end
 
   @tag :utility_payment
+  test "page utility payment" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.UtilityPayment.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :utility_payment
+  test "page! utility payment" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.UtilityPayment.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :utility_payment
   test "get utility payment" do
     payment =
       StarkBank.UtilityPayment.query!()
@@ -93,7 +105,7 @@ defmodule StarkBankTest.UtilityPayment do
 
   def example_payment(_, false) do
     bar_code_core =
-      :crypto.rand_uniform(100, 100_000)
+      :rand.uniform(100_000)
       |> to_string
       |> String.pad_leading(11, "0")
 

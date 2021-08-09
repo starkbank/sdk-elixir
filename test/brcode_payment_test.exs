@@ -29,6 +29,18 @@ defmodule StarkBankTest.BrcodePayment do
   end
 
   @tag :brcode_payment
+  test "page brcode payment" do
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.BrcodePayment.page/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :brcode_payment
+  test "page! brcode payment" do
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.BrcodePayment.page!/1, 2, limit: 5)
+    assert length(ids) == 10
+  end
+
+  @tag :brcode_payment
   test "get brcode payment" do
     payment =
       StarkBank.BrcodePayment.query!()
