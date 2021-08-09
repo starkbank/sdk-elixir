@@ -11,6 +11,7 @@ defmodule StarkBank.PaymentRequest do
     alias StarkBank.Transaction, as: Transaction
     alias StarkBank.BoletoPayment, as: BoletoPayment
     alias StarkBank.UtilityPayment, as: UtilityPayment
+    alias StarkBank.TaxPayment, as: TaxPayment
 
     @moduledoc """
     Groups PaymentRequest related functions
@@ -25,7 +26,7 @@ defmodule StarkBank.PaymentRequest do
 
     ## Parameters (required):
     - `:center_id` [string]: target cost center ID. ex: "5656565656565656"
-    - `:payment` [Transfer, BrcodePayments, BoletoPayment, UtilityPayment, Transaction or map]: payment entity that should be approved and executed.
+    - `:payment` [Transfer, BrcodePayments, BoletoPayment, UtilityPayment, TaxPayment, Transaction or map]: payment entity that should be approved and executed.
 
     ## Parameters (conditionally required):
     - `:type` [string]: payment type, inferred from the payment parameter if it is not a map. ex: "transfer", "boleto-payment"
@@ -223,6 +224,7 @@ defmodule StarkBank.PaymentRequest do
             %BrcodePayment{} -> "brcode-payment"
             %BoletoPayment{} -> "boleto-payment"
             %UtilityPayment{} -> "utility-payment"
+            %TaxPayment{} -> "tax-payment"
         end
     end
 
@@ -246,6 +248,7 @@ defmodule StarkBank.PaymentRequest do
             "brcode-payment" -> &BrcodePayment.resource_maker/1
             "boleto-payment" -> &BoletoPayment.resource_maker/1
             "utility-payment" -> &UtilityPayment.resource_maker/1
+            "tax-payment" -> &TaxPayment.resource_maker/1
         end
     end
 

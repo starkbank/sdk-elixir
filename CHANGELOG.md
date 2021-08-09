@@ -22,6 +22,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - pdf method for retrieving PDF receipts from reversed invoice logs
 - page functions as a manual-pagination alternative to queries
 - Institution resource to allow query of institutions recognized by the Brazilian Central Bank for Pix and TED transactions
+- TaxPayment resource
 
 ## [2.4.1] - 2021-03-19
 ### Fixed
