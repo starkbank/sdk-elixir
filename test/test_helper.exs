@@ -24,6 +24,8 @@ ExUnit.start(
     # :utility_payment_log,
     # :tax_payment,
     # :tax_payment_log,
+    # :darf_payment,
+    # :darf_payment_log,
     # :payment_request,
     # :institution,
     # :webhook,
