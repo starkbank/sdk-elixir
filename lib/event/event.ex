@@ -18,6 +18,7 @@ defmodule StarkBank.Event do
   alias StarkBank.BoletoPayment.Log, as: BoletoPaymentLog
   alias StarkBank.UtilityPayment.Log, as: UtilityPaymentLog
   alias StarkBank.TaxPayment.Log, as: TaxPaymentLog
+  alias StarkBank.DarfPayment.Log, as: DarfPaymentLog
   alias StarkBank.Deposit.Log, as: DepositLog
 
   @moduledoc """
@@ -409,6 +410,7 @@ defmodule StarkBank.Event do
       "boleto-payment" -> &BoletoPaymentLog.resource_maker/1
       "utility-payment" -> &UtilityPaymentLog.resource_maker/1
       "tax-payment" -> &TaxPaymentLog.resource_maker/1
+      "darf-payment" -> &DarfPaymentLog.resource_maker/1
       "deposit" -> &DepositLog.resource_maker/1
     end
   end
