@@ -82,7 +82,7 @@ defmodule StarkBank.PaymentRequest do
             Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end),
             options
         ) do
-            {:ok, requests} -> {:ok, requests |> Enum.map(&parse_request!/1)}
+            {:ok, requests} -> {:ok, requests}
             response -> response
         end
     end
@@ -96,7 +96,7 @@ defmodule StarkBank.PaymentRequest do
             resource(),
             Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end),
             options
-        ) |> Enum.map(&parse_request!/1)
+        )
     end
 
     @doc """
@@ -136,7 +136,7 @@ defmodule StarkBank.PaymentRequest do
             any ->
                 any)
     def query(options \\ []) do
-        Rest.get_list(resource(), options) |> Enum.map(&parse_request/1)
+        Rest.get_list(resource(), options)
     end
 
     @doc """
@@ -156,7 +156,7 @@ defmodule StarkBank.PaymentRequest do
             ) ::
             ({:cont, [PaymentRequest.t()]} | {:halt, any} | {:suspend, any}, any -> any)
     def query!(options \\ []) do
-        Rest.get_list!(resource(), options) |> Enum.map(&parse_request!/1)
+        Rest.get_list!(resource(), options)
     end
 
     @doc """
@@ -230,28 +230,16 @@ defmodule StarkBank.PaymentRequest do
         end
     end
 
-    defp parse_request(request_tuple) do
-        case request_tuple do
-            {:ok, request} -> {:ok, parse_request!(request)}
-            _ -> request_tuple
-        end
-    end
-
-    defp parse_request!(request) do
-        %PaymentRequest{request | payment: request.payment |> API.from_api_json(resource_maker_by_type(request.type))}
-    rescue
-        CaseClauseError -> request
-    end
-
-    defp resource_maker_by_type(subscription) do
+    defp parse_payment!(payment, subscription) do
         case subscription do
-            "transfer" -> &Transfer.resource_maker/1
-            "transaction" -> &Transaction.resource_maker/1
-            "brcode-payment" -> &BrcodePayment.resource_maker/1
-            "boleto-payment" -> &BoletoPayment.resource_maker/1
-            "utility-payment" -> &UtilityPayment.resource_maker/1
-            "tax-payment" -> &TaxPayment.resource_maker/1
-            "darf-payment" -> &DarfPayment.resource_maker/1
+            "transfer" -> API.from_api_json(payment, &Transfer.resource_maker/1)
+            "transaction" -> API.from_api_json(payment, &Transaction.resource_maker/1)
+            "brcode-payment" -> API.from_api_json(payment, &BrcodePayment.resource_maker/1)
+            "boleto-payment" -> API.from_api_json(payment, &BoletoPayment.resource_maker/1)
+            "utility-payment" -> API.from_api_json(payment, &UtilityPayment.resource_maker/1)
+            "tax-payment" -> API.from_api_json(payment, &TaxPayment.resource_maker/1)
+            "darf-payment" -> API.from_api_json(payment, &DarfPayment.resource_maker/1)
+            _ -> payment
         end
     end
 
@@ -267,7 +255,7 @@ defmodule StarkBank.PaymentRequest do
     def resource_maker(json) do
         %PaymentRequest{
             id: json[:id],
-            payment: json[:payment],
+            payment: parse_payment!(json[:payment], json[:type]),
             center_id: json[:center_id],
             type: json[:type],
             tags: json[:tags],
