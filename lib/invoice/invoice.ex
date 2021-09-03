@@ -15,6 +15,8 @@ defmodule StarkBank.Invoice do
   When you initialize a Invoice struct, the entity will not be automatically
   sent to the Stark Bank API. The 'create' function sends the structs
   to the Stark Bank API and returns the list of created structs.
+  To create scheduled Invoices, which will display the discount, interest, etc. on the final users banking interface,
+  use dates instead of datetimes on the "due" and "discounts" fields.
 
   ## Parameters (required):
     - `:amount` [integer]: Invoice value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
@@ -22,7 +24,7 @@ defmodule StarkBank.Invoice do
     - `:name` [string]: payer name. ex: "Iron Bank S.A."
 
   ## Parameters (optional):
-    - `:due` [DateTime or string, default now + 2 days]: Invoice due date in UTC ISO format. ex: ~U[2021-03-26 19:32:35.418698Z]
+    - `:due` [DateTime, Date or string, default now + 2 days]: Invoice due date in UTC ISO format. ex: ~U[2021-03-26 19:32:35.418698Z] for immediate invoices and ~D[2020-10-28] for scheduled invoices
     - `:expiration` [integer, default 59 days]: time interval in seconds between due date and expiration date. ex 123456789
     - `:fine` [float, default 0.0]: Invoice fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Invoice monthly interest for overdue payment in %. ex: 5.2
@@ -356,13 +358,13 @@ defmodule StarkBank.Invoice do
   def resource_maker(json) do
     %Invoice{
       amount: json[:amount],
-      due: json[:due] |> Check.datetime(),
+      due: json[:due] |> Check.date_or_datetime(),
       tax_id: json[:tax_id],
       name: json[:name],
       expiration: json[:expiration],
       fine: json[:fine],
       interest: json[:interest],
-      discounts: json[:discounts] |> Enum.map(fn discount -> %{discount | "due" => discount["due"] |> Check.datetime()} end),
+      discounts: json[:discounts] |> Enum.map(fn discount -> %{discount | "due" => discount["due"] |> Check.date_or_datetime()} end),
       tags: json[:tags],
       descriptions: json[:descriptions],
       pdf: json[:pdf],
