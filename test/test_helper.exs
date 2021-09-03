@@ -27,6 +27,7 @@ ExUnit.start(
     # :darf_payment,
     # :darf_payment_log,
     # :payment_request,
+    # :payment_preview,
     # :institution,
     # :webhook,
     # :event,
