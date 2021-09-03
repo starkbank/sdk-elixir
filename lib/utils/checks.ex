@@ -47,6 +47,14 @@ defmodule StarkBank.Utils.Check do
     data
   end
 
+  def date_or_datetime(data) do
+    try do 
+      date(data)
+    rescue
+      ArgumentError -> datetime(data)
+    end
+  end
+
   def private_key(private_key) do
     try do
       {:ok, parsed_key} = PrivateKey.fromPem(private_key)
