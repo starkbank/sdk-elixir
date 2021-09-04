@@ -35,6 +35,11 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
       :account_type,
       :allow_change,
       :amount,
+      :nominal_amount,
+      :interest_amount,
+      :fine_amount,
+      :reduction_amount,
+      :discount_amount,
       :reconciliation_id
     ]
 
@@ -61,6 +66,11 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
         account_type: json[:account_type],
         allow_change: json[:allow_change],
         amount: json[:amount],
+        nominal_amount: json[:nominal_amount],
+        interest_amount: json[:interest_amount],
+        fine_amount: json[:fine_amount],
+        reduction_amount: json[:reduction_amount],
+        discount_amount: json[:discount_amount],
         reconciliation_id: json[:reconciliation_id],
       }
     end
