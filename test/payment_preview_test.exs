@@ -19,8 +19,8 @@ defmodule StarkBankTest.PaymentPreview do
 
   defp generate_preview_ids() do
     [
+      %StarkBank.PaymentPreview{ scheduled: Date.utc_today() |> Date.add(2), id: StarkBankTest.BrcodePayment.example_payment(false).brcode },
       %StarkBank.PaymentPreview{ id: StarkBankTest.BoletoPayment.example_payment(false).line },
-      %StarkBank.PaymentPreview{ id: StarkBankTest.BrcodePayment.example_payment(false).brcode },
       %StarkBank.PaymentPreview{ id: StarkBankTest.TaxPayment.example_payment(false).bar_code },
       %StarkBank.PaymentPreview{ id: StarkBankTest.UtilityPayment.example_payment(false).bar_code }
     ]
