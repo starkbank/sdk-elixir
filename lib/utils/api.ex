@@ -37,7 +37,13 @@ defmodule StarkBank.Utils.API do
   end
 
   defp coerce_types(%Date{} = date) do
-    "#{date.year}-#{date.month}-#{date.day}"
+    "#{
+      date.year
+    }-#{
+      date.month |> Integer.to_string |> String.pad_leading(2, "0")
+    }-#{
+      date.day |> Integer.to_string |> String.pad_leading(2, "0")
+    }"
   end
 
   defp coerce_types(%DateTime{} = datetime) do

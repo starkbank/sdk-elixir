@@ -63,7 +63,6 @@ defmodule StarkBank.BrcodePreview do
            | {:suspend, any},
            any ->
              any)
-  @since("2.6.0")
   @deprecated "BrcodePreview is deprecated. Please use PaymentPreview instead."
   def query(options \\ []) do
     Rest.get_list(resource(), options)
@@ -77,7 +76,6 @@ defmodule StarkBank.BrcodePreview do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, [BrcodePreview.t()]} | {:halt, any} | {:suspend, any}, any -> any)
-  @since("2.6.0")
   @deprecated "BrcodePreview is deprecated. Please use PaymentPreview instead."
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)

@@ -32,7 +32,9 @@ defmodule StarkBank.MixProject do
   end
 
   def application do
-    []
+    [
+      extra_applications: [:inets]
+    ]
   end
 
   defp deps do

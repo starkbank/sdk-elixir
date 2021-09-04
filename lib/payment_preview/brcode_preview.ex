@@ -1,17 +1,13 @@
 defmodule StarkBank.PaymentPreview.BrcodePreview do
-    alias StarkBank.Utils.Rest
     alias StarkBank.PaymentPreview.BrcodePreview
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
-  
+
     @moduledoc """
     Groups BrcodePreview related functions
     """
-  
+
     @doc """
     A BrcodePreview is used to get information from a BR Code you received before confirming the payment.
-  
+
     ## Attributes (return-only):
       - `:status` [string]: Payment status. ex: "active", "paid", "canceled" or "unknown"
       - `:name` [string]: Payment receiver name. ex: "Tony Stark"
@@ -30,7 +26,6 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
       - `:reconciliation_id` [string]: Reconciliation ID linked to this payment. ex: "txId", "payment-123"
     """
     defstruct [
-      :id,
       :status,
       :name,
       :tax_id,
@@ -40,11 +35,16 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
       :account_type,
       :allow_change,
       :amount,
+      :nominal_amount,
+      :interest_amount,
+      :fine_amount,
+      :reduction_amount,
+      :discount_amount,
       :reconciliation_id
     ]
-  
+
     @type t() :: %__MODULE__{}
-    
+
     @doc false
     def resource() do
       {
@@ -52,12 +52,11 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
         &resource_maker/1
       }
     end
-  
+
     @doc false
     def resource_maker(json) do
       # IO.inspect json
       %BrcodePreview{
-        id: json[:id],
         status: json[:status],
         name: json[:name],
         tax_id: json[:tax_id],
@@ -67,8 +66,12 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
         account_type: json[:account_type],
         allow_change: json[:allow_change],
         amount: json[:amount],
+        nominal_amount: json[:nominal_amount],
+        interest_amount: json[:interest_amount],
+        fine_amount: json[:fine_amount],
+        reduction_amount: json[:reduction_amount],
+        discount_amount: json[:discount_amount],
         reconciliation_id: json[:reconciliation_id],
       }
     end
   end
-  

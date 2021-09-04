@@ -1,17 +1,13 @@
 defmodule StarkBank.PaymentPreview.TaxPreview do
-    alias StarkBank.Utils.Rest
     alias StarkBank.PaymentPreview.TaxPreview
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
-  
+
     @moduledoc """
     Groups TaxPreview related functions
     """
-  
+
     @doc """
     A TaxPreview is used to get information from a Tax Payment you received before confirming the payment.
-  
+
     ## Attributes (return-only):
       - `:amount` [int]: final amount to be paid. ex: 23456 (= R$ 234.56)
       - `:name` [string]: beneficiary full name. ex: "Iron Throne"
@@ -26,9 +22,9 @@ defmodule StarkBank.PaymentPreview.TaxPreview do
       :line,
       :bar_code
     ]
-  
+
     @type t() :: %__MODULE__{}
-    
+
     @doc false
     def resource() do
       {
@@ -36,7 +32,7 @@ defmodule StarkBank.PaymentPreview.TaxPreview do
         &resource_maker/1
       }
     end
-  
+
     @doc false
     def resource_maker(json) do
       %TaxPreview{
@@ -48,4 +44,3 @@ defmodule StarkBank.PaymentPreview.TaxPreview do
       }
     end
   end
-  
