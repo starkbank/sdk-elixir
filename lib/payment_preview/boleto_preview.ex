@@ -1,18 +1,14 @@
 defmodule StarkBank.PaymentPreview.BoletoPreview do
-    alias StarkBank.Utils.Rest
     alias StarkBank.Utils.Check
     alias StarkBank.PaymentPreview.BoletoPreview
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
-  
+
     @moduledoc """
     Groups BoletoPreview related functions
     """
-  
+
     @doc """
     A BoletoPreview is used to get information from a Boleto payment you received before confirming the payment.
-  
+
     ## Attributes (return-only):
       - `:status` [string]: current boleto status. ex: "active", "expired" or "inactive"
       - `:amount` [int]: final amount to be paid. ex: 23456 (= R$ 234.56)
@@ -47,9 +43,9 @@ defmodule StarkBank.PaymentPreview.BoletoPreview do
       :line,
       :bar_code
     ]
-  
+
     @type t() :: %__MODULE__{}
-    
+
     @doc false
     def resource() do
       {
@@ -57,7 +53,7 @@ defmodule StarkBank.PaymentPreview.BoletoPreview do
         &resource_maker/1
       }
     end
-  
+
     @doc false
     def resource_maker(json) do
       %BoletoPreview{
@@ -79,4 +75,3 @@ defmodule StarkBank.PaymentPreview.BoletoPreview do
       }
     end
   end
-  

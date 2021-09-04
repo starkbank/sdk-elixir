@@ -1,18 +1,14 @@
 defmodule StarkBank.PaymentPreview.UtilityPreview do
-    alias StarkBank.Utils.Rest
     alias StarkBank.PaymentPreview.UtilityPreview
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
-  
+
     @moduledoc """
     Groups UtilityPreview related functions
     """
-  
+
     @doc """
     A UtilityPreview is used to get information from a BR Code
     you received to check the informations before paying it.
-  
+
     ## Attributes (return-only):
       - `:amount` [int]: final amount to be paid. ex: 23456 (= R$ 234.56)
       - `:name` [string]: beneficiary full name. ex: "Light Company"
@@ -27,9 +23,9 @@ defmodule StarkBank.PaymentPreview.UtilityPreview do
       :line,
       :bar_code
     ]
-  
+
     @type t() :: %__MODULE__{}
-    
+
     @doc false
     def resource() do
       {
@@ -37,7 +33,7 @@ defmodule StarkBank.PaymentPreview.UtilityPreview do
         &resource_maker/1
       }
     end
-  
+
     @doc false
     def resource_maker(json) do
       %UtilityPreview{
@@ -49,4 +45,3 @@ defmodule StarkBank.PaymentPreview.UtilityPreview do
       }
     end
   end
-  
