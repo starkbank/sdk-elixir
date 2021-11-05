@@ -3,7 +3,7 @@ defmodule StarkBankTest.Institution do
 
   @tag :institution
   test "query institution" do
-    {:ok, [_stark_name]} = StarkBank.Institution.query(search: "stark")
+    {:ok, [_stark_name, _stark_scd_name]} = StarkBank.Institution.query(search: "stark")
 
     {:ok, [_stark_spi_code]} = StarkBank.Institution.query(spi_codes: "20018183")
 
@@ -12,7 +12,7 @@ defmodule StarkBankTest.Institution do
 
   @tag :institution
   test "query! institution" do
-    assert length(StarkBank.Institution.query!(search: "stark")) == 1
+    assert length(StarkBank.Institution.query!(search: "stark")) == 2
 
     assert length(StarkBank.Institution.query!(spi_codes: "20018183")) == 1
 
