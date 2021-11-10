@@ -39,7 +39,7 @@ defmodule StarkBank.MixProject do
 
   defp deps do
     [
-      {:starkbank_ecdsa, "~> 1.0.1"},
+      {:starkbank_ecdsa, "~> 1.1.0"},
       {:jason, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
