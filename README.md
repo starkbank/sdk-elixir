@@ -8,15 +8,53 @@ If you have no idea what Stark Bank is, check out our [website](https://www.Star
 and discover a world where receiving or making payments
 is as easy as sending a text message to your client!
 
-## Supported Elixir Versions
+# Introduction
+
+# Index
+
+- [Introduction](#introduction)
+    - [Supported Elixir versions](#supported-elixir-versions)
+    - [API documentation](#stark-bank-api-documentation)
+    - [Versioning](#versioning)
+- [Setup](#setup)
+    - [Install our SDK](#1-install-our-sdk)
+    - [Create your Private and Public Keys](#2-create-your-private-and-public-keys)
+    - [Register your user credentials](#3-register-your-user-credentials)
+    - [Setting up the user](#4-setting-up-the-user)
+    - [Setting up the error language](#5-setting-up-the-error-language)
+    - [Resource listing and manual pagination](#6-resource-listing-and-manual-pagination)
+- [Testing in Sandbox](#testing-in-sandbox) 
+- [Usage](#usage)
+    - [Transactions](#create-transactions): Account statement entries
+    - [Balance](#get-balance): Account balance
+    - [Transfers](#create-transfers): Wire transfers (TED and manual Pix)
+    - [DictKeys](#get-dict-key): Pix Key queries to use with Transfers
+    - [Institutions](#query-bacen-institutions): Instutitions recognized by the Central Bank
+    - [Invoices](#create-invoices): Reconciled receivables (dynamic PIX QR Codes)
+    - [Deposits](#query-deposits): Other cash-ins (static PIX QR Codes, manual PIX, etc)
+    - [Boletos](#create-boletos): Boleto receivables
+    - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
+    - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
+    - [BoletoPayments](#pay-a-boleto): Pay Boletos
+    - [UtilityPayments](#create-utility-payments): Pay Utility bills (water, light, etc.)
+    - [TaxPayments](#create-tax-payments): Pay taxes
+    - [PaymentPreviews](#preview-payment-information-before-executing-the-payment): Preview all sorts of payments
+    - [Webhooks](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
+    - [WebhookEvents](#process-webhook-events): Manage webhook events
+    - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
+    - [Workspaces](#create-a-new-workspace): Manage your accounts
+- [Handling errors](#handling-errors)
+- [Help and Feedback](#help-and-feedback)
+
+# Supported Elixir Versions
 
 This library supports Elixir versions 1.9+.
 
-## Stark Bank API documentation
+# Stark Bank API documentation
 
 Feel free to take a look at our [API docs](https://www.starkbank.com/docs/api).
 
-## Versioning
+# Versioning
 
 This project adheres to the following versioning pattern:
 
@@ -26,9 +64,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - MINOR version when **breaking changes** are introduced OR **new functionalities** are added in a backwards compatible manner;
 - PATCH version when backwards compatible bug **fixes** are implemented.
 
-## Setup
+# Setup
 
-### 1. Install our SDK
+## 1. Install our SDK
 
 To install the package with mix, add this to your deps and run `mix deps.get`:
 
@@ -40,7 +78,7 @@ def deps do
 end
 ```
 
-### 2. Create your Private and Public Keys
+## 2. Create your Private and Public Keys
 
 We use ECDSA. That means you need to generate a secp256k1 private
 key to sign your requests to our API, and register your public key
@@ -64,7 +102,7 @@ keys inside the infrastructure that will use it, in order to avoid risky interne
 transmissions of your **private-key**. Then you can export the **public-key** alone to the
 computer where it will be used in the new Project creation.
 
-### 3. Register your user credentials
+## 3. Register your user credentials
 
 You can interact directly with our API using two types of users: Projects and Organizations.
 
@@ -156,7 +194,7 @@ NOTE 2: We support `'sandbox'` and `'production'` as environments.
 
 NOTE 3: The credentials you registered in `sandbox` do not exist in `production` and vice versa.
 
-### 4. Setting up the user
+## 4. Setting up the user
 
 There are three kinds of users that can access our API: **Organization**, **Project** and **Member**.
 
@@ -202,7 +240,7 @@ Just select the way of passing the user that is more convenient to you.
 On all following examples we will assume a default user has been set in the configs.
 
 
-### 5. Setting up the error language
+## 5. Setting up the error language
 
 The error language can also be set in the `config/config.exs` file:
 
@@ -215,7 +253,7 @@ config :starkbank,
 
 Language options are "en-US" for english and "pt-BR" for brazilian portuguese. English is default
 
-### 6. Resource listing and manual pagination
+## 6. Resource listing and manual pagination
 
 Almost all SDK resources provide a `query` and a `page` function.
 
@@ -256,7 +294,7 @@ transactions = CursorRecursion.get!(3) |> IO.inspect
 
 To simplify the following SDK examples, we will only use the `query` function, but feel free to use `page` instead.
 
-## Testing in Sandbox
+# Testing in Sandbox
 
 Your initial balance is zero. For many operations in Stark Bank, you'll need funds
 in your account, which can be added to your balance by creating an Invoice or a Boleto. 
@@ -269,7 +307,7 @@ In Production, you (or one of your clients) will need to actually pay this Invoi
 for the value to be credited to your account.
 
 
-## Usage
+# Usage
 
 Here are a few examples on how to use the SDK. If you have any doubts, use the built-in
 `h()` function to get more info on the desired functionality
@@ -278,7 +316,7 @@ Here are a few examples on how to use the SDK. If you have any doubts, use the b
 **Note**: Almost all SDK functions also provide a bang (!) version. To simplify the examples, they will be used the most throughout this README.
 
 
-### Create transactions
+## Create transactions
 
 To send money between Stark Bank accounts, you can create transactions:
 
@@ -305,7 +343,7 @@ transactions = StarkBank.Transaction.create!(
 
 **Note**: Instead of using Transaction structs, you can also pass each transaction element in map format
 
-### Query transactions
+## Query transactions
 
 To understand your balance changes (bank statement), you can query
 transactions. Note that our system creates transactions for you when
@@ -318,7 +356,7 @@ transactions = StarkBank.Transaction.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get a transaction
+## Get a transaction
 
 You can get a specific transaction by its id:
 
@@ -327,7 +365,7 @@ transaction = StarkBank.Transaction.get!("6677396233125888")
   |> IO.inspect
 ```
 
-### Get your balance
+## Get balance
 
 To know how much money you have in your workspace, run:
 
@@ -336,7 +374,7 @@ balance = StarkBank.Balance.get!()
 IO.puts(balance.amount / 100)
 ```
 
-### Create transfers
+## Create transfers
 
 You can also create transfers in the SDK (TED/Pix).
 
@@ -368,7 +406,7 @@ transfers = StarkBank.Transfer.create!(
 
 **Note**: Instead of using Transfer structs, you can also pass each transfer element in map format
 
-### Query transfers
+## Query transfers
 
 You can query multiple transfers according to filters.
 
@@ -381,7 +419,7 @@ for transfer <- StarkBank.Transfer.query!(
 end
 ```
 
-### Get a transfer
+## Get a transfer
 
 To get a single transfer by its id, run:
 
@@ -390,7 +428,7 @@ transfer = StarkBank.Transfer.get!("4882890932355072")
   |> IO.inspect
 ```
 
-### Cancel a transfer
+## Cancel a transfer
 
 To cancel a single scheduled transfer by its id, run:
 
@@ -399,7 +437,7 @@ transfer = StarkBank.Transfer.delete!("4882890932355072")
   |> IO.inspect
 ```
 
-### Get a transfer PDF
+## Get a transfer PDF
 
 A transfer PDF may also be retrieved by passing its id.
 This operation is only valid for transfers with "processing" or "success" status.
@@ -416,7 +454,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Query transfer logs
+## Query transfer logs
 
 You can query transfer logs to better understand transfer life cycles.
 
@@ -426,7 +464,7 @@ logs = StarkBank.Transfer.Log.query!(limit: 50)
   |> IO.inspect
 ```
 
-### Get a transfer log
+## Get a transfer log
 
 You can also get a specific log by its id.
 
@@ -435,7 +473,28 @@ log = StarkBank.Transfer.Log.get!("6610264099127296")
   |> IO.inspect
 ```
 
-### Query Bacen institutions
+## Get DICT key
+
+You can get DICT (Pix) key's parameters by its id.
+
+```elixir
+dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
+  |> IO.inspect
+```
+
+## Query your DICT keys
+
+To take a look at the DICT keys linked to your workspace, just run the following:
+
+```elixir
+dict_key = StarkBank.DictKey.query!(
+  limit: 1,
+  status: "registered",
+  type: "evp"
+) |> Enum.take(1) |> IO.inspect
+```
+
+## Query Bacen institutions
 
 You can query institutions registered by the Brazilian Central Bank for Pix and TED transactions.
 
@@ -443,7 +502,7 @@ You can query institutions registered by the Brazilian Central Bank for Pix and 
 institutions = StarkBank.Institution.query(search: "stark") |> IO.inspect
 ```
 
-### Create invoices
+## Create invoices
 
 You can create dynamic QR Code invoices to charge customers or to receive money from accounts you have in other banks. 
 
@@ -487,7 +546,7 @@ invoice = StarkBank.Invoice.create!(
 
 **Note**: Instead of using Invoice objects, you can also pass each invoice element in dictionary format
 
-### Get an invoice
+## Get an invoice
 
 After its creation, information on an invoice may be retrieved by its id. 
 Its status indicates whether it's been paid.
@@ -497,7 +556,7 @@ invoice = StarkBank.Invoice.get!("6750458353811456")
   |> IO.inspect
 ```
 
-### Get an invoice PDF
+## Get an invoice PDF
 
 After its creation, an invoice PDF may be retrieved by its id. 
 
@@ -513,7 +572,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Get an invoice QR Code 
+## Get an invoice QR Code 
 
 After its creation, an invoice QR Code png file may be retrieved by its id. 
 
@@ -525,7 +584,7 @@ IO.binwrite(file, qrcode)
 File.close(file)
 ```
 
-### Cancel an invoice
+## Cancel an invoice
 
 You can also cancel an invoice by its id.
 Note that this is not possible if it has been paid already.
@@ -535,7 +594,7 @@ invoice = StarkBank.Invoice.update!("6750458353811456", status: "canceled")
   |> IO.inspect
 ```
 
-### Update an invoice
+## Update an invoice
 
 You can update an invoice's amount, due date and expiration by its id.
 Note that this is not possible if it has been paid already.
@@ -550,7 +609,7 @@ invoice = StarkBank.Invoice.update!(
   |> IO.inspect
 ```
 
-### Query invoices
+## Query invoices
 
 You can get a list of created invoices given some filters.
 
@@ -563,7 +622,7 @@ invoices = StarkBank.Invoice.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Query invoice logs
+## Query invoice logs
 
 Logs are pretty important to understand the life cycle of an invoice.
 
@@ -573,7 +632,7 @@ for log <- StarkBank.Invoice.Log.query!(invoice_ids: ["6750458353811456"]) do
 end
 ```
 
-### Get an invoice log
+## Get an invoice log
 
 You can get a single log by its id.
 
@@ -582,7 +641,7 @@ log = StarkBank.Invoice.Log.get!("6288576484474880")
   |> IO.inspect
 ```
 
-### Get a reversed invoice log PDF
+## Get a reversed invoice log PDF
 
 Whenever an Invoice is successfully reversed, a reversed log will be created.
 To retrieve a specific reversal receipt, you can request the corresponding log PDF:
@@ -599,7 +658,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Get an invoice payment information
+## Get an invoice payment information
 
 Once an invoice has been paid, you can get the payment information using the Invoice.Payment sub-resource:
 
@@ -608,7 +667,7 @@ payment_information = StarkBank.Invoice.payment!("5155165527080960")
   |> IO.inspect
 ```
 
-### Query deposits
+## Query deposits
 
 You can get a list of created deposits given some filters.
 
@@ -622,7 +681,7 @@ You can get a list of created deposits given some filters.
     end
 ```
 
-### Get a deposit
+## Get a deposit
 
 After its creation, information on a deposit may be retrieved by its id. 
 
@@ -631,7 +690,7 @@ deposit = StarkBank.Deposit.get!("5738709764800512")
   |> IO.inspect
 ```
 
-### Query deposit logs
+## Query deposit logs
 
 Logs are pretty important to understand the life cycle of a deposit.
 
@@ -645,7 +704,7 @@ logs = StarkBank.Deposit.Log.query!(
 |> IO.inspect
 ```
 
-### Get a deposit log
+## Get a deposit log
 
 You can get a single log by its id.
 
@@ -654,7 +713,7 @@ log = StarkBank.Deposit.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 
-### Create boletos
+## Create boletos
 
 You can create boletos to charge customers or to receive money from accounts
 you have in other banks.
@@ -682,7 +741,7 @@ boletos = StarkBank.Boleto.create!(
 
 **Note**: Instead of using Boleto structs, you can also pass each boleto element in map format
 
-### Get a boleto
+## Get a boleto
 
 After its creation, information on a boleto may be retrieved by passing its id.
 Its status indicates whether it's been paid.
@@ -692,7 +751,7 @@ boleto = StarkBank.Boleto.get!("6750458353811456")
   |> IO.inspect
 ```
 
-### Get a boleto PDF
+## Get a boleto PDF
 
 After its creation, a boleto PDF may be retrieved by passing its id.
 
@@ -708,7 +767,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete a boleto
+## Delete a boleto
 
 You can also cancel a boleto by its id.
 Note that this is not possible if it has been processed already.
@@ -718,7 +777,7 @@ boleto = StarkBank.Boleto.delete!("5202697619767296")
   |> IO.inspect
 ```
 
-### Query boletos
+## Query boletos
 
 You can get a stream of created boletos given some filters.
 
@@ -730,7 +789,7 @@ boletos = StarkBank.Boleto.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Query boleto logs
+## Query boleto logs
 
 Logs are pretty important to understand the life cycle of a boleto.
 
@@ -740,7 +799,7 @@ for log <- StarkBank.Boleto.Log.query!(boleto_ids: ["6750458353811456"]) do
 end
 ```
 
-### Get a boleto log
+## Get a boleto log
 
 You can get a single log by its id.
 
@@ -749,7 +808,7 @@ log = StarkBank.Boleto.Log.get!("6288576484474880")
   |> IO.inspect
 ```
 
-### Investigate a boleto
+## Investigate a boleto
 
 You can discover if a StarkBank boleto has been recently paid before we receive the response on the next day.
 This can be done by creating a BoletoHolmes object, which fetches the updated status of the corresponding
@@ -771,7 +830,7 @@ holmes = StarkBank.BoletoHolmes.create!(
 
 **Note**: Instead of using BoletoHolmes structs, you can also pass each payment element in map format
 
-### Get a boleto holmes
+## Get a boleto holmes
 
 To get a single Holmes by its id, run:
 
@@ -780,7 +839,7 @@ sherlock = StarkBank.BoletoHolmes.get!("5629412477239296")
   |> IO.inspect
 ```
 
-### Query boleto holmes
+## Query boleto holmes
 
 You can search for boleto Holmes using filters.
 
@@ -792,7 +851,7 @@ for sherlock <- StarkBank.BoletoHolmes.query!(
 end
 ```
 
-### Query boleto holmes logs
+## Query boleto holmes logs
 
 Searches are also possible with boleto holmes logs:
 
@@ -804,7 +863,7 @@ for log <- StarkBank.BoletoHolmes.Log.query!(
 end
 ```
 
-### Get a boleto holmes log
+## Get a boleto holmes log
 
 You can also get a boleto holmes log by specifying its id.
 
@@ -813,7 +872,7 @@ log = StarkBank.BoletoHolmes.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
-### Pay a BR Code
+## Pay a BR Code
 
 Paying a BR Code is also simple. After extracting the BR Code encoded in the Pix QR Code, you can do the following:
 
@@ -832,7 +891,7 @@ payments = StarkBank.BrcodePayment.create!(
 
 **Note**: Instead of using BrcodePayment objects, you can also pass each payment element in dictionary format
 
-### Get a BR Code payment
+## Get a BR Code payment
 
 To get a single BR Code payment by its id, run:
 
@@ -841,7 +900,7 @@ payment = StarkBank.BrcodePayment.get!("5629412477239296")
   |> IO.inspect
 ```
 
-### Get a BR Code payment PDF
+## Get a BR Code payment PDF
 
 After its creation, a BR Code payment PDF may be retrieved by its id. 
 
@@ -857,7 +916,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Cancel a BR Code payment
+## Cancel a BR Code payment
 
 You can cancel a BR Code payment by changing its status to "canceled".
 Note that this is not possible if it has been processed already.
@@ -870,7 +929,7 @@ payment = StarkBank.BrcodePayment.update!(
   |> IO.inspect
 ```
 
-### Query BR Code payments
+## Query BR Code payments
 
 You can search for BR Code payments using filters. 
 
@@ -882,7 +941,7 @@ payments = StarkBank.BrcodePayment.query!(
 ) |> Enum.take(2) |> IO.inspect
 ```
 
-### Query BR Code payment logs
+## Query BR Code payment logs
 
 Searches are also possible with BR Code payment logs:
 
@@ -894,7 +953,7 @@ for log <- StarkBank.BrcodePayment.Log.query!(
 end
 ```
 
-### Get a BR Code payment log
+## Get a BR Code payment log
 
 You can also get a BR Code payment log by specifying its id.
 
@@ -904,7 +963,7 @@ log = StarkBank.BrcodePayment.Log.get!("5735810494103552")
 log |> IO.inspect
 ```
 
-### Pay a boleto
+## Pay a boleto
 
 Paying a boleto is also simple.
 
@@ -931,7 +990,7 @@ payments = StarkBank.BoletoPayment.create!(
 
 **Note**: Instead of using BoletoPayment structs, you can also pass each payment element in map format
 
-### Get a boleto payment
+## Get a boleto payment
 
 To get a single boleto payment by its id, run:
 
@@ -940,7 +999,7 @@ payment = StarkBank.BoletoPayment.get!("5629412477239296")
   |> IO.inspect
 ```
 
-### Get a boleto payment PDF
+## Get a boleto payment PDF
 
 After its creation, a boleto payment PDF may be retrieved by passing its id.
 
@@ -956,7 +1015,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete a boleto payment
+## Delete a boleto payment
 
 You can also cancel a boleto payment by its id.
 Note that this is not possible if it has been processed already.
@@ -966,7 +1025,7 @@ payment = StarkBank.BoletoPayment.delete!("5629412477239296")
   |> IO.inspect
 ```
 
-### Query boleto payments
+## Query boleto payments
 
 You can search for boleto payments using filters.
 
@@ -976,7 +1035,7 @@ payments = StarkBank.BoletoPayment.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Query boleto payment logs
+## Query boleto payment logs
 
 Searches are also possible with boleto payment logs:
 
@@ -988,7 +1047,7 @@ for log <- StarkBank.BoletoPayment.Log.query!(
 end
 ```
 
-### Get a boleto payment log
+## Get a boleto payment log
 
 You can also get a boleto payment log by specifying its id.
 
@@ -997,7 +1056,7 @@ log = StarkBank.BoletoPayment.Log.get!("5391671273455616")
   |> IO.inspect
 ```
 
-### Create a utility payment
+## Create utility payments
 
 It's also simple to pay utility bills (such as electricity and water bills) in the SDK.
 
@@ -1022,7 +1081,7 @@ payments = StarkBank.UtilityPayment.create!(
 
 **Note**: Instead of using UtilityPayment structs, you can also pass each payment element in map format
 
-### Query utility payments
+## Query utility payments
 
 To search for utility payments using filters, run:
 
@@ -1032,7 +1091,7 @@ payments = StarkBank.UtilityPayment.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get a utility payment
+## Get a utility payment
 
 You can get a specific bill by its id:
 
@@ -1041,7 +1100,7 @@ payment = StarkBank.UtilityPayment.get!("6619425641857024")
   |> IO.inspect
 ```
 
-### Get a utility payment PDF
+## Get a utility payment PDF
 
 After its creation, a utility payment PDF may also be retrieved by passing its id.
 
@@ -1057,7 +1116,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Delete a utility payment
+## Delete a utility payment
 
 You can also cancel a utility payment by its id.
 Note that this is not possible if it has been processed already.
@@ -1067,7 +1126,7 @@ payment = StarkBank.UtilityPayment.delete!("6619425641857024")
   |> IO.inspect
 ```
 
-### Query utility payment logs
+## Query utility payment logs
 
 You can search for payments by specifying filters. Use this to understand the
 bills life cycles.
@@ -1080,7 +1139,7 @@ for log <- StarkBank.UtilityPayment.Log.query!(
 end
 ```
 
-### Get a utility payment log
+## Get a utility payment log
 
 If you want to get a specific payment log by its id, just run:
 
@@ -1089,7 +1148,7 @@ log = StarkBank.UtilityPayment.Log.get!("6197807794880512")
   |> IO.inspect
 ```
 
-### Create tax payments
+## Create tax payments
 
 It is also simple to pay taxes (such as ISS and DAS) using this SDK.
 
@@ -1114,7 +1173,7 @@ payments = StarkBank.TaxPayment.create!(
 
 **Note**: Instead of using TaxPayment objects, you can also pass each payment element in dictionary format
 
-### Query tax payments
+## Query tax payments
 
 To search for tax payments using filters, run:
 
@@ -1122,7 +1181,7 @@ To search for tax payments using filters, run:
 payments = StarkBank.TaxPayment.query(limit: 5) |> IO.inspect
 ```
 
-### Get a tax payment
+## Get a tax payment
 
 You can get a specific tax payment by its id:
 
@@ -1130,7 +1189,7 @@ You can get a specific tax payment by its id:
 payment = StarkBank.TaxPayment.get!("5155165527080960") |> IO.inspect
 ```
 
-### Get a tax payment PDF
+## Get a tax payment PDF
 
 After its creation, a tax payment PDF may also be retrieved by its id.
 
@@ -1145,7 +1204,7 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-### Cancel a tax payment
+## Cancel a tax payment
 
 You can also cancel a tax payment by its id.
 Note that this is not possible if it has been processed already.
@@ -1154,7 +1213,7 @@ Note that this is not possible if it has been processed already.
 payment = StarkBank.TaxPayment.delete!("5155165527080960") |> IO.inspect
 ```
 
-### Query tax payment logs
+## Query tax payment logs
 
 You can search for payment logs by specifying filters. Use this to understand each payment life cycle.
 
@@ -1162,7 +1221,7 @@ You can search for payment logs by specifying filters. Use this to understand ea
 logs = StarkBank.TaxPayment.Log.query!(limit: 5) |> IO.inspect
 ```
 
-### Get a tax payment log
+## Get a tax payment log
 
 If you want to get a specific payment log by its id, just run:
 
@@ -1174,7 +1233,7 @@ log = StarkBank.TaxPayment.Log.get!("1902837198237992") |> IO.inspect
 resource and routes, which are all analogous to the TaxPayment resource. The ones we currently support are:
 - DarfPayment, for DARFs
 
-### Preview payment information before executing the payment
+## Preview payment information before executing the payment
 
 You can preview multiple types of payment to confirm any information before actually paying.
 If the "scheduled" parameter is not informed, today will be assumed as the intended payment date.
@@ -1199,7 +1258,7 @@ previews = StarkBank.PaymentPreview.create!(
 
 **Note**: Instead of using PaymentPreview structs, you can also pass each payment request element in map format
 
-### Create payment requests to be approved by authorized people in a cost center 
+## Create payment requests to be approved by authorized people in a cost center 
 
 You can also request payments that must pass through a specific cost center approval flow to be executed.
 In certain structures, this allows double checks for cash-outs and also gives time to load your account
@@ -1233,7 +1292,7 @@ requests = StarkBank.PaymentRequest.create!(
 **Note**: Instead of using PaymentRequest structs, you can also pass each payment request element in map format
 
 
-### Query payment requests
+## Query payment requests
 
 To search for payment requests, run:
 
@@ -1246,7 +1305,7 @@ requests = StarkBank.PaymentRequest.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Create a webhook subscription
+## Create a webhook subscription
 
 To create a webhook subscription and be notified whenever an event occurs, run:
 
@@ -1257,7 +1316,7 @@ webhook = StarkBank.Webhook.create!(
 ) |> IO.inspect
 ```
 
-### Query webhooks
+## Query webhooks
 
 To search for registered webhooks, run:
 
@@ -1267,7 +1326,7 @@ for webhook <- StarkBank.Webhook.query!() do
 end
 ```
 
-### Get a webhook subscription
+## Get a webhook subscription
 
 You can get a specific webhook by its id.
 
@@ -1276,7 +1335,7 @@ webhook = StarkBank.Webhook.get!("6178044066660352")
   |> IO.inspect
 ```
 
-### Delete a webhook subscription
+## Delete a webhook subscription
 
 You can also delete a specific webhook by its id.
 
@@ -1285,7 +1344,7 @@ webhook = StarkBank.Webhook.delete!("6178044066660352")
   |> IO.inspect
 ```
 
-### Process webhook events
+## Process webhook events
 
 It's easy to process events that have arrived in your webhook. Remember to pass the
 signature header so the SDK can make sure it's really StarkBank that has sent you
@@ -1317,7 +1376,7 @@ and automatically refresh it if an inconsistency is found between the content, s
 If the data does not check out with the Stark Bank public-key, the function will automatically request the
 key from the API and try to validate the signature once more. If it still does not check out, it will raise an error.
 
-### Query webhook events
+## Query webhook events
 
 To search for webhooks events, run:
 
@@ -1329,7 +1388,7 @@ events = StarkBank.Event.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-### Get a webhook event
+## Get a webhook event
 
 You can get a specific webhook event by its id.
 
@@ -1338,7 +1397,7 @@ event = StarkBank.Event.get!("4568139664719872")
   |> IO.inspect
 ```
 
-### Delete a webhook event
+## Delete a webhook event
 
 You can also delete a specific webhook event by its id.
 
@@ -1347,7 +1406,7 @@ event = StarkBank.Event.delete!("4568139664719872")
   |> IO.inspect
 ```
 
-### Set webhook events as delivered
+## Set webhook events as delivered
 
 This can be used in case you've lost events.
 With this function, you can manually set events retrieved from the API as
@@ -1358,7 +1417,7 @@ event = StarkBank.Event.update!("5764442407043072", is_delivered: true)
   |> IO.inspect
 ```
 
-### Query failed webhook event delivery attempts information
+## Query failed webhook event delivery attempts information
 
 You can also get information on failed webhook event delivery attempts.
 
@@ -1368,7 +1427,7 @@ for attempt <- StarkBank.Event.Attempt.query!(after: "2020-03-20") do
 end
 ```
 
-### Get a failed webhook event delivery attempt information
+## Get a failed webhook event delivery attempt information
 
 To retrieve information on a single attempt, use the following function:
 
@@ -1377,28 +1436,7 @@ attempt = StarkBank::Event::Attempt.get("1616161616161616")
   |> IO.inspect
 ```
 
-### Get a DICT key
-
-You can get DICT (Pix) key's parameters by its id.
-
-```elixir
-dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
-  |> IO.inspect
-```
-
-### Query your DICT keys
-
-To take a look at the DICT keys linked to your workspace, just run the following:
-
-```elixir
-dict_key = StarkBank.DictKey.query!(
-  limit: 1,
-  status: "registered",
-  type: "evp"
-) |> Enum.take(1) |> IO.inspect
-```
-
-### Create a Workspace
+## Create a new Workspace
 
 The Organization user allows you to create new Workspaces (bank accounts) under your organization.
 Workspaces have independent balances, statements, operations and users.
@@ -1413,7 +1451,7 @@ workspace = StarkBank.Workspace.create!(
 ) |> IO.inspect
 ```
 
-### List your Workspaces
+## List your Workspaces
 
 This route lists Workspaces. If no parameter is passed, all the workspaces the user has access to will be listed, but
 you can also find other Workspaces by searching for their usernames or IDs directly.
@@ -1423,7 +1461,7 @@ workspaces = StarkBank.Workspace.query!(limit: 10)
   |> IO.inspect
 ```
 
-### Get a Workspace
+## Get a Workspace
 
 You can get a specific Workspace by its id.
 
@@ -1432,7 +1470,7 @@ workspace = StarkBank.Workspace.get!("10827361982368179")
   |> IO.inspect
 ```
 
-### Update a Workspace
+## Update a Workspace
 
 You can update a specific Workspace by its id.
 
@@ -1446,9 +1484,17 @@ workspace = StarkBank.Workspace.update!(
 ) |> IO.inspect
 ```
 
-## Handling errors
+# Handling errors
 
 The SDK may raise or return errors as the StarkBank.Error struct, which contains the "code" and "message" attributes.
 
 If you use bang functions, the list of errors will be converted into a string and raised.
 If you use normal functions, the list of error structs will be returned so you can better analyse them.
+
+# Help and Feedback
+
+If you have any questions about our SDK, just send us an email.
+We will respond you quickly, pinky promise. We are here to help you integrate with us ASAP.
+We also love feedback, so don't be shy about sharing your thoughts with us.
+
+Email: developers@starkbank.com
