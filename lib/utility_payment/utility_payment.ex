@@ -27,13 +27,15 @@ defmodule StarkBank.UtilityPayment do
     - `:tags` [list of strings]: list of strings for tagging
 
   Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
-    - `:amount` [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
-    - `:fee` [integer, default nil]: fee charged when a utility payment is created. ex: 200 (= R$ 2.00)
-    - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:status` [string]: current payment status. ex: "success" or "failed"
+    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    - `:fee` [integer]: fee charged when a utility payment is created. ex: 200 (= R$ 2.00)
+    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:description]
+  @enforce_keys [
+    :description
+  ]
   defstruct [
     :line,
     :bar_code,
@@ -186,7 +188,7 @@ defmodule StarkBank.UtilityPayment do
   end
 
   @doc """
-  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -211,8 +213,8 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -229,7 +231,7 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [UtilityPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

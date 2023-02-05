@@ -169,7 +169,13 @@ defmodule StarkBankTest.Transfer do
         |> String.pad_leading(5, "0")
         |> (fn s -> s <> "-#{:rand.uniform(9)}" end).(),
       account_type: ["checking", "savings", "salary", "payment"] |> Enum.random(),
-      external_id: "elixir-#{:rand.uniform(9999999999)}"
+      external_id: "elixir-#{:rand.uniform(9999999999)}",
+      rules: [
+        %StarkBank.Transfer.Rule{
+          keu: "resendingLimit",
+          value: 5
+        }
+      ]
     }
   end
 end

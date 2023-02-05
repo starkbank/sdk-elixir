@@ -5,16 +5,16 @@ defmodule StarkBank.DarfPayment do
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
-  
+
   @moduledoc """
   Groups DarfPayment related functions
   """
-  
+
   @doc """
   When you initialize a DarfPayment, the entity will not be automatically
   created in the Stark Bank API. The 'create' function sends the objects
   to the Stark Bank API and returns the list of created objects.
-  
+
   ## Parameters (required):
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
     - `:revenue_code` [string]: 4-digit tax code assigned by Federal Revenue. ex: "5948"
@@ -29,16 +29,25 @@ defmodule StarkBank.DarfPayment do
     - `:reference_number` [string]: number assigned to the region of the tax. ex: "08.1.17.00-4"
     - `:scheduled` [Date or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
-  
+
   ## Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
-    - `:amount` [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
-    - `:fee` [integer, default nil]: fee charged when the tax payment is created. ex: 200 (= R$ 2.00)
-    - `:updated` [DateTime, default nil]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
-    - `:created` [DateTime, default nil]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:status` [string]: current payment status. ex: "success" or "failed"
+    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    - `:fee` [integer]: fee charged when the tax payment is created. ex: 200 (= R$ 2.00)
+    - `:updated` [DateTime]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
+    - `:created` [DateTime]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:description, :revenue_code, :tax_id, :competence, :nominal_amount, :fine_amount, :interest_amount, :due]
+  @enforce_keys [
+    :description,
+    :revenue_code,
+    :tax_id,
+    :competence,
+    :nominal_amount,
+    :fine_amount,
+    :interest_amount,
+    :due
+  ]
   defstruct [
     :revenue_code,
     :tax_id,
@@ -57,18 +66,18 @@ defmodule StarkBank.DarfPayment do
     :updated,
     :created
   ]
-  
+
   @type t() :: %__MODULE__{}
-  
+
   @doc """
   Send a list of DarfPayment structs for creation in the Stark Bank API
-  
+
   ## Parameters (required):
     - `:payments` [list of DarfPayment structs]: list of DarfPayment structs to be created in the API
-  
+
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - list of DarfPayment structs with updated attributes
   """
@@ -81,7 +90,7 @@ defmodule StarkBank.DarfPayment do
       options
     )
   end
-  
+
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -93,16 +102,16 @@ defmodule StarkBank.DarfPayment do
       options
     )
   end
-  
+
   @doc """
   Receive a single DarfPayment struct previously created by the Stark Bank API by passing its id
-  
+
   ## Parameters (required):
     - `:id` [string]: entity unique id. ex: "5656565656565656"
-  
+
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - DarfPayment struct with updated attributes
   """
@@ -110,7 +119,7 @@ defmodule StarkBank.DarfPayment do
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
-  
+
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -118,10 +127,10 @@ defmodule StarkBank.DarfPayment do
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
-  
+
   @doc """
   Receive a stream of DarfPayment entities previously created in the Stark Bank API
-  
+
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
@@ -130,7 +139,7 @@ defmodule StarkBank.DarfPayment do
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ['5656565656565656', '4545454545454545']
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: 'success'
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - stream of DarfPayment structs with updated attributes
   """
@@ -152,7 +161,7 @@ defmodule StarkBank.DarfPayment do
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
-  
+
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -169,11 +178,11 @@ defmodule StarkBank.DarfPayment do
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
-  
+
   @doc """
   Receive a list of up to 100 DarfPayment structs previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
-  
+
   ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
@@ -183,7 +192,7 @@ defmodule StarkBank.DarfPayment do
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ['5656565656565656', '4545454545454545']
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: 'success'
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - list of DarfPayment structs with updated attributes and cursor to retrieve the next page of DarfPayment structs
   """
@@ -196,12 +205,12 @@ defmodule StarkBank.DarfPayment do
       ids: [binary],
       status: binary,
       user: Project.t() | Organization.t()
-  ) :: 
-        {:ok, {binary, [DarfPayment.t()]}} | {:error, [%Error{}]} 
+  ) ::
+        {:ok, {binary, [DarfPayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
-  
+
   @doc """
   Same as page(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -214,7 +223,7 @@ defmodule StarkBank.DarfPayment do
       ids: [binary],
       status: binary,
       user: Project.t() | Organization.t()
-    ) :: 
+    ) ::
         [DarfPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -271,7 +280,7 @@ defmodule StarkBank.DarfPayment do
   def delete!(id, options \\ []) do
     Rest.delete_id!(resource(), id, options)
   end
-  
+
   @doc false
   def resource() do
     {
@@ -279,7 +288,7 @@ defmodule StarkBank.DarfPayment do
       &resource_maker/1
     }
   end
-  
+
   @doc false
   def resource_maker(json) do
     %DarfPayment{
@@ -298,7 +307,7 @@ defmodule StarkBank.DarfPayment do
       nominal_amount: json[:nominal_amount],
       id: json[:id],
       updated: json[:updated] |> Check.datetime(),
-      created: json[:created] |> Check.datetime() 
+      created: json[:created] |> Check.datetime()
     }
   end
 end

@@ -14,7 +14,7 @@ defmodule StarkBank.Event.Attempt do
   When an Event delivery fails, an event attempt will be registered.
   It carries information meant to help you debug event reception issues.
 
-  ## Attributes:
+  ## Attributes (return-only):
     - `:id` [string]: unique id that identifies the delivery attempt. ex: "5656565656565656"
     - `:code` [string]: delivery error code. ex: badHttpStatus, badConnection, timeout
     - `:message` [string]: delivery error full description. ex: "HTTP POST request returned status 404"
@@ -22,8 +22,22 @@ defmodule StarkBank.Event.Attempt do
     - `:webhook_id` [string]: ID of the Webhook that triggered this event. ex: "5656565656565656"
     - `:created` [DateTime]: datetime representing the moment when the attempt was made. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:id, :code, :message, :webhook_id, :event_id, :created]
-  defstruct [:id, :code, :message, :webhook_id, :event_id, :created]
+  @enforce_keys [
+    :id,
+    :code,
+    :message,
+    :webhook_id,
+    :event_id,
+    :created
+  ]
+  defstruct [
+    :id,
+    :code,
+    :message,
+    :webhook_id,
+    :event_id,
+    :created
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -102,7 +116,7 @@ defmodule StarkBank.Event.Attempt do
   end
 
   @doc """
-  Receive a list of up to 100 Attempt objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Attempt objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -125,8 +139,8 @@ defmodule StarkBank.Event.Attempt do
           event_ids: [binary],
           webhook_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Attempt.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Attempt.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -142,7 +156,7 @@ defmodule StarkBank.Event.Attempt do
           event_ids: [binary],
           webhook_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Attempt.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

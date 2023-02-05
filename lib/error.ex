@@ -7,7 +7,7 @@ defmodule StarkBank.Error do
     - "unknownException": a request encounters an error that has not been sent by the API, such as connectivity problems.
     - any other binary: the API has detected a mistake in your request
 
-  ## Attributes:
+  ## Attributes (return-only):
     - `code` [string]: defines de error code. ex: "invalidCredentials"
     - `message` [string]: explains the detected error. ex: "Provided digital signature in the header Access-Signature does not check out. See https://docs.api.starkbank.com/#auth for details."
   """

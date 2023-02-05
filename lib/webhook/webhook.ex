@@ -19,11 +19,18 @@ defmodule StarkBank.Webhook do
     - `:url` [string]: Url that will be notified when an event occurs.
     - `:subscriptions` [list of strings]: list of any non-empty combination of the available services. ex: ["transfer", "invoice", "deposit"]
 
-  ## Attributes:
-    - `:id` [string, default nil]: unique id returned when the webhook is created. ex: "5656565656565656"
+  ## Attributes (return-only):
+    - `:id` [string]: unique id returned when the webhook is created. ex: "5656565656565656"
   """
-  @enforce_keys [:url, :subscriptions]
-  defstruct [:id, :url, :subscriptions]
+  @enforce_keys [
+    :url,
+    :subscriptions
+  ]
+  defstruct [
+    :id,
+    :url,
+    :subscriptions
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -134,9 +141,9 @@ defmodule StarkBank.Webhook do
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
-  
+
   @doc """
-  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -151,8 +158,8 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -164,7 +171,7 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Webhook.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

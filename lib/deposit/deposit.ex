@@ -14,7 +14,7 @@ defmodule StarkBank.Deposit do
   Deposits represent passive cash-ins received by your account from external transfers and payments.
 
   Attributes (return-only):
-    - `:id` [string, default nil]: unique id associated with a Deposit when it is created. ex: "5656565656565656"
+    - `:id` [string]: unique id associated with a Deposit when it is created. ex: "5656565656565656"
     - `:name` [string]: payer name. ex: "Iron Bank S.A."
     - `:tax_id` [string]: payer tax ID (CPF or CNPJ). ex: "012.345.678-90" or "20.018.183/0001-80"
     - `:bank_code` [string]: payer bank code in Brazil. ex: "20018183" or "341"
@@ -23,12 +23,12 @@ defmodule StarkBank.Deposit do
     - `:account_type` [string]: payer bank account type. ex: "checking"
     - `:amount` [integer]: Deposit value in cents. ex: 1234 (= R$ 12.34)
     - `:type` [string]: Type of settlement that originated the deposit. ex: "pix" or "ted"
-    - `:status` [string, default nil]: current Deposit status. ex: "paid" or "registered"
+    - `:status` [string]: current Deposit status. ex: "paid" or "registered"
     - `:tags` [list of strings]: list of strings that are tagging the deposit. ex: ["reconciliationId", "txId"]
-    - `:fee` [integer, default nil]: fee charged by this deposit. ex: 50 (= R$ 0.50)
-    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this deposit (if there are more than one, all but first are reversals). ex: ["19827356981273"]
-    - `:created` [DateTime, default nil]: creation datetime for the Deposit. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime, default nil]:latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
+    - `:fee` [integer]: fee charged by this deposit. ex: 50 (= R$ 0.50)
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this deposit (if there are more than one, all but first are reversals). ex: ["19827356981273"]
+    - `:created` [DateTime]: creation datetime for the Deposit. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime]:latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
   """
   defstruct [
     :id,
@@ -103,11 +103,11 @@ defmodule StarkBank.Deposit do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Deposit.t()]}}
-           | {:error, [Error.t()]}
-           | {:halt, any}
-           | {:suspend, any},
-           any ->
-             any)
+          | {:error, [Error.t()]}
+          | {:halt, any}
+          | {:suspend, any},
+          any ->
+            any)
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
@@ -131,7 +131,7 @@ defmodule StarkBank.Deposit do
   end
 
   @doc """
-  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -158,8 +158,8 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -177,7 +177,7 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Deposit.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

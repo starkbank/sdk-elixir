@@ -28,16 +28,20 @@ defmodule StarkBank.BrcodePayment do
     - `:tags` [list of strings]: list of strings for tagging.
 
   ## Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:name` [string, default nil]: receiver name. ex: "Jon Snow"
-    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
-    - `:type` [string, default nil]: brcode type. ex: "static" or "dynamic"
-    - `:fee` [integer, default nil]: fee charged when a brcode payment is created. ex: 200 (= R$ 2.00)
-    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this BR Code payment. ex: ["19827356981273"]
-    - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime, default nil]: latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
+    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:name` [string]: receiver name. ex: "Jon Snow"
+    - `:status` [string]: current payment status. ex: "success" or "failed"
+    - `:type` [string]: brcode type. ex: "static" or "dynamic"
+    - `:fee` [integer]: fee charged when a brcode payment is created. ex: 200 (= R$ 2.00)
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this BR Code payment. ex: ["19827356981273"]
+    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime]: latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
   """
-  @enforce_keys [:brcode, :tax_id, :description]
+  @enforce_keys [
+    :brcode,
+    :tax_id,
+    :description
+  ]
   defstruct [
     :brcode,
     :tax_id,
@@ -193,7 +197,7 @@ defmodule StarkBank.BrcodePayment do
   end
 
   @doc """
-  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -218,8 +222,8 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -236,11 +240,11 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [BrcodePayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
-  end  
+  end
 
   @doc """
   Update an BrcodePayment by passing id, if it hasn't been paid yet.

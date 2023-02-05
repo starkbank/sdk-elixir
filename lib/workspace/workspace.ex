@@ -23,7 +23,8 @@ defmodule StarkBank.Workspace do
     - `:allowed_tax_ids` [list of strings, default []]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
 
   ## Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when the workspace is created. ex: "5656565656565656"
+    - `:id` [string]: unique id returned when the workspace is created. ex: "5656565656565656"
+    - `:status` [string]: current Workspace status. Options: "active", "closed", "frozen" or "blocked"
   """
   @enforce_keys [
     :username,
@@ -34,6 +35,7 @@ defmodule StarkBank.Workspace do
     :name,
     :allowed_tax_ids,
     :id,
+    :status
   ]
 
   @type t() :: %__MODULE__{}
@@ -46,6 +48,7 @@ defmodule StarkBank.Workspace do
     - `:name` [string]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
 
   ## Options:
+    - `:allowed_tax_ids` [list of strings, default []]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
     - `:user` [Organization]: Organization struct with nil workspace_id. Only necessary if default organization has not been set in configs.
 
   ## Return:
@@ -153,7 +156,7 @@ defmodule StarkBank.Workspace do
   end
 
   @doc """
-  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -172,8 +175,8 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -187,7 +190,7 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Workspace.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -199,10 +202,14 @@ defmodule StarkBank.Workspace do
   ## Parameters (required):
     - `:id` [string]: Invoice id. ex: '5656565656565656'
 
+  ## Parameters (conditionally required):
+    - `:picture_type` [string]: picture MIME type. This parameter will be required if the picture parameter is informed ex: "image/png" or "image/jpeg"
+
   ## Parameters (optional):
     - `:username` [string, default nil]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbank-workspace"
     - `:name` [string, default nil]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
     - `:allowed_tax_ids` [list of strings, default nil]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
+    - `:status` [string, default nil]: current Workspace status. Options: "active" or "blocked"
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -235,7 +242,8 @@ defmodule StarkBank.Workspace do
       username: json[:username],
       name: json[:name],
       allowed_tax_ids: json[:allowed_tax_ids],
-      id: json[:id]
+      id: json[:id],
+      status: json[:status]
     }
   end
 end

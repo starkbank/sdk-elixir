@@ -13,6 +13,13 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- DynamicBrcode resource
+- status attribute to Workspace resource
+- rules attribute to BrcodePayment resource
+- BrcodePayment.Rule sub-resource
+- rules attribute to Transfer resource
+- Transfer.Rule sub-resource
 
 ## [2.6.2] - 2021-11-10
 ### Changed

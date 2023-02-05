@@ -37,15 +37,18 @@ defmodule StarkBank.PaymentRequest do
     - `:tags` [list of strings]: list of strings for tagging
 
     ## Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when PaymentRequest is created. ex: "5656565656565656"
-    - `:amount` [integer, default nil]: PaymentRequest amount. ex: 100000 = R$1.000,00
-    - `:status` [string, default nil]: current PaymentRequest status.ex: "pending" or "approved"
-    - `:actions` [list of maps, default nil]: list of actions that are affecting this PaymentRequest. ex: [%{"type": "member", "id": "56565656565656, "action": "requested"}]
-    - `:updated` [DateTime, default nil]: latest update datetime for the PaymentRequest. ex: 2020-12-31
-    - `:created` [DateTime, default nil]: creation datetime for the PaymentRequest. ex: 2020-12-31
+    - `:id` [string]: unique id returned when PaymentRequest is created. ex: "5656565656565656"
+    - `:amount` [integer]: PaymentRequest amount. ex: 100000 = R$1.000,00
+    - `:status` [string]: current PaymentRequest status.ex: "pending" or "approved"
+    - `:actions` [list of maps]: list of actions that are affecting this PaymentRequest. ex: [%{"type": "member", "id": "56565656565656, "action": "requested"}]
+    - `:updated` [DateTime]: latest update datetime for the PaymentRequest. ex: 2020-12-31
+    - `:created` [DateTime]: creation datetime for the PaymentRequest. ex: 2020-12-31
     """
 
-    @enforce_keys [:center_id, :payment]
+    @enforce_keys [
+        :center_id,
+        :payment
+    ]
     defstruct [
         :id,
         :payment,
@@ -160,7 +163,7 @@ defmodule StarkBank.PaymentRequest do
     end
 
     @doc """
-    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page. 
+    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page.
     Use this function instead of query if you want to manually page your requests.
 
     ## Options:
@@ -191,8 +194,8 @@ defmodule StarkBank.PaymentRequest do
             tags: [binary],
             ids: [binary],
             user: Project.t() | Organization.t()
-            ) :: 
-            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]} 
+            ) ::
+            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]}
     def page(options \\ []) do
         Rest.get_page(resource(), options)
     end

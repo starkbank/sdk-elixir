@@ -38,14 +38,14 @@ defmodule StarkBank.Boleto do
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
-    - `:id` [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
-    - `:fee` [integer, default nil]: fee charged when Boleto is paid. ex: 200 (= R$ 2.00)
-    - `:line` [string, default nil]: generated Boleto line for payment. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
-    - `:bar_code` [string, default nil]: generated Boleto bar-code for payment. ex: "34195819600000000621090063571277307144464000"
-    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
-    - `:status` [string, default nil]: current Boleto status. ex: "registered" or "paid"
-    - `:created` [DateTime, default nil]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:our_number` [string, default nil]: reference number registered at the settlement bank. ex: "10131474"
+    - `:id` [string]: unique id returned when Boleto is created. ex: "5656565656565656"
+    - `:fee` [integer]: fee charged when Boleto is paid. ex: 200 (= R$ 2.00)
+    - `:line` [string]: generated Boleto line for payment. ex: "34191.09008 63571.277308 71444.640008 5 81960000000062"
+    - `:bar_code` [string]: generated Boleto bar-code for payment. ex: "34195819600000000621090063571277307144464000"
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
+    - `:status` [string]: current Boleto status. ex: "registered" or "paid"
+    - `:created` [DateTime]: creation datetime for the Boleto. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:our_number` [string]: reference number registered at the settlement bank. ex: "10131474"
   """
   @enforce_keys [
     :amount,
@@ -199,11 +199,11 @@ defmodule StarkBank.Boleto do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Boleto.t()]}}
-           | {:error, [Error.t()]}
-           | {:halt, any}
-           | {:suspend, any},
-           any ->
-             any)
+          | {:error, [Error.t()]}
+          | {:halt, any}
+          | {:suspend, any},
+          any ->
+            any)
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
@@ -226,7 +226,7 @@ defmodule StarkBank.Boleto do
   end
 
   @doc """
-  Receive a list of up to 100 Boleto objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Boleto objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -251,8 +251,8 @@ defmodule StarkBank.Boleto do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Boleto.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Boleto.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -269,7 +269,7 @@ defmodule StarkBank.Boleto do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Boleto.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

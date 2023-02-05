@@ -18,14 +18,24 @@ defmodule StarkBank.BoletoHolmes.Log do
   user, but it can be retrieved to check additional information
   on the BoletoHolmes.
 
-  ## Attributes:
+  ## Attributes (return-only):
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:holmes` [BoletoHolmes]: BoletoHolmes entity to which the log refers to.
     - `:type` [string]: type of the BoletoHolmes event which triggered the log creation. ex: "solving" or "solved"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:id, :holmes, :type, :created]
-  defstruct [:id, :holmes, :type, :created]
+  @enforce_keys [
+    :id,
+    :holmes,
+    :type,
+    :created
+]
+  defstruct [
+    :id,
+    :holmes,
+    :type,
+    :created
+]
 
   @type t() :: %__MODULE__{}
 
@@ -77,11 +87,11 @@ defmodule StarkBank.BoletoHolmes.Log do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Log.t()]}}
-           | {:error, [Error.t()]}
-           | {:halt, any}
-           | {:suspend, any},
-           any ->
-             any)
+          | {:error, [Error.t()]}
+          | {:halt, any}
+          | {:suspend, any},
+          any ->
+            any)
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
@@ -103,7 +113,7 @@ defmodule StarkBank.BoletoHolmes.Log do
   end
 
   @doc """
-  Receive a list of up to 100 BoletoHolmes.Log objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 BoletoHolmes.Log objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -126,8 +136,8 @@ defmodule StarkBank.BoletoHolmes.Log do
           types: [binary],
           holmes_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -143,11 +153,11 @@ defmodule StarkBank.BoletoHolmes.Log do
           types: [binary],
           holmes_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Log.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
-  end  
+  end
 
   @doc false
   def resource() do

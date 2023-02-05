@@ -15,13 +15,18 @@ defmodule StarkBank.Institution do
     (used for Pix) for the institutions. Either of these codes may be empty if the institution is not registered on
     that Central Bank service.
 
-    ## Attributes:
+    ## Attributes (return-only):
       - `:display_name` [string]: short version of the institution name that should be displayed to end users. ex: "Stark Bank"
       - `:name` [string]: full version of the institution name. ex: "Stark Bank S.A."
       - `:spi_code` [string]: SPI code used to identify the institution on Pix transactions. ex: "20018183"
       - `:str_code` [string]: STR code used to identify the institution on TED transactions. ex: "123"
     """
-    defstruct [:display_name, :name, :spi_code, :str_code]
+    defstruct [
+      :display_name,
+      :name,
+      :spi_code,
+      :str_code
+    ]
 
     @type t() :: %__MODULE__{}
 
@@ -46,11 +51,11 @@ defmodule StarkBank.Institution do
             user: Project.t() | Organization.t()
           ) ::
             ({:cont, {:ok, [Institution.t()]}}
-             | {:error, [Error.t()]}
-             | {:halt, any}
-             | {:suspend, any},
-             any ->
-               any)
+            | {:error, [Error.t()]}
+            | {:halt, any}
+            | {:suspend, any},
+            any ->
+              any)
     def query(options \\ []) do
       case Rest.get_page(resource(), options) do
         {:ok, {_cursor, entities}} -> {:ok, entities}

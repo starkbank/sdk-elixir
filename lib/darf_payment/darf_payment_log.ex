@@ -24,7 +24,13 @@ defmodule StarkBank.DarfPayment.Log do
     - `:type` [string]: tax type. ex: "das"
     - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [:id, :payment, :errors, :type, :created]
+  @enforce_keys [
+    :id,
+    :payment,
+    :errors,
+    :type,
+    :created
+  ]
   defstruct [
     :id,
     :payment,

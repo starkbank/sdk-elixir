@@ -30,7 +30,7 @@ defmodule StarkBank.Event do
   Events cannot be created, but may be retrieved from the Stark Bank API to
   list all generated updates on entities.
 
-  ## Attributes:
+  ## Attributes (return-only):
     - `:id` [string]: unique id returned when the event is created. ex: "5656565656565656"
     - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log, UtilityPayment.Log or TaxPayment.Log)
     - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
@@ -38,7 +38,14 @@ defmodule StarkBank.Event do
     - `:subscription` [string]: service that triggered this event. ex: "transfer", "utility-payment"
     - `workspace_id` [string]: ID of the Workspace that generated this event. Mostly used when multiple Workspaces have Webhooks registered to the same endpoint. ex: "4545454545454545"
   """
-  defstruct [:id, :log, :created, :is_delivered, :subscription, :workspace_id]
+  defstruct [
+    :id,
+    :log,
+    :created,
+    :is_delivered,
+    :subscription,
+    :workspace_id
+  ]
 
   @type t() :: %__MODULE__{}
 
@@ -113,7 +120,7 @@ defmodule StarkBank.Event do
   end
 
   @doc """
-  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -134,8 +141,8 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -150,7 +157,7 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Event.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

@@ -31,6 +31,7 @@ is as easy as sending a text message to your client!
     - [DictKeys](#get-dict-key): Pix Key queries to use with Transfers
     - [Institutions](#query-bacen-institutions): Instutitions recognized by the Central Bank
     - [Invoices](#create-invoices): Reconciled receivables (dynamic PIX QR Codes)
+    - [DynamicBrcode](#create-dynamicbrcodes): Simplified reconciled receivables (dynamic Pix QR Codes)
     - [Deposits](#query-deposits): Other cash-ins (static PIX QR Codes, manual PIX, etc)
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
@@ -38,7 +39,9 @@ is as easy as sending a text message to your client!
     - [BoletoPayments](#pay-a-boleto): Pay Boletos
     - [UtilityPayments](#create-utility-payments): Pay Utility bills (water, light, etc.)
     - [TaxPayments](#create-tax-payments): Pay taxes
+    - [DarfPayments](#create-darf-payment): Pay DARFs
     - [PaymentPreviews](#preview-payment-information-before-executing-the-payment): Preview all sorts of payments
+    - [PaymentRequest](#create-payment-requests-to-be-approved-by-authorized-people-in-a-cost-center): Request a payment approval to a cost center
     - [Webhooks](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage webhook events
     - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
@@ -388,7 +391,13 @@ transfers = StarkBank.Transfer.create!(
         account_number: "10000-0",
         tax_id: "012.345.678-90",
         name: "Tony Stark",
-        tags: ["iron", "suit"]
+        tags: ["iron", "suit"],
+        rules: [
+        %StarkBank.Transfer.Rule{
+          keu: "resendingLimit",
+          value: 5
+        }
+      ]
     },
     %StarkBank.Transfer{
         amount: 200,
@@ -399,7 +408,13 @@ transfers = StarkBank.Transfer.create!(
         external_id: "my-internal-id-12345",
         tax_id: "012.345.678-90",
         name: "Jon Snow",
-        scheduled: Date.utc_today |> Date.add(30)
+        scheduled: Date.utc_today |> Date.add(30),
+        rules: [
+        %StarkBank.Transfer.Rule{
+          keu: "resendingLimit",
+          value: 5
+        }
+      ]
     }
 ]) |> IO.inspect
 ```
@@ -597,7 +612,9 @@ invoice = StarkBank.Invoice.update!("6750458353811456", status: "canceled")
 ## Update an invoice
 
 You can update an invoice's amount, due date and expiration by its id.
-Note that this is not possible if it has been paid already.
+If the invoice has already been paid, only the amount can be
+decreased, which will result in a payment reversal. To fully reverse 
+the invoice, pass amount: 0.
 
 ```elixir
 invoice = StarkBank.Invoice.update!(
@@ -667,18 +684,74 @@ payment_information = StarkBank.Invoice.payment!("5155165527080960")
   |> IO.inspect
 ```
 
+## Create DynamicBrcodes
+
+You can create simplified dynamic QR Codes to receive money using Pix transactions. 
+When a DynamicBrcode is paid, a Deposit is created with the tags parameter containing the character “dynamic-brcode/” followed by the DynamicBrcode’s uuid "dynamic-brcode/{uuid}" for conciliation.
+
+The differences between an Invoice and the DynamicBrcode are the following:
+
+|                   | Invoice | DynamicBrcode |
+|-------------------|:-------:|:-------------:|
+| Expiration        |    ✓    |       ✓       | 
+| Due, fine and fee |    ✓    |       X       | 
+| Discount          |    ✓    |       X       | 
+| Description       |    ✓    |       X       |
+| Can be updated    |    ✓    |       X       |
+
+**Note:** In order to check if a BR code has expired, you must first calculate its expiration date (add the expiration to the creation date). 
+**Note:** To know if the BR code has been paid, you need to query your Deposits by the tag "dynamic-brcode/{uuid}" to check if it has been paid.
+
+```elixir
+brcode = StarkBank.DynamicBrcode.create!(
+  [
+    %StarkBank.DynamicBrcode{
+      amount: 400000,
+      expiration: 123456789,
+      tags: [
+        "War supply",
+        "Invoice #1234"
+      ]
+    }
+  ]
+) |> IO.inspect()
+```
+
+**Note**: Instead of using DynamicBrcode objects, you can also pass each brcode element in dictionary format
+
+## Get a DynamicBrcode
+
+After its creation, information on a DynamicBrcode may be retrieved by its uuid.
+
+```elixir
+brcode = StarkBank.DynamicBrcode.get!("6750458353811456")
+  |> IO.inspect
+```
+
+## Query DynamicBrcodes
+
+You can get a list of created DynamicBrcodes given some filters.
+
+```elixir
+    for brcode <- StarkBank.DynamicBrcode.query!(
+      after: "2020-10-01",
+      before: "2020-10-10",
+      limit: 1
+    ) do
+      brcode |> IO.inspect
+    end
+```
+
 ## Query deposits
 
 You can get a list of created deposits given some filters.
 
 ```elixir
-    for deposit <- StarkBank.Deposit.query!(
-      after: "2020-10-01",
-      before: "2020-10-10",
-      limit: 1
-    ) do
-      deposit |> IO.inspect
-    end
+brcodes = StarkBank.DynamicBrcode.query!(
+  after: Date.utc_today |> Date.add(-2),
+  before: Date.utc_today |> Date.add(-1),
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
 ```
 
 ## Get a deposit
@@ -884,6 +957,12 @@ payments = StarkBank.BrcodePayment.create!(
         tax_id: "012.345.678-90",
         description: "paying the bill",
         tags: ["invoice#123", "bills"],
+        rules: [
+        %StarkBank.BrcodePayment.Rule{
+          keu: "resendingLimit",
+          value: 5
+        }
+      ]
     }
   ]
 ) |> IO.inspect
@@ -1232,6 +1311,86 @@ log = StarkBank.TaxPayment.Log.get!("1902837198237992") |> IO.inspect
 **Note**: Some taxes can't be payed with bar codes. Since they have specific parameters, each one of them has its own
 resource and routes, which are all analogous to the TaxPayment resource. The ones we currently support are:
 - DarfPayment, for DARFs
+
+## Create DARF payment
+
+If you want to manually pay DARFs without barcodes, you may create DarfPayments:
+
+```elixir
+payments = StarkBank.DarfPayment.create!(
+  [
+    %StarkBank.DarfPayment{
+      revenue_code: "1240",
+      tax_id: "012.345.678-90",
+      competence: "2020-09-01",
+      reference_number: "2340978970",
+      nominal_amount: 1234,
+      fine_amount: 12,
+      interest_amount: 34,
+      tags: ["DARF", "making money"],
+      description: "take my money",
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using DarfPayment objects, you can also pass each payment element in dictionary format
+
+## Query DARF payments
+
+To search for DARF payments using filters, run:
+
+```elixir
+payments = StarkBank.DarfPayment.query(limit: 5) |> IO.inspect
+```
+
+## Get DARF payment
+
+You can get a specific DARF payment by its id:
+
+```elixir
+payment = StarkBank.DarfPayment.get!("5155165527080960") |> IO.inspect
+```
+
+## Get DARF payment PDF
+
+After its creation, a DARF payment PDF may also be retrieved by its id. 
+
+```elixir
+pdf = StarkBank.DarfPayment.pdf!("5155165527080960")
+file = File.open!("tmp/tax-payment.pdf", [:write])
+IO.binwrite(file, pdf)
+File.close(file)
+```
+
+Be careful not to accidentally enforce any encoding on the raw pdf content,
+as it may yield abnormal results in the final file, such as missing images
+and strange characters.
+
+## Delete DARF payment
+
+You can also cancel a DARF payment by its id.
+Note that this is not possible if it has been processed already.
+
+```elixir
+payment = StarkBank.DarfPayment.delete!("5155165527080960") |> IO.inspect
+```
+
+## Query DARF payment logs
+
+You can search for payment logs by specifying filters. Use this to understand each payment life cycle.
+
+```elixir
+logs = StarkBank.DarfPayment.Log.query!(limit: 5) |> IO.inspect
+```
+
+## Get DARF payment log
+
+If you want to get a specific payment log by its id, just run:
+
+```elixir
+log = StarkBank.DarfPayment.Log.get!("1902837198237992") |> IO.inspect
+```
 
 ## Preview payment information before executing the payment
 

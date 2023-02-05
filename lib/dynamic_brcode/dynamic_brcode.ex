@@ -1,42 +1,48 @@
-defmodule StarkBank.BoletoHolmes do
-  alias __MODULE__, as: BoletoHolmes
+defmodule StarkBank.DynamicBrcode do
+  alias __MODULE__, as: DynamicBrcode
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
+  alias StarkBank.DynamicBrcode.Payment
 
   @moduledoc """
-  Groups BoletoHolmes related functions
+  Groups DynamicBrcode related functions
   """
 
   @doc """
-  When you initialize a BoletoHolmes, the entity will not be automatically
-  created in the Stark Bank API. The 'create' function sends the objects
+  When you initialize a DynamicBrcode, the entity will not be automatically
+  sent to the Stark Bank API. The 'create' function sends the objects
   to the Stark Bank API and returns the list of created objects.
+  DynamicBrcodes are conciliated BR Codes that can be used to receive Pix transactions in a convenient way.
+  When a DynamicBrcode is paid, a Deposit is created with the tags parameter containing the character “dynamic-brcode/” followed by the DynamicBrcode’s uuid "dynamic-brcode/{uuid}" for conciliation.
+  Additionally, all tags passed on the DynamicBrcode will be transferred to the respective Deposit resource.
 
   ## Parameters (required):
-    - `:boleto_id` [string]: unique id of the investigated boleto. ex: "5656565656565656"
+    - `:amount` [integer]: DynamicBrcode value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
 
   ## Parameters (optional):
-    - `:tags` [list of strings]: list of strings for tagging
+    - `:expiration` [integer, default 59 days]: time interval in seconds between due date and expiration date. ex 123456789
+    - `:tags` [list of strings, default nil]: list of strings for tagging
 
-  ## Attributes (return-only):
-    - `:id` [string]: unique id returned when BoletoHolmes is created. ex: "5656565656565656"
-    - `:status` [string]: current BoletoHolmes status. ex: "solving" or "solved"
-    - `:result` [string]: result of boleto status investigation. ex: "paid" or "registered"
-    - `:created` [DateTime]: creation datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime]: latest updated datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
+    ## Attributes (return-only):
+    - `:id` [string]: id returned on creation, this is the BR code. ex: "00020126360014br.gov.bcb.pix0114+552840092118152040000530398654040.095802BR5915Jamie Lannister6009Sao Paulo620705038566304FC6C"
+    - `:uuid` [string]: unique uuid returned when the DynamicBrcode is created. ex: "4e2eab725ddd495f9c98ffd97440702d"
+    - `:picture_url` [string]: public QR Code (png image) URL. "https://sandbox.api.starkbank.com/v2/dynamic-brcode/d3ebb1bd92024df1ab6e5a353ee799a4.png"
+    - `:created` [DateTime]: creation datetime for the DynamicBrcode. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime]: latest update datetime for the DynamicBrcode. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
   @enforce_keys [
-    :boleto_id
+    :amount
   ]
   defstruct [
-    :boleto_id,
+    :amount,
+    :expiration,
     :tags,
     :id,
-    :status,
-    :result,
+    :uuid,
+    :picture_url,
     :created,
     :updated
   ]
@@ -44,23 +50,23 @@ defmodule StarkBank.BoletoHolmes do
   @type t() :: %__MODULE__{}
 
   @doc """
-  Send a list of BoletoHolmes objects for creation in the Stark Bank API
+  Send a list of DynamicBrcode structs for creation in the Stark Bank API
 
   ## Parameters (required):
-    - `holmes` [list of BoletoHolmes structs]: list of BoletoHolmes structs to be created in the API
+    - `brcodes` [list of DynamicBrcode structs]: list of DynamicBrcode structs to be created in the API
 
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
-    - list of BoletoHolmes structs with updated attributes
+    - list of DynamicBrcode structs with updated attributes
   """
-  @spec create([BoletoHolmes.t() | map()], user: Project.t() | Organization.t() | nil) ::
-          {:ok, [BoletoHolmes.t()]} | {:error, [Error.t()]}
-  def create(holmes, options \\ []) do
+  @spec create([DynamicBrcode.t() | map()], user: Project.t() | Organization.t() | nil) ::
+          {:ok, [DynamicBrcode.t()]} | {:error, [Error.t()]}
+  def create(brcodes, options \\ []) do
     Rest.post(
       resource(),
-      holmes,
+      brcodes,
       options
     )
   end
@@ -68,17 +74,17 @@ defmodule StarkBank.BoletoHolmes do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([BoletoHolmes.t() | map()], user: Project.t() | Organization.t() | nil) :: any
-  def create!(holmes, options \\ []) do
+  @spec create!([DynamicBrcode.t() | map()], user: Project.t() | Organization.t() | nil) :: any
+  def create!(brcodes, options \\ []) do
     Rest.post!(
       resource(),
-      holmes,
+      brcodes,
       options
     )
   end
 
   @doc """
-  Receive a single BoletoHolmes struct previously created in the Stark Bank API by passing its id
+  Receive a single DynamicBrcode struct previously created in the Stark Bank API by passing its id
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
@@ -87,9 +93,9 @@ defmodule StarkBank.BoletoHolmes do
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
-    - BoletoHolmes struct with updated attributes
+    - DynamicBrcode struct with updated attributes
   """
-  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, BoletoHolmes.t()} | {:error, [%Error{}]}
+  @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, DynamicBrcode.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
     Rest.get_id(resource(), id, options)
   end
@@ -97,26 +103,24 @@ defmodule StarkBank.BoletoHolmes do
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: BoletoHolmes.t()
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: DynamicBrcode.t()
   def get!(id, options \\ []) do
     Rest.get_id!(resource(), id, options)
   end
 
   @doc """
-  Receive a stream of BoletoHolmes structs previously created in the Stark Bank API
+  Receive a stream of DynamicBrcode structs previously created in the Stark Bank API
 
   ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
-    - `:status` [string, default nil]: filter for status of retrieved structs. ex: "solving" or "solved"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:boleto_id` [string, default nil]: filter for holmes that investigate a specific boleto by its ID. ex: "5656565656565656"
+    - `:uuids` [list of strings, default nil]: list of uuids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
-    - stream of BoletoHolmes structs with updated attributes
+    - stream of DynamicBrcode structs with updated attributes
   """
   @spec query(
           limit: integer,
@@ -124,11 +128,10 @@ defmodule StarkBank.BoletoHolmes do
           before: Date.t() | binary,
           status: binary,
           tags: [binary],
-          ids: [binary],
-          boleto_id: binary,
+          uuids: [binary],
           user: Project.t() | Organization.t()
         ) ::
-          ({:cont, {:ok, [BoletoHolmes.t()]}}
+          ({:cont, {:ok, [DynamicBrcode.t()]}}
           | {:error, [Error.t()]}
           | {:halt, any}
           | {:suspend, any},
@@ -145,19 +148,17 @@ defmodule StarkBank.BoletoHolmes do
           limit: integer,
           after: Date.t() | binary,
           before: Date.t() | binary,
-          status: binary,
           tags: [binary],
-          ids: [binary],
-          boleto_id: binary,
+          uuids: [binary],
           user: Project.t() | Organization.t()
         ) ::
-          ({:cont, [BoletoHolmes.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+          ({:cont, [DynamicBrcode.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 BoletoHolmes objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 DynamicBrcode objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -165,27 +166,23 @@ defmodule StarkBank.BoletoHolmes do
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
-    - `:status` [string, default nil]: filter for status of retrieved structs. ex: "solving" or "solved"
     - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
-    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
-    - `:boleto_id` [string, default nil]: filter for holmes that investigate a specific boleto by its ID. ex: "5656565656565656"
+    - `:uuids` [list of strings, default nil]: list of uuids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
-    - list of BoletoHolmes structs with updated attributes and cursor to retrieve the next page of BoletoHolmes objects
+    - list of DynamicBrcode structs with updated attributes and cursor to retrieve the next page of DynamicBrcode objects
   """
   @spec page(
           cursor: binary,
           limit: integer,
           after: Date.t() | binary,
           before: Date.t() | binary,
-          status: binary,
           tags: [binary],
-          ids: [binary],
-          boleto_id: binary,
+          uuids: [binary],
           user: Project.t() | Organization.t()
           ) ::
-            {:ok, {binary, [BoletoHolmes.t()]}} | {:error, [%Error{}]}
+            {:ok, {binary, [DynamicBrcode.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -198,13 +195,11 @@ defmodule StarkBank.BoletoHolmes do
           limit: integer,
           after: Date.t() | binary,
           before: Date.t() | binary,
-          status: binary,
           tags: [binary],
-          ids: [binary],
-          boleto_id: binary,
+          uuids: [binary],
           user: Project.t() | Organization.t()
           ) ::
-            [BoletoHolmes.t()]
+            [DynamicBrcode.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
   end
@@ -212,19 +207,20 @@ defmodule StarkBank.BoletoHolmes do
   @doc false
   def resource() do
     {
-      "BoletoHolmes",
+      "DynamicBrcode",
       &resource_maker/1
     }
   end
 
   @doc false
   def resource_maker(json) do
-    %BoletoHolmes{
-      boleto_id: json[:boleto_id],
+    %DynamicBrcode{
+      amount: json[:amount],
+      expiration: json[:expiration],
       tags: json[:tags],
-      status: json[:status],
-      result: json[:result],
       id: json[:id],
+      uuid: json[:uuid],
+      picture_url: json[:picture_url],
       created: json[:created] |> Check.datetime(),
       updated: json[:updated] |> Check.datetime()
     }
