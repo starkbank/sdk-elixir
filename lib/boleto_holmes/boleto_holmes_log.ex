@@ -23,18 +23,21 @@ defmodule StarkBank.BoletoHolmes.Log do
     - `:holmes` [BoletoHolmes]: BoletoHolmes entity to which the log refers to.
     - `:type` [string]: type of the BoletoHolmes event which triggered the log creation. ex: "solving" or "solved"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime]: latest update datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [
     :id,
     :holmes,
     :type,
     :created
+    :updated
 ]
   defstruct [
     :id,
     :holmes,
     :type,
     :created
+    :updated
 ]
 
   @type t() :: %__MODULE__{}
@@ -173,6 +176,7 @@ defmodule StarkBank.BoletoHolmes.Log do
       id: json[:id],
       holmes: json[:holmes] |> API.from_api_json(&BoletoHolmes.resource_maker/1),
       created: json[:created] |> Check.datetime(),
+      updated: json[:updated] |> Check.datetime(),
       type: json[:type]
     }
   end

@@ -32,6 +32,7 @@ defmodule StarkBank.TaxPayment do
     - `:status` [string]: current payment status. ex: "success" or "failed"
     - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:fee` [integer]: fee charged when the tax payment is created. ex: 200 (= R$ 2.00)
+    - `:transaction_ids` [list of strings]: list of strings for taggingledger transaction ids linked to this TaxPayment. ex: ["19827356981273"]
     - `:updated` [string]: latest update datetime for the payment. ex: "2020-03-10 10:30:00.000"
     - `:created` [string]: creation datetime for the payment. ex: "2020-03-10 10:30:00.000"
   """
@@ -50,6 +51,7 @@ defmodule StarkBank.TaxPayment do
     :updated,
     :created,
     :fee,
+    :transaction_ids,
     :id
   ]
 
@@ -287,6 +289,7 @@ defmodule StarkBank.TaxPayment do
       status: json[:status],
       type: json[:type],
       fee: json[:fee],
+      transaction_ids: json[:transaction_ids],
       id: json[:id],
       created: json[:created] |> Check.datetime(),
       updated: json[:updated] |> Check.datetime()

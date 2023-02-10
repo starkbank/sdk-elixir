@@ -25,6 +25,10 @@ defmodule StarkBank.Workspace do
   ## Attributes (return-only):
     - `:id` [string]: unique id returned when the workspace is created. ex: "5656565656565656"
     - `:status` [string]: current Workspace status. Options: "active", "closed", "frozen" or "blocked"
+    - `:organization_id` [string]: unique organization id returned when the organization is created. ex: "5656565656565656"
+    - `:picture_url` [string]: public workspace image (png) URL. ex: "https://storage.googleapis.com/api-ms-workspace-sbx.appspot.com/pictures/workspace/6284441752174592.png?20230208220551"
+    - `:created` [DateTime]: creation datetime for the balance. ex: ~U[2020-03-26 19:32:35.418698Z]
+
   """
   @enforce_keys [
     :username,
@@ -35,7 +39,10 @@ defmodule StarkBank.Workspace do
     :name,
     :allowed_tax_ids,
     :id,
-    :status
+    :status,
+    :organization_id,
+    :picture_url,
+    :created,
   ]
 
   @type t() :: %__MODULE__{}
@@ -244,6 +251,9 @@ defmodule StarkBank.Workspace do
       allowed_tax_ids: json[:allowed_tax_ids],
       id: json[:id],
       status: json[:status]
+      organization_id: json[:organization_id]
+      picture_url: json[:picture_url],
+      created: json[:created] |> Check.datetime()
     }
   end
 end

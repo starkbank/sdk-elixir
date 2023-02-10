@@ -26,6 +26,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (optional):
     - `:scheduled` [Date, DateTime or string, default now]: payment scheduled date or datetime. ex: "2020-12-13T18:36:18.219000+00:00"
     - `:tags` [list of strings]: list of strings for tagging.
+    - `:rules` [list of BrcodePayment.Rules]: list of BrcodePayment.Rule objects for modifying payment behavior.
 
   ## Attributes (return-only):
     - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
@@ -49,6 +50,7 @@ defmodule StarkBank.BrcodePayment do
     :amount,
     :scheduled,
     :tags,
+    :rules,
     :id,
     :name,
     :status,
@@ -291,6 +293,7 @@ defmodule StarkBank.BrcodePayment do
       scheduled: json[:scheduled] |> Check.datetime(),
       tags: json[:tags],
       id: json[:id],
+      rules: json[:rules],
       name: json[:name],
       status: json[:status],
       type: json[:type],

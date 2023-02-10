@@ -39,6 +39,7 @@ defmodule StarkBank.PaymentRequest do
     ## Attributes (return-only):
     - `:id` [string]: unique id returned when PaymentRequest is created. ex: "5656565656565656"
     - `:amount` [integer]: PaymentRequest amount. ex: 100000 = R$1.000,00
+    - `:description` [string]: payment request description. ex: "Tony Stark's Suit"
     - `:status` [string]: current PaymentRequest status.ex: "pending" or "approved"
     - `:actions` [list of maps]: list of actions that are affecting this PaymentRequest. ex: [%{"type": "member", "id": "56565656565656, "action": "requested"}]
     - `:updated` [DateTime]: latest update datetime for the PaymentRequest. ex: 2020-12-31
@@ -56,6 +57,7 @@ defmodule StarkBank.PaymentRequest do
         :due,
         :tags,
         :amount,
+        :description,
         :status,
         :actions,
         :updated,
@@ -263,6 +265,7 @@ defmodule StarkBank.PaymentRequest do
             type: json[:type],
             tags: json[:tags],
             amount: json[:amount],
+            description: json[:description],
             status: json[:status],
             actions: json[:actions],
             updated: json[:updated] |> Check.datetime(),

@@ -35,6 +35,7 @@ defmodule StarkBank.DarfPayment do
     - `:status` [string]: current payment status. ex: "success" or "failed"
     - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:fee` [integer]: fee charged when the tax payment is created. ex: 200 (= R$ 2.00)
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this DarfPayment. ex: ["19827356981273"]
     - `:updated` [DateTime]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
     - `:created` [DateTime]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
@@ -61,6 +62,8 @@ defmodule StarkBank.DarfPayment do
     :scheduled,
     :status,
     :amount,
+    :fee,
+    :transaction_ids,
     :nominal_amount,
     :id,
     :updated,
@@ -304,6 +307,8 @@ defmodule StarkBank.DarfPayment do
       scheduled: json[:scheduled] |> Check.datetime(),
       status: json[:status],
       amount: json[:amount],
+      fee: json[:fee],
+      transaction_ids: json[:transaction_ids],
       nominal_amount: json[:nominal_amount],
       id: json[:id],
       updated: json[:updated] |> Check.datetime(),

@@ -31,7 +31,10 @@ defmodule StarkBank.UtilityPayment do
     - `:status` [string]: current payment status. ex: "success" or "failed"
     - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:fee` [integer]: fee charged when a utility payment is created. ex: 200 (= R$ 2.00)
+    - `:type` [string]: payment type. ex: "utility"
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this UtilityPayment. ex: ["19827356981273"]
     - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [
     :description
@@ -46,7 +49,10 @@ defmodule StarkBank.UtilityPayment do
     :status,
     :amount,
     :fee,
-    :created
+    :type,
+    :transaction_ids,
+    :created,
+    :updated,
   ]
 
   @type t() :: %__MODULE__{}
@@ -282,7 +288,10 @@ defmodule StarkBank.UtilityPayment do
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
+      type: json[:type],
+      transaction_ids: json[:transaction_ids],
       created: json[:created] |> Check.datetime()
+      updated: json[:updated] |> Check.datetime()
     }
   end
 end

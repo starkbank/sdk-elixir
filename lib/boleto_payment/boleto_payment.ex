@@ -24,14 +24,15 @@ defmodule StarkBank.BoletoPayment do
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
 
   ## Parameters (optional):
+    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:scheduled` [Date or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
     - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
     - `:status` [string]: current payment status. ex: "success" or "failed"
-    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:fee` [integer]: fee charged when a boleto payment is created. ex: 200 (= R$ 2.00)
+    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this BoletoPayment. ex: ["19827356981273"]
     - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [
@@ -49,6 +50,7 @@ defmodule StarkBank.BoletoPayment do
     :status,
     :amount,
     :fee,
+    :transaction_ids,
     :created
   ]
 
@@ -286,6 +288,7 @@ defmodule StarkBank.BoletoPayment do
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
+      transaction_ids: json[:transaction_ids],
       created: json[:created] |> Check.datetime()
     }
   end
