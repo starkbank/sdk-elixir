@@ -70,7 +70,7 @@ defmodule StarkBank.PaymentRequest do
     @doc """
     Sends a list of PaymentRequests structs for creating in the Stark Bank API
 
-    ## Paramenters (required):
+    ## Parameters (required):
     - `payment_requests` [list of PaymentRequest structs]: list of PaymentRequest objects to be created in the API
 
     ## Options:

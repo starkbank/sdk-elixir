@@ -222,9 +222,17 @@ defmodule StarkBank.Workspace do
   ## Return:
     - target Workspace with updated attributes
   """
-  @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
+  @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], picture: binary, picture_type: binary, user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
-    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+
+    payload = parameters |> Enum.into(%{})
+
+    if Map.get(payload, :picture) != nil do
+      payload = Map.put(payload, :picture, "data:" <> Map.get(payload, :picture_type) <> ";base64," <> Base.encode64(Map.get(payload, :picture)))
+      payload = Map.delete(payload, :picture_type)
+    end
+
+    Rest.patch_id(resource(), id, payload)
   end
 
   @doc """
@@ -232,6 +240,14 @@ defmodule StarkBank.Workspace do
   """
   @spec update!(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: Workspace.t()
   def update!(id, parameters \\ []) do
+
+    payload = parameters |> Enum.into(%{})
+
+    if Map.get(payload, :picture) != nil do
+      payload = Map.put(payload, :picture, "data:" <> Map.get(payload, :picture_type) <> ";base64," <> Base.encode64(Map.get(payload, :picture)))
+      payload = Map.delete(payload, :picture_type)
+    end
+    
     Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end
 
@@ -250,8 +266,8 @@ defmodule StarkBank.Workspace do
       name: json[:name],
       allowed_tax_ids: json[:allowed_tax_ids],
       id: json[:id],
-      status: json[:status]
-      organization_id: json[:organization_id]
+      status: json[:status],
+      organization_id: json[:organization_id],
       picture_url: json[:picture_url],
       created: json[:created] |> Check.datetime()
     }
