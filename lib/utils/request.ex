@@ -17,7 +17,7 @@ defmodule StarkBank.Utils.Request do
       method,
       URL.get_url(user.environment, version, path, query),
       payload
-    
+    )
     |> process_response
   end
 

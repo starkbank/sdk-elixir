@@ -29,14 +29,14 @@ defmodule StarkBank.BoletoHolmes.Log do
     :id,
     :holmes,
     :type,
-    :created
+    :created,
     :updated
 ]
   defstruct [
     :id,
     :holmes,
     :type,
-    :created
+    :created,
     :updated
 ]
 

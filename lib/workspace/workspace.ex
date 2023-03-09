@@ -222,15 +222,18 @@ defmodule StarkBank.Workspace do
   ## Return:
     - target Workspace with updated attributes
   """
-  @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], picture: binary, picture_type: binary, user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
+  @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], picture: [byte], picture_type: binary, user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
 
-    payload = parameters |> Enum.into(%{})
+    parameters_map = parameters |> Enum.into(%{})
 
-    if Map.get(payload, :picture) != nil do
-      payload = Map.put(payload, :picture, "data:" <> Map.get(payload, :picture_type) <> ";base64," <> Base.encode64(Map.get(payload, :picture)))
-      payload = Map.delete(payload, :picture_type)
+    payload = parameters_map |> Map.take([:username, :name, :allowed_tax_ids, :status, :picture])
+
+    if Map.get(parameters_map, :picture) != nil do
+      payload = Map.put(payload, :picture, "data:" <> Map.get(parameters_map, :picture_type) <> ";base64," <> Base.encode64(Map.get(parameters_map, :picture)))
     end
+
+    payload |> IO.inspect()
 
     Rest.patch_id(resource(), id, payload)
   end
@@ -247,7 +250,7 @@ defmodule StarkBank.Workspace do
       payload = Map.put(payload, :picture, "data:" <> Map.get(payload, :picture_type) <> ";base64," <> Base.encode64(Map.get(payload, :picture)))
       payload = Map.delete(payload, :picture_type)
     end
-    
+
     Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
   end
 

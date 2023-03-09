@@ -290,7 +290,7 @@ defmodule StarkBank.UtilityPayment do
       fee: json[:fee],
       type: json[:type],
       transaction_ids: json[:transaction_ids],
-      created: json[:created] |> Check.datetime()
+      created: json[:created] |> Check.datetime(),
       updated: json[:updated] |> Check.datetime()
     }
   end

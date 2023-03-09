@@ -172,7 +172,7 @@ defmodule StarkBankTest.Transfer do
       external_id: "elixir-#{:rand.uniform(9999999999)}",
       rules: [
         %StarkBank.Transfer.Rule{
-          keu: "resendingLimit",
+          key: "resendingLimit",
           value: 5
         }
       ]

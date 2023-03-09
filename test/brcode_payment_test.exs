@@ -96,7 +96,7 @@ defmodule StarkBankTest.BrcodePayment do
       tax_id: invoice.tax_id,
       rules: [
         %StarkBank. BrcodePayment.Rule{
-          keu: "resendingLimit",
+          key: "resendingLimit",
           value: 5
         }
       ]

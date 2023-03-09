@@ -394,7 +394,7 @@ transfers = StarkBank.Transfer.create!(
         tags: ["iron", "suit"],
         rules: [
         %StarkBank.Transfer.Rule{
-          keu: "resendingLimit",
+          key: "resendingLimit",
           value: 5
         }
       ]
@@ -411,7 +411,7 @@ transfers = StarkBank.Transfer.create!(
         scheduled: Date.utc_today |> Date.add(30),
         rules: [
         %StarkBank.Transfer.Rule{
-          keu: "resendingLimit",
+          key: "resendingLimit",
           value: 5
         }
       ]
@@ -959,7 +959,7 @@ payments = StarkBank.BrcodePayment.create!(
         tags: ["invoice#123", "bills"],
         rules: [
         %StarkBank.BrcodePayment.Rule{
-          keu: "resendingLimit",
+          key: "resendingLimit",
           value: 5
         }
       ]
