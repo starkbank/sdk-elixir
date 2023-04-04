@@ -14,6 +14,18 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+### Added
+- CorporateBalance resource
+- CorporateCard resource
+- CorporateHolder resource
+- CorporateInvoice resource
+- CorporatePurchase resource
+- CorporateRule resource
+- CorporateTransaction resource
+- CorporateWithdrawal resource
+- CardMethod sub-resource
+- MerchantCategory sub-resource
+- MerchantCountry sub-resource
 - DynamicBrcode resource
 - status attribute to Workspace resource
 - rules attribute to BrcodePayment resource
