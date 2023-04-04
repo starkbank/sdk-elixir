@@ -10,6 +10,7 @@ defmodule StarkBank.Balance do
   Groups Balance related functions
   """
 
+  @spec __struct__ :: StarkBank.Balance.t()
   @doc """
   The Balance struct displays the current balance of the workspace,
   which is the result of the sum of all transactions within this
@@ -34,7 +35,7 @@ defmodule StarkBank.Balance do
   @doc """
   Receive the Balance entity linked to your workspace in the Stark Bank API
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

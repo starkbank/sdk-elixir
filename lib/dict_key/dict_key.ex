@@ -56,7 +56,7 @@ defmodule StarkBank.DictKey do
   ## Parameters (required):
     - `:id` [string]: DictKey object unique id and PIX key itself. ex: "tony@starkbank.com", "722.461.430-04", "20.018.183/0001-80", "+5511988887777", "b6295ee1-f054-47d1-9e90-ee57b74f60d9"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -78,7 +78,7 @@ defmodule StarkBank.DictKey do
 @doc """
   Receive a stream of DictKey structs associated with your Stark Bank Workspace
 
-  ## Options:
+  ## Parameters (optional):
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:type` [string, default nil]: DictKey type. ex: "cpf", "cnpj", "phone", "email" or "evp"
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -130,7 +130,7 @@ defmodule StarkBank.DictKey do
   Receive a list of up to 100 DictKey objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Options:
+  ## Parameters (optional):
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:type` [string, default nil]: DictKey type. ex: "cpf", "cnpj", "phone", "email" or "evp"

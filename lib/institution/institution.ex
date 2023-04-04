@@ -33,7 +33,7 @@ defmodule StarkBank.Institution do
     @doc """
     Receive a list of Institution objects that are recognized by the Brazilian Central bank for Pix and TED transactions
 
-    ## Options:
+    ## Parameters (optional):
       - `:limit` [integer, default nil]: maximum number of objects to be retrieved. Unlimited if nil. ex: 35
       - `:search` [string, default nil]: part of the institution name to be searched. ex: "stark"
       - `:spi_codes` [list of strings, default nil]: list of SPI (Pix) codes to be searched. ex: ["20018183"]

@@ -87,7 +87,7 @@ defmodule StarkBank.Webhook do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -109,7 +109,7 @@ defmodule StarkBank.Webhook do
   @doc """
   Receive a stream of Webhook subcription structs previously created in the Stark Bank API
 
-  ## Options:
+  ## Parameters (optional):
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
@@ -146,7 +146,7 @@ defmodule StarkBank.Webhook do
   Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Options:
+  ## Parameters (optional):
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
@@ -183,7 +183,7 @@ defmodule StarkBank.Webhook do
   ## Parameters (required):
     - `id` [string]: Webhook unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

@@ -24,7 +24,7 @@ defmodule StarkBank.Workspace do
 
   ## Attributes (return-only):
     - `:id` [string]: unique id returned when the workspace is created. ex: "5656565656565656"
-    - `:status` [string]: current Workspace status. Options: "active", "closed", "frozen" or "blocked"
+    - `:status` [string]: current Workspace status. Parameters (optional): "active", "closed", "frozen" or "blocked"
     - `:organization_id` [string]: unique organization id returned when the organization is created. ex: "5656565656565656"
     - `:picture_url` [string]: public workspace image (png) URL. ex: "https://storage.googleapis.com/api-ms-workspace-sbx.appspot.com/pictures/workspace/6284441752174592.png?20230208220551"
     - `:created` [DateTime]: creation datetime for the balance. ex: ~U[2020-03-26 19:32:35.418698Z]
@@ -54,7 +54,7 @@ defmodule StarkBank.Workspace do
     - `:username` [string]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
     - `:name` [string]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
 
-  ## Options:
+  ## Parameters (optional):
     - `:allowed_tax_ids` [list of strings, default []]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
     - `:user` [Organization]: Organization struct with nil workspace_id. Only necessary if default organization has not been set in configs.
 
@@ -101,7 +101,7 @@ defmodule StarkBank.Workspace do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct. Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -123,7 +123,7 @@ defmodule StarkBank.Workspace do
   @doc """
   Receive a stream of Workspace structs previously created in the Stark Bank API
 
-  ## Options:
+  ## Parameters (optional):
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:username` [string]: query by the simplified name that defines the workspace URL. This name is always unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
@@ -166,7 +166,7 @@ defmodule StarkBank.Workspace do
   Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Options:
+  ## Parameters (optional):
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:username` [string]: query by the simplified name that defines the workspace URL. This name is always unique across all Stark Bank Workspaces. Ex: "starkbankworkspace"
@@ -216,7 +216,7 @@ defmodule StarkBank.Workspace do
     - `:username` [string, default nil]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbank-workspace"
     - `:name` [string, default nil]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
     - `:allowed_tax_ids` [list of strings, default nil]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
-    - `:status` [string, default nil]: current Workspace status. Options: "active" or "blocked"
+    - `:status` [string, default nil]: current Workspace status. Parameters (optional): "active" or "blocked"
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

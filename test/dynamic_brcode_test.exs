@@ -12,7 +12,7 @@ defmodule StarkBankTest.DynamicBrcode do
   @tag :dynamic_brcode
   test "create! dynamic_brcode" do
     brcode = StarkBank.DynamicBrcode.create!([example_brcode()]) |> hd
-    assert !is_nil(dynamic_brcode)
+    assert !is_nil(brcode)
   end
 
   @tag :dynamic_brcode
@@ -48,7 +48,7 @@ defmodule StarkBankTest.DynamicBrcode do
       |> Enum.take(1)
       |> hd()
 
-    {:ok, _brcode} = StarkBank.DynamicBrcode.get(dynamic_brcode.id)
+    {:ok, _brcode} = StarkBank.DynamicBrcode.get(brcode.id)
   end
 
   @tag :dynamic_brcode
@@ -58,7 +58,7 @@ defmodule StarkBankTest.DynamicBrcode do
       |> Enum.take(1)
       |> hd()
 
-    _brcode = StarkBank.DynamicBrcode.get!(dynamic_brcode.id)
+    _brcode = StarkBank.DynamicBrcode.get!(brcode.id)
   end
 
   def example_brcode() do
@@ -71,3 +71,5 @@ defmodule StarkBankTest.DynamicBrcode do
       ]
     }
   end
+
+end

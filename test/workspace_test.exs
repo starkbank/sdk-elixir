@@ -139,6 +139,36 @@ defmodule StarkBankTest.Workspace do
     _workspace = StarkBank.Workspace.get!(workspace.id, user: organization() |> StarkBank.Organization.replace(workspace.id))
   end
 
+  @tag :workspace
+  test "update workspace" do
+
+    workspace_id = "6341320293482496"
+
+    {:ok, pictureByte} = File.read("./test/utils/logo.png")
+
+    update = example_workspace()
+    {:ok, updated_workspace} = StarkBank.Workspace.update(
+      workspace_id,
+      picture: pictureByte,
+      picture_type: "image/png"
+    )
+  end
+
+  @tag :workspace
+  test "update! workspace" do
+
+    workspace_id = "6341320293482496"
+
+    {:ok, pictureByte} = File.read("./test/utils/logo.png")
+
+    update = example_workspace()
+    updated_workspace = StarkBank.Workspace.update!(
+      workspace_id,
+      picture: pictureByte,
+      picture_type: "image/png"
+    )
+  end
+
   def example_workspace() do
     id = Enum.random(0..100_000_000_000) |> Integer.to_string
     %StarkBank.Workspace{

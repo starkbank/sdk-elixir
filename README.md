@@ -4,7 +4,7 @@ Welcome to the Stark Bank Elixir SDK! This tool is made for Elixir
 developers who want to easily integrate with our API.
 This SDK version is compatible with the Stark Bank API v2.
 
-If you have no idea what Stark Bank is, check out our [website](https://www.StarkBank.com/)
+If you have no idea what Stark Bank is, check out our [website](https://www.starkbank.com/)
 and discover a world where receiving or making payments
 is as easy as sending a text message to your client!
 
@@ -22,7 +22,7 @@ is as easy as sending a text message to your client!
     - [Register your user credentials](#3-register-your-user-credentials)
     - [Setting up the user](#4-setting-up-the-user)
     - [Setting up the error language](#5-setting-up-the-error-language)
-    - [Resource listing and manual pagination](#6-resource-listing-and-manual-pagination)
+- [Resource listing and manual pagination](#6-resource-listing-and-manual-pagination)
 - [Testing in Sandbox](#testing-in-sandbox) 
 - [Usage](#usage)
     - [Transactions](#create-transactions): Account statement entries
@@ -42,6 +42,13 @@ is as easy as sending a text message to your client!
     - [DarfPayments](#create-darf-payment): Pay DARFs
     - [PaymentPreviews](#preview-payment-information-before-executing-the-payment): Preview all sorts of payments
     - [PaymentRequest](#create-payment-requests-to-be-approved-by-authorized-people-in-a-cost-center): Request a payment approval to a cost center
+    - [CorporateHolders](#create-corporateholders): Manage cardholders
+    - [CorporateCards](#create-corporatecards): Create virtual and/or physical cards
+    - [CorporateInvoices](#create-corporateinvoices): Add money to your corporate balance
+    - [CorporateWithdrawals](#create-corporatewithdrawals): Send money back to your Workspace from your corporate balance
+    - [CorporateBalance](#get-your-corporatebalance): View your corporate balance
+    - [CorporateTransactions](#query-corporatetransactions): View the transactions that have affected your corporate balance
+    - [CorporateEnums](#corporate-enums): Query enums related to the corporate purchases, such as merchant categories, countries and card purchase methods
     - [Webhooks](#create-a-webhook-subscription): Configure your webhook endpoints and subscriptions
     - [WebhookEvents](#process-webhook-events): Manage webhook events
     - [WebhookEventAttempts](#query-failed-webhook-event-delivery-attempts-information): Query failed webhook event deliveries
@@ -379,7 +386,7 @@ IO.puts(balance.amount / 100)
 
 ## Create transfers
 
-You can also create transfers in the SDK (TED/Pix).
+You can also create transfers in the SDK (TED/Pix) and configure transfer behavior according to its rules.
 
 ```elixir
 transfers = StarkBank.Transfer.create!(
@@ -443,7 +450,7 @@ transfer = StarkBank.Transfer.get!("4882890932355072")
   |> IO.inspect
 ```
 
-## Cancel a transfer
+## Cancel a scheduled transfer
 
 To cancel a single scheduled transfer by its id, run:
 
@@ -490,7 +497,7 @@ log = StarkBank.Transfer.Log.get!("6610264099127296")
 
 ## Get DICT key
 
-You can get DICT (Pix) key's parameters by its id.
+You can get Pix key's parameters by its id.
 
 ```elixir
 dict_key = StarkBank.DictKey.get!("tony@starkbank.com")
@@ -691,13 +698,14 @@ When a DynamicBrcode is paid, a Deposit is created with the tags parameter conta
 
 The differences between an Invoice and the DynamicBrcode are the following:
 
-|                   | Invoice | DynamicBrcode |
-|-------------------|:-------:|:-------------:|
-| Expiration        |    ✓    |       ✓       | 
-| Due, fine and fee |    ✓    |       X       | 
-| Discount          |    ✓    |       X       | 
-| Description       |    ✓    |       X       |
-| Can be updated    |    ✓    |       X       |
+|                       | Invoice | DynamicBrcode |
+|-----------------------|:-------:|:-------------:|
+| Expiration            |    ✓    |       ✓       |
+| Can only be paid once |    ✓    |       ✓       |
+| Due, fine and fee     |    ✓    |       X       |
+| Discount              |    ✓    |       X       |
+| Description           |    ✓    |       X       |
+| Can be updated        |    ✓    |       X       |
 
 **Note:** In order to check if a BR code has expired, you must first calculate its expiration date (add the expiration to the creation date). 
 **Note:** To know if the BR code has been paid, you need to query your Deposits by the tag "dynamic-brcode/{uuid}" to check if it has been paid.
@@ -885,7 +893,9 @@ log = StarkBank.Boleto.Log.get!("6288576484474880")
 
 You can discover if a StarkBank boleto has been recently paid before we receive the response on the next day.
 This can be done by creating a BoletoHolmes object, which fetches the updated status of the corresponding
-Boleto object according to CIP to check, for example, whether it is still payable or not.
+Boleto object according to CIP to check, for example, whether it is still payable or not. The investigation
+happens asynchronously and the most common way to retrieve the results is to register a "boleto-holmes" webhook
+subscription, although polling is also possible.
 
 ```elixir
 holmes = StarkBank.BoletoHolmes.create!(
@@ -1170,7 +1180,7 @@ payments = StarkBank.UtilityPayment.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
-## Get a utility payment
+## Get an utility payment
 
 You can get a specific bill by its id:
 
@@ -1179,9 +1189,9 @@ payment = StarkBank.UtilityPayment.get!("6619425641857024")
   |> IO.inspect
 ```
 
-## Get a utility payment PDF
+## Get an utility payment PDF
 
-After its creation, a utility payment PDF may also be retrieved by passing its id.
+After its creation, an utility payment PDF may also be retrieved by passing its id.
 
 ```elixir
 pdf = StarkBank.UtilityPayment.pdf!("6619425641857024")
@@ -1195,9 +1205,9 @@ Be careful not to accidentally enforce any encoding on the raw pdf content,
 as it may yield abnormal results in the final file, such as missing images
 and strange characters.
 
-## Delete a utility payment
+## Delete an utility payment
 
-You can also cancel a utility payment by its id.
+You can also cancel an utility payment by its id.
 Note that this is not possible if it has been processed already.
 
 ```elixir
@@ -1464,6 +1474,312 @@ requests = StarkBank.PaymentRequest.query!(
 ) |> Enum.take(10) |> IO.inspect
 ```
 
+## Create CorporateHolders
+
+You can create card holders to which your cards will be bound.
+They support spending rules that will apply to all underlying cards.
+
+```elixir
+holder = StarkBank.CorporateHolder.create!(
+  name: "Iron Bank S.A.",
+  tags: ["Traveler", "Employee"]
+  rules: [
+        %StarkBank.CorporateRule{
+          name: "General USD",
+          interval: "day",
+          value: 100000,
+          currency_code: "USD",
+        }
+  ]   
+) |> IO.inspect
+```
+
+**Note**: Instead of using CorporateHolder objects, you can also pass each element in dictionary format
+
+## Query CorporateHolders
+
+You can query multiple holders according to filters.
+
+```elixir
+holders = StarkBank.CorporateHolder.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Cancel a CorporateHolder
+
+To cancel a single Corporate Holder by its id, run:
+
+```elixir
+holder = StarkBank.CorporateHolder.cancel!("5155165527080960") |> IO.inspect
+```
+
+## Get a CorporateHolder
+
+To get a single Corporate Holder by its id, run:
+
+```elixir
+holder = StarkBank.CorporateHolder.get!("5155165527080960") |> IO.inspect
+```
+
+## Query CorporateHolder logs
+
+You can query holder logs to better understand holder life cycles.
+
+```elixir
+logs = StarkBank.CorporateHolder.Log.query!(
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporateHolder log
+
+You can also get a specific log by its id.
+
+```elixir
+holder = StarkBank.CorporateHolder.Log.get!("5155165527080960") |> IO.inspect
+```
+
+## Create CorporateCards
+
+You can issue cards with specific spending rules.
+
+```elixir
+card = StarkBank.CorporateCard.create!(
+  holder_id: "5155165527080960",
+) |> IO.inspect
+```
+
+## Query CorporateCards
+
+You can get a list of created cards given some filters.
+
+```elixir
+cards = StarkBank.CorporateCard.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporateCard
+
+After its creation, information on a card may be retrieved by its id.
+
+```elixir
+card = StarkBank.CorporateCard.get!("5155165527080960") |> IO.inspect
+```
+
+## Update a CorporateCard
+
+You can update a specific card by its id.
+
+```elixir
+card = StarkBank.CorporateCard.update!(
+  "5629412477239296",
+  status: "blocked"
+)
+|> IO.inspect
+```
+
+## Cancel a CorporateCard
+
+You can also cancel a card by its id.
+
+```elixir
+card = StarkBank.CorporateCard.cancel!("5155165527080960") 
+|> IO.inspect
+```
+
+## Query CorporateCard logs
+
+Logs are pretty important to understand the life cycle of a card.
+
+```elixir
+logs = StarkBank.CorporateCard.Log.query!(
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporateCard log
+
+You can get a single log by its id.
+
+```elixir
+logs = StarkBank.CorporateCard.Log.get!("5155165527080960") 
+|> IO.inspect
+```
+
+## Query CorporatePurchases
+
+You can get a list of created purchases given some filters.
+
+```elixir
+purchases = StarkBank.CorporatePurchase.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporatePurchase
+
+After its creation, information on a purchase may be retrieved by its id. 
+
+```elixir
+purchase = StarkBank.CorporatePurchase.get!("5155165527080960") 
+|> IO.inspect
+```
+
+## Query CorporatePurchase logs
+
+Logs are pretty important to understand the life cycle of a purchase.
+
+```elixir
+logs = StarkBank.CorporatePurchase.Log.query!(
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporatePurchase log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporatePurchase.Log.get!("5155165527080960") 
+|> IO.inspect
+```
+
+## Create CorporateInvoices
+
+You can create Pix invoices to transfer money from accounts you have in any bank to your Corporate balance,
+allowing you to run your corporate operation.
+
+```elixir
+invoice = StarkBank.CorporateInvoice.create!(
+  amount: 10000
+) |> IO.inspect
+```
+
+**Note**: Instead of using CorporateInvoice objects, you can also pass each element in dictionary format
+
+## Query CorporateInvoices
+
+You can get a list of created invoices given some filters.
+
+```elixir
+invoices = StarkBank.CorporateInvoice.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Create CorporateWithdrawals
+
+You can create withdrawals to send cash back from your Corporate balance to your Banking balance
+by using the Withdrawal resource.
+
+```elixir
+withdrawal = StarkBank.CorporateWithdrawal.create!(
+  amount: 10000
+  external_id: "3257"
+) |> IO.inspect
+```
+
+**Note**: Instead of using CorporateWithdrawal objects, you can also pass each element in dictionary format
+
+## Get a CorporateWithdrawal
+
+After its creation, information on a withdrawal may be retrieved by its id.
+
+```elixir
+withdrawal = StarkBank.CorporateWithdrawal.get!("5155165527080960") 
+|> IO.inspect
+```
+
+## Query CorporateWithdrawals
+
+You can get a list of created withdrawals given some filters.
+
+```elixir
+withdrawals = StarkBank.CorporateWithdrawal.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get your CorporateBalance
+
+To know how much money you have available to run authorizations, run:
+
+```elixir
+balance = StarkBank.CorporateBalance.get!() 
+|> IO.inspect
+```
+
+## Query CorporateTransactions
+
+To understand your balance changes (corporate statement), you can query
+transactions. Note that our system creates transactions for you when
+you make purchases, withdrawals, receive corporate invoice payments, for example.
+
+```elixir
+transactions = StarkBank.CorporateTransaction.query!(
+  after: "2020-10-09",
+  before: "2020-10-10",
+  limit: 10
+) |> Enum.take(10) |> IO.inspect
+```
+
+## Get a CorporateTransaction
+
+You can get a specific transaction by its id:
+
+```elixir
+withdrawal = StarkBank.CorporateTransaction.get!("5155165527080960") 
+|> IO.inspect
+```
+
+## Corporate Enums
+
+### Query MerchantCategories
+
+You can query any merchant categories using this resource.
+You may also use MerchantCategories to define specific category filters in CorporateRules.
+Either codes (which represents specific MCCs) or types (code groups) will be accepted as filters.
+
+```elixir
+categories = StarkBank.MerchantCategory.query!(
+  search: "food"
+) |> IO.inspect
+```
+
+### Query MerchantCountries
+
+You can query any merchant countries using this resource.
+You may also use MerchantCountries to define specific country filters in CorporateRules.
+
+```elixir
+countries = StarkBank.MerchantCountry.query!(
+  search: "brazil"
+) |> IO.inspect
+```
+
+### Query CardMethods
+
+You can query available card methods using this resource.
+You may also use CardMethods to define specific purchase method filters in CorporateRules.
+
+```elixir
+methods = StarkBank.CardMethod.query!(
+  search: "token"
+) |> IO.inspect
+```
+
 ## Create a webhook subscription
 
 To create a webhook subscription and be notified whenever an event occurs, run:
@@ -1656,4 +1972,4 @@ If you have any questions about our SDK, just send us an email.
 We will respond you quickly, pinky promise. We are here to help you integrate with us ASAP.
 We also love feedback, so don't be shy about sharing your thoughts with us.
 
-Email: developers@starkbank.com
+Email: help@starkbank.com

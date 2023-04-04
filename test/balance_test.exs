@@ -17,11 +17,11 @@ defmodule StarkBankTest.Balance do
   test "get balance with user overwrite" do
     project = StarkBank.project(
       environment: :sandbox,
-      id: "9999999999999999",
+      id: "5637129447145472",
       private_key: "-----BEGIN EC PRIVATE KEY-----
-      MHQCAQEEIBEcEJZLk/DyuXVsEjz0w4vrE7plPXhQxODvcG1Jc0WToAcGBSuBBAAK
-      oUQDQgAE6t4OGx1XYktOzH/7HV6FBukxq0Xs2As6oeN6re1Ttso2fwrh5BJXDq75
-      mSYHeclthCRgU8zl6H1lFQ4BKZ5RCQ==
+      MHQCAQEEILChZrjrrtFnyCLhcxm/hp+9ljWSmG7Wv9HRugf+FnhkoAcGBSuBBAAK
+      oUQDQgAEpIAM/tMqXEfLeR93rRHiFcpDB9I18MrnCJyTVk0MdD1J9wgEbRfvAZEL
+      YcEGhTFYp2X3B7K7c4gDDCr0Pu1L3A==
       -----END EC PRIVATE KEY-----"
     )
 

@@ -36,6 +36,7 @@ defmodule StarkBank.Transfer do
     - `:fee` [integer]: fee charged when transfer is created. ex: 200 (= R$ 2.00)
     - `:status` [string]: current transfer status. ex: "success" or "failed"
     - `:transaction_ids` [list of strings]: ledger transaction ids linked to this transfer (if there are two, second is the chargeback). ex: ["19827356981273"]
+    - `:metadata` [Metadata struct]: object used to store additional information about the Transfer struct.
     - `:created` [DateTime]: creation datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:updated` [DateTime]: latest update datetime for the transfer. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
@@ -59,6 +60,7 @@ defmodule StarkBank.Transfer do
     :scheduled,
     :description,
     :transaction_ids,
+    :metadata,
     :fee,
     :tags,
     :rules,
@@ -76,7 +78,7 @@ defmodule StarkBank.Transfer do
   ## Parameters (required):
     - `transfers` [list of Transfer structs]: list of Transfer structs to be created in the API
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -110,7 +112,7 @@ defmodule StarkBank.Transfer do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -135,7 +137,7 @@ defmodule StarkBank.Transfer do
   ## Parameters (required):
     - `id` [string]: Boleto unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ##  Return:
@@ -161,7 +163,7 @@ defmodule StarkBank.Transfer do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -183,7 +185,7 @@ defmodule StarkBank.Transfer do
   @doc """
   Receive a stream of Transfer structs previously created in the Stark Bank API
 
-  ## Options:
+  ## Parameters (optional):
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created or updated only before specified date. ex: ~D[2020-03-25]
@@ -244,7 +246,7 @@ defmodule StarkBank.Transfer do
   Receive a list of up to 100 Transfer objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Options:
+  ## Parameters (optional):
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created or updated only after specified date. ex: ~D[2020-03-25]
@@ -321,6 +323,7 @@ defmodule StarkBank.Transfer do
       scheduled: json[:scheduled] |> Check.datetime(),
       description: json[:description],
       transaction_ids: json[:transaction_ids],
+      metadata: json[:metadata],
       fee: json[:fee],
       tags: json[:tags],
       rules: json[:rules],

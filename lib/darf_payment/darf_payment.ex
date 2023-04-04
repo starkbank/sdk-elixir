@@ -78,7 +78,7 @@ defmodule StarkBank.DarfPayment do
   ## Parameters (required):
     - `:payments` [list of DarfPayment structs]: list of DarfPayment structs to be created in the API
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -112,7 +112,7 @@ defmodule StarkBank.DarfPayment do
   ## Parameters (required):
     - `:id` [string]: entity unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -134,7 +134,7 @@ defmodule StarkBank.DarfPayment do
   @doc """
   Receive a stream of DarfPayment entities previously created in the Stark Bank API
 
-  ## Options:
+  ## Parameters (optional):
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
@@ -186,7 +186,7 @@ defmodule StarkBank.DarfPayment do
   Receive a list of up to 100 DarfPayment structs previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Options:
+  ## Parameters (optional):
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
@@ -240,7 +240,7 @@ defmodule StarkBank.DarfPayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -265,7 +265,7 @@ defmodule StarkBank.DarfPayment do
   ## Parameters (required):
     - `:id` [string]: Boleto unique id. ex: "5656565656565656"
 
-  ## Options:
+  ## Parameters (optional):
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ##  Return:
