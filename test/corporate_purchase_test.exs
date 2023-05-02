@@ -28,7 +28,7 @@ defmodule StarkBankTest.CorporatePurchase do
 
   @tag :corporate_purchase
   test "page corporate purchase test" do
-    {:ok, ids} = StarkInfraTest.Utils.Page.get(&StarkBank.CorporatePurchase.page/1, 2, limit: 5)
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.CorporatePurchase.page/1, 2, limit: 5)
     assert length(ids) <= 10
 
     Enum.each(ids, fn id ->
@@ -40,7 +40,7 @@ defmodule StarkBankTest.CorporatePurchase do
 
   @tag :corporate_purchase
   test "page! corporate purchase test" do
-    ids = StarkInfraTest.Utils.Page.get!(&StarkBank.CorporatePurchase.page!/1, 2, limit: 5)
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.CorporatePurchase.page!/1, 2, limit: 5)
     assert length(ids) <= 10
 
     Enum.each(ids, fn id ->
