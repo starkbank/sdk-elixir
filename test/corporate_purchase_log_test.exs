@@ -32,13 +32,13 @@ defmodule StarkBankTest.CorporatePurchase.Log do
 
   @tag :corporate_purchase_log
   test "page corporate purchase log" do
-      {:ok, ids} = StarkInfraTest.Utils.Page.get(&StarkBank.CorporatePurchase.Log.page/1, 2, limit: 5)
+      {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.CorporatePurchase.Log.page/1, 2, limit: 5)
       assert length(ids) <= 10
   end
 
   @tag :corporate_purchase_log
   test "page! corporate purchase log" do
-      ids = StarkInfraTest.Utils.Page.get!(&StarkBank.CorporatePurchase.Log.page!/1, 2, limit: 5)
+      ids = StarkBankTest.Utils.Page.get!(&StarkBank.CorporatePurchase.Log.page!/1, 2, limit: 5)
       assert length(ids) <= 10
   end
 end
