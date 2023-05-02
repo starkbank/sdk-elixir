@@ -1,7 +1,7 @@
 defmodule StarkBank.CardMethod do
   alias __MODULE__, as: CardMethod
   alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
+  # alias StarkBank.Utils.Check
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error

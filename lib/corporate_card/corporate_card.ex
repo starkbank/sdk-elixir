@@ -16,8 +16,9 @@ defmodule StarkBank.CorporateCard do
   The CorporateCard object displays the information of the cards created in your Workspace.
   Sensitive information will only be returned when the "expand" parameter is used, to avoid security concerns.
 
+  @TODO: second is python's version, first is what was already implemented here. Which one is true?
   ## Parameters (required):
-  - `:holder_id` [binary]: card holder tax ID. ex: "012.345.678-90"
+  - `:holder_id` [string]: card holder unique id. ex: "5656565656565656"
 
   ## Parameters (optional):
     - `:id` [binary]: unique id returned when CorporateCard is created. ex: "5656565656565656"
@@ -46,6 +47,7 @@ defmodule StarkBank.CorporateCard do
   defstruct [
     :id,
     :holder_name,
+    :holder_id,
     :display_name,
     :rules,
     :tags,

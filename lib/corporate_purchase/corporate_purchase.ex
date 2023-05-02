@@ -357,7 +357,7 @@ defmodule StarkBank.CorporatePurchase do
   ) ::
     {:ok, PixReversal.t()} |
     {:error, [Error.t()]}
-  def response(status, reason, amount, tags) do
+  def response(status, reason\\nil, amount\\nil, tags\\nil) do
     body = %{status: status, reason: reason, amount: amount, tags: tags}
     params = %{authorization: body}
     params

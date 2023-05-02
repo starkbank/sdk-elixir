@@ -32,7 +32,7 @@ ExUnit.start(
     # :merchant_country,
     # :merchant_category,
     # :transaction,
-    # :transfer,
+    :transfer,
     # :transfer_log,
     # :utility_payment,
     # :utility_payment_log,
@@ -45,7 +45,7 @@ ExUnit.start(
     # :institution,
     # :webhook,
     # :event,
-    # :workspace,
+    :workspace,
   ]
 )
 

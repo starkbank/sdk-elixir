@@ -113,9 +113,8 @@ defmodule StarkBankTest.CorporateCard do
       city: "Sao Paulo",
       display_name: "ANTHONY STARK",
       district: "Bela Vista",
-      holder_external_id: holder.external_id,
+      holder_id: holder.holder_id,
       holder_name: holder.name,
-      holder_tax_id: holder.tax_id,
       rules: [
         %StarkBank.CorporateRule{
           amount: 900000,
