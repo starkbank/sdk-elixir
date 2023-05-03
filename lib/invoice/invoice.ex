@@ -29,6 +29,7 @@ defmodule StarkBank.Invoice do
     - `:fine` [float, default 0.0]: Invoice fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Invoice monthly interest for overdue payment in %. ex: 5.2
     - `:discounts` [list of dictionaries, default nil]: list of dictionaries with "percentage":float and "due":string pairs
+    - `:rules` [list of Invoice.Rule, default []]: list of Invoice.Rule objects for modifying invoice behavior. ex: [Invoice.Rule(key="allowedTaxIds", value=[ "012.345.678-90", "45.059.493/0001-73" ])]
     - `:tags` [list of strings, default nil]: list of strings for tagging
     - `:descriptions` [list of dictionaries, default nil]: list of dictionaries with "key":string and (optional) "value":string pairs
 
@@ -61,6 +62,7 @@ defmodule StarkBank.Invoice do
     :fine,
     :interest,
     :discounts,
+    :rules,
     :tags,
     :descriptions,
     :pdf,
@@ -346,6 +348,10 @@ defmodule StarkBank.Invoice do
     Rest.get_sub_resource!(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
   end
 
+  defp parse_rules(rule) do
+
+  end
+
   @doc false
   def resource() do
     {
@@ -367,6 +373,7 @@ defmodule StarkBank.Invoice do
       discounts: json[:discounts] |> Enum.map(fn discount -> %{discount | "due" => discount["due"] |> Check.date_or_datetime()} end),
       tags: json[:tags],
       descriptions: json[:descriptions],
+      rules: json[:rules],
       pdf: json[:pdf],
       link: json[:link],
       nominal_amount: json[:nominal_amount],
