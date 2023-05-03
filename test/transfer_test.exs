@@ -171,7 +171,7 @@ defmodule StarkBankTest.Transfer do
       account_type: ["checking", "savings", "salary", "payment"] |> Enum.random(),
       external_id: "elixir-#{:rand.uniform(9999999999)}",
       rules: [
-        %StarkBank.Transfer.Rule{
+        %{
           key: "resendingLimit",
           value: 5
         }

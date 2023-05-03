@@ -84,8 +84,12 @@ defmodule StarkBank.Transfer do
   ## Return:
     - list of Transfer structs with updated attributes
   """
-  @spec create([Transfer.t() | map()], user: Project.t() | Organization.t() | nil) ::
-          {:ok, [Transfer.t()]} | {:error, [Error.t()]}
+  @spec create(
+    [Transfer.t() | map()],
+    user: Project.t() | Organization.t() | nil
+  ) ::
+  {:ok, [Transfer.t()]} |
+  {:error, [Error.t()]}
   def create(transfers, options \\ []) do
     Rest.post(
       resource(),
