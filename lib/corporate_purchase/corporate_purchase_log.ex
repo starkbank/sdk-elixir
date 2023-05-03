@@ -20,6 +20,7 @@ defmodule StarkBank.CorporatePurchase.Log do
     - `:id` [binary]: unique id returned when the log is created. ex: "5656565656565656"
     - `:purchase` [CorporatePurchase]: CorporatePurchase entity to which the log refers to.
     - `:corporate_transaction_id` [binary]: transaction ID related to the CorporateCard.
+    - `:description` [string]: purchase descriptions. ex: "my_description"
     - `:errors` [list of binaries]: list of errors linked to this CorporatePurchase event
     - `:type` [binary]: type of the CorporatePurchase event which triggered the log creation. Options: "approved", "canceled", "confirmed", "denied", "reversed", "voided".
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-10 10:30:0:0]
@@ -28,6 +29,7 @@ defmodule StarkBank.CorporatePurchase.Log do
     :id,
     :purchase,
     :corporate_transaction_id,
+    :description,
     :errors,
     :type,
     :created
@@ -36,6 +38,7 @@ defmodule StarkBank.CorporatePurchase.Log do
     :id,
     :purchase,
     :corporate_transaction_id,
+    :description,
     :errors,
     :type,
     :created
@@ -205,6 +208,7 @@ defmodule StarkBank.CorporatePurchase.Log do
       id: json[:id],
       purchase: json[:purchase],
       corporate_transaction_id: json[:corporate_transaction_id],
+      description: json[:description],
       errors: json[:errors],
       type: json[:type],
       created: json[:created] |> Check.datetime(),
