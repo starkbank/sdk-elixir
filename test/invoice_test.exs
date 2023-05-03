@@ -203,7 +203,7 @@ defmodule StarkBankTest.Invoice do
         }
       ],
       rules: [
-        %StarkBank.Invoice.Rule{
+        %{
           key: "allowedTaxIds",
           value: ["012.345.678-90", "45.059.493/0001-73"]
         }
