@@ -17,6 +17,8 @@ defmodule StarkBank.CorporateRule do
 
     ## Parameters (optional):
     - `:interval` [binary, default nil]: interval after which the rule amount counter will be reset to 0. ex: "instant", "day", "week", "month", "year" or "lifetime"
+    - `:schedule` [string, default nil]: schedule time for user to spend. ex: "every monday, wednesday from 00:00 to 23:59 in America/Sao_Paulo"
+    - `:purposes` [list of string, default []]: list of strings representing the allowed purposes for card purchases, you can use this to restrict ATM withdrawals. ex: ["purchase", "withdrawal"]
     - `:currency_code` [binary, default "BRL"]: code of the currency that the rule amount refers to. ex: "BRL" or "USD"
     - `:categories` [list of MerchantCategories, default []]: merchant categories accepted by the rule. ex: [%{ code: "fastFoodRestaurants"}]
     - `:countries` [list of MerchantCountries, default []]: countries accepted by the rule. ex: [%{ code: "BRA"}]
@@ -37,6 +39,8 @@ defmodule StarkBank.CorporateRule do
     :name,
     :amount,
     :interval,
+    :schedule,
+    :purposes,
     :currency_code,
     :categories,
     :countries,
@@ -63,6 +67,8 @@ defmodule StarkBank.CorporateRule do
       currency_code: json[:currency_code],
       id: json[:id],
       interval: json[:interval],
+      schedule: json[:schedule],
+      purposes: json[:purposes],
       name: json[:name],
       categories: json[:categories] |> Enum.map(fn category -> API.from_api_json(category, &MerchantCategory.resource_maker/1) end),
       countries: json[:countries] |> Enum.map(fn country -> API.from_api_json(country, &MerchantCountry.resource_maker/1) end),
