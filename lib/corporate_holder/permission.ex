@@ -1,5 +1,6 @@
 defmodule StarkBank.CorporateHolder.Permission do
   alias __MODULE__, as: Permission
+  alias StarkBank.Utils.Check
 
   @moduledoc """
   Groups Permission related functions

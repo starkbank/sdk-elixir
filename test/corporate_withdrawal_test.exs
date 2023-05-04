@@ -3,7 +3,7 @@ defmodule StarkBankTest.CorporateWithdrawal do
 
   @tag :corporate_withdrawal
   test "create corporate withdrawal test" do
-    {:ok, corporate_withdrawal} = StarkBank.CorporateWithdrawal.create(StarkInfraTest.Utils.CorporateWithdrawal.example_corporate_withdrawal())
+    {:ok, corporate_withdrawal} = StarkBank.CorporateWithdrawal.create(example_corporate_withdrawal())
     {:ok, withdrawal} = StarkBank.CorporateWithdrawal.get(corporate_withdrawal.id)
 
     assert corporate_withdrawal.id == withdrawal.id
@@ -11,7 +11,7 @@ defmodule StarkBankTest.CorporateWithdrawal do
 
   @tag :corporate_withdrawal
   test "create! corporate withdrawal test" do
-    corporate_withdrawal = StarkBank.CorporateWithdrawal.create!(StarkInfraTest.Utils.CorporateWithdrawal.example_corporate_withdrawal())
+    corporate_withdrawal = StarkBank.CorporateWithdrawal.create!(example_corporate_withdrawal())
     {:ok, withdrawal} = StarkBank.CorporateWithdrawal.get(corporate_withdrawal.id)
 
     assert corporate_withdrawal.id == withdrawal.id
@@ -80,5 +80,17 @@ defmodule StarkBankTest.CorporateWithdrawal do
     Enum.each(corporate_withdrawals, fn withdrawal ->
       assert withdrawal.id == StarkBank.CorporateWithdrawal.get!(withdrawal.id).id
     end)
+  end
+
+  def example_corporate_withdrawal() do
+    %StarkBank.CorporateWithdrawal{
+      amount: 40,
+      external_id: new_id()
+    }
+  end
+
+  def new_id() do
+    {_,_,diff} = :os.timestamp
+    to_string(diff)
   end
 end
