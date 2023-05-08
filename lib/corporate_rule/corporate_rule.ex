@@ -2,6 +2,7 @@ defmodule StarkBank.CorporateRule do
   alias StarkBank.CardMethod
   alias StarkBank.MerchantCountry
   alias StarkBank.MerchantCategory
+  alias StarkBank.Utils.API
   alias __MODULE__, as: CorporateRule
 
   @moduledoc """

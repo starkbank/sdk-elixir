@@ -80,7 +80,7 @@ defmodule StarkBankTest.CorporateHolder do
     {:ok, corporate_holder} = StarkBank.CorporateHolder.create([example_corporate_holder()])
     corporate_holder = corporate_holder |> Enum.take(1) |> hd
 
-    updated_name = new_name()
+    updated_name = generate_name()
     {:ok, updated_corporate_holder} = StarkBank.CorporateHolder.update(corporate_holder.id, %{name: updated_name})
 
     assert updated_corporate_holder.name == updated_name
@@ -91,7 +91,7 @@ defmodule StarkBankTest.CorporateHolder do
     {:ok, corporate_holder} = StarkBank.CorporateHolder.create([example_corporate_holder()])
     corporate_holder = corporate_holder |> Enum.take(1) |> hd
 
-    updated_name = new_name()
+    updated_name = generate_name()
     updated_corporate_holder = StarkBank.CorporateHolder.update!(corporate_holder.id, %{name: updated_name})
 
     assert updated_corporate_holder.name == updated_name
@@ -119,14 +119,12 @@ defmodule StarkBankTest.CorporateHolder do
 
   def example_corporate_holder() do
     %StarkBank.CorporateHolder{
-      name: new_name(),
+      name: generate_name(),
     }
   end
 
-  # @TODO: should it be a Util function?
-  def new_name() do
+  def generate_name() do
     {_, _, n} = :os.timestamp
-    name = "Test_Arya " <> to_string(n) <> " Stark"
-    name
+    "Holder " <> to_string(n) <> " Stark"
   end
 end

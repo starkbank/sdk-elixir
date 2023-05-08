@@ -319,7 +319,7 @@ defmodule StarkBank.CorporateHolder do
       id: json[:id],
       name: json[:name],
       center_id: json[:center_id],
-      permissions: json[:permissions] |> Enum.map(fn rule -> API.from_api_json(rule, &Permission.resource_maker/1) end),
+      permissions: json[:permissions] |> Enum.map(fn permission -> API.from_api_json(permission, &Permission.resource_maker/1) end),
       rules: json[:rules] |> Enum.map(fn rule -> API.from_api_json(rule, &CorporateRule.resource_maker/1) end),
       tags: json[:tags],
       status: json[:status],
