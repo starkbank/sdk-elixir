@@ -38,13 +38,13 @@ defmodule StarkBankTest.CorporateHolder.Log do
 
   @tag :corporate_holder_log
   test "page corporate holder log" do
-      {:ok, ids} = StarkInfraTest.Utils.Page.get(&StarkBank.CorporateHolder.Log.page/1, 2, limit: 5)
+      {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.CorporateHolder.Log.page/1, 2, limit: 5)
       assert length(ids) <= 10
   end
 
   @tag :corporate_holder_log
   test "page! corporate holder log" do
-      ids = StarkInfraTest.Utils.Page.get!(&StarkBank.CorporateHolder.Log.page!/1, 2, limit: 5)
+      ids = StarkBankTest.Utils.Page.get!(&StarkBank.CorporateHolder.Log.page!/1, 2, limit: 5)
       assert length(ids) <= 10
   end
 end
