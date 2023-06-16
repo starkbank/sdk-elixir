@@ -78,39 +78,39 @@ defmodule StarkBank.CorporateCard do
   #   - `:expand` [list of binaries, default []]: fields to expand information. ex: ["rules", "security_code", "number", "expiration"]
   #   - `:user` [Organization/Project, default nil]: Organization or Project object returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
-  # ## Return:
-  #   - list of CorporateCard objects with updated attributes
+  ## Return:
+  # - list of CorporateCard objects with updated attributes
   # """
-  # @spec create(
-  #   [CorporateCard.t() | map],
-  #   expand: [binary] | nil,
-  #   user: Organization.t() | Project.t() | nil
-  # ) ::
-  #   {:ok, [CorporateCard.t()]} |
-  #   {:error, [Error.t()]}
-  # def create(cards, options \\ []) do
-  #   Rest.post(
-  #     resource(),
-  #     cards,
-  #     options
-  #   )
-  # end
+  @spec create(
+    [CorporateCard.t() | map],
+    expand: [binary] | nil,
+    user: Organization.t() | Project.t() | nil
+  ) ::
+    {:ok, [CorporateCard.t()]} |
+    {:error, [Error.t()]}
+  def create(cards, options \\ []) do
+    Rest.post(
+      resource(),
+      cards,
+      options
+    )
+  end
 
-  # @doc """
-  # Same as create(), but it will unwrap the error tuple and raise in case of errors.
-  # """
-  # @spec create!(
-  #   [CorporateCard.t() | map],
-  #   expand: [binary] | nil,
-  #   user: Organization.t() | Project.t() | nil
-  # ) :: any
-  # def create!(cards, options \\ []) do
-  #   Rest.post!(
-  #     resource(),
-  #     cards,
-  #     options
-  #   )
-  # end
+  @doc """
+  Same as create(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec create!(
+    [CorporateCard.t() | map],
+    expand: [binary] | nil,
+    user: Organization.t() | Project.t() | nil
+  ) :: any
+  def create!(cards, options \\ []) do
+    Rest.post!(
+      resource(),
+      cards,
+      options
+    )
+  end
 
   @doc """
   Receive a stream of CorporateCard objects previously created in the Stark Bank API.
