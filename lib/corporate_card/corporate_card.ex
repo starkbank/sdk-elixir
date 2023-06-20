@@ -89,8 +89,8 @@ defmodule StarkBank.CorporateCard do
     {:ok, [CorporateCard.t()]} |
     {:error, [Error.t()]}
   def create(cards, options \\ []) do
-    Rest.post(
-      resource(),
+    Rest.post_raw(
+      resource("/token"),
       cards,
       options
     )
@@ -380,9 +380,9 @@ defmodule StarkBank.CorporateCard do
   end
 
   @doc false
-  def resource() do
+  def resource(subresource \\ "") do
     {
-      "CorporateCard",
+      "CorporateCard" <> subresource,
       &resource_maker/1
     }
   end
