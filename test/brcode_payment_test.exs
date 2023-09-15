@@ -93,13 +93,7 @@ defmodule StarkBankTest.BrcodePayment do
     %StarkBank.BrcodePayment{
       brcode: invoice.brcode,
       description: "loading a random account",
-      tax_id: invoice.tax_id,
-      rules: [
-        %StarkBank. BrcodePayment.Rule{
-          key: "resendingLimit",
-          value: 5
-        }
-      ]
+      tax_id: invoice.tax_id
     }
   end
 end

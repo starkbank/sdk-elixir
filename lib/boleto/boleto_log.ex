@@ -18,27 +18,15 @@ defmodule StarkBank.Boleto.Log do
   user, but it can be retrieved to check additional information
   on the Boleto.
 
-  ## Attributes (return-only):
+  ## Attributes:
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:boleto` [Boleto]: Boleto entity to which the log refers to.
     - `:errors` [list of strings]: list of errors linked to this Boleto event
     - `:type` [string]: type of the Boleto event which triggered the log creation. ex: "registered" or "paid"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :id,
-    :boleto,
-    :errors,
-    :type,
-    :created
-  ]
-  defstruct [
-    :id,
-    :boleto,
-    :errors,
-    :type,
-    :created
-  ]
+  @enforce_keys [:id, :boleto, :errors, :type, :created]
+  defstruct [:id, :boleto, :errors, :type, :created]
 
   @type t() :: %__MODULE__{}
 
@@ -48,7 +36,7 @@ defmodule StarkBank.Boleto.Log do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -70,7 +58,7 @@ defmodule StarkBank.Boleto.Log do
   @doc """
   Receive a stream of Log structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -90,11 +78,11 @@ defmodule StarkBank.Boleto.Log do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Log.t()]}}
-          | {:error, [Error.t()]}
-          | {:halt, any}
-          | {:suspend, any},
-          any ->
-            any)
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
@@ -116,10 +104,10 @@ defmodule StarkBank.Boleto.Log do
   end
 
   @doc """
-  Receive a list of up to 100 Boleto.Log objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 Boleto.Log objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -139,8 +127,8 @@ defmodule StarkBank.Boleto.Log do
           types: [binary],
           boleto_ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -156,7 +144,7 @@ defmodule StarkBank.Boleto.Log do
           types: [binary],
           boleto_ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [Log.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

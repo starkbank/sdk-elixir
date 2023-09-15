@@ -22,11 +22,11 @@ defmodule StarkBank.BoletoHolmes do
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
-    - `:id` [string]: unique id returned when BoletoHolmes is created. ex: "5656565656565656"
-    - `:status` [string]: current BoletoHolmes status. ex: "solving" or "solved"
-    - `:result` [string]: result of boleto status investigation. ex: "paid" or "registered"
-    - `:created` [DateTime]: creation datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime]: latest updated datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string, default nil]: unique id returned when BoletoHolmes is created. ex: "5656565656565656"
+    - `:status` [string, default nil]: current BoletoHolmes status. ex: "solving" or "solved"
+    - `:result` [string, default nil]: result of boleto status investigation. ex: "paid" or "registered"
+    - `:created` [DateTime, default nil]: creation datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime, default nil]: latest updated datetime for the BoletoHolmes. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
   @enforce_keys [
     :boleto_id
@@ -49,7 +49,7 @@ defmodule StarkBank.BoletoHolmes do
   ## Parameters (required):
     - `holmes` [list of BoletoHolmes structs]: list of BoletoHolmes structs to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -83,7 +83,7 @@ defmodule StarkBank.BoletoHolmes do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -105,7 +105,7 @@ defmodule StarkBank.BoletoHolmes do
   @doc """
   Receive a stream of BoletoHolmes structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -129,11 +129,11 @@ defmodule StarkBank.BoletoHolmes do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [BoletoHolmes.t()]}}
-          | {:error, [Error.t()]}
-          | {:halt, any}
-          | {:suspend, any},
-          any ->
-            any)
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
   def query(options \\ []) do
     Rest.get_list(resource(), options)
   end
@@ -157,10 +157,10 @@ defmodule StarkBank.BoletoHolmes do
   end
 
   @doc """
-  Receive a list of up to 100 BoletoHolmes objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 BoletoHolmes objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -184,8 +184,8 @@ defmodule StarkBank.BoletoHolmes do
           ids: [binary],
           boleto_id: binary,
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [BoletoHolmes.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [BoletoHolmes.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -203,7 +203,7 @@ defmodule StarkBank.BoletoHolmes do
           ids: [binary],
           boleto_id: binary,
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [BoletoHolmes.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

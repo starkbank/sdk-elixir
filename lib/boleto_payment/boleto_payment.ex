@@ -24,33 +24,28 @@ defmodule StarkBank.BoletoPayment do
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
 
   ## Parameters (optional):
-    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
     - `:scheduled` [Date or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
 
   ## Attributes (return-only):
-    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:status` [string]: current payment status. ex: "success" or "failed"
-    - `:fee` [integer]: fee charged when a boleto payment is created. ex: 200 (= R$ 2.00)
-    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this BoletoPayment. ex: ["19827356981273"]
-    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
+    - `:amount` [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    - `:fee` [integer, default nil]: fee charged when a boleto payment is created. ex: 200 (= R$ 2.00)
+    - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :tax_id,
-    :description
-  ]
+  @enforce_keys [:tax_id, :description]
   defstruct [
     :line,
     :bar_code,
     :tax_id,
     :description,
-    :amount,
     :scheduled,
     :tags,
     :id,
     :status,
+    :amount,
     :fee,
-    :transaction_ids,
     :created
   ]
 
@@ -62,7 +57,7 @@ defmodule StarkBank.BoletoPayment do
   ## Parameters (required):
     - `payments` [list of BoletoPayment structs]: list of BoletoPayment structs to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -96,7 +91,7 @@ defmodule StarkBank.BoletoPayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -122,7 +117,7 @@ defmodule StarkBank.BoletoPayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -144,7 +139,7 @@ defmodule StarkBank.BoletoPayment do
   @doc """
   Receive a stream of BoletoPayment structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -193,10 +188,10 @@ defmodule StarkBank.BoletoPayment do
   end
 
   @doc """
-  Receive a list of up to 100 BoletoPayment objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 BoletoPayment objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -218,8 +213,8 @@ defmodule StarkBank.BoletoPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [BoletoPayment.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [BoletoPayment.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -236,7 +231,7 @@ defmodule StarkBank.BoletoPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [BoletoPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -248,7 +243,7 @@ defmodule StarkBank.BoletoPayment do
   ## Parameters (required):
     - `id` [string]: BoletoPayment unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -288,7 +283,6 @@ defmodule StarkBank.BoletoPayment do
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
-      transaction_ids: json[:transaction_ids],
       created: json[:created] |> Check.datetime()
     }
   end

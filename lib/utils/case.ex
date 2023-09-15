@@ -4,7 +4,6 @@ defmodule StarkBank.Utils.Case do
   def camel_to_kebab(string) do
     string
     |> camel_to_snake()
-    |> process_subresource_string
     |> String.replace("_", "-")
   end
 
@@ -14,19 +13,6 @@ defmodule StarkBank.Utils.Case do
     |> camel_to_snake_graphemes()
     |> strip_underscore()
     |> Enum.join()
-  end
-
-  defp process_subresource_string(string) do
-    parts = String.split(string, "/")
-    processed_parts = Enum.map(parts, &remove_trailing_underscore/1)
-    Enum.join(processed_parts, "/")
-  end
-
-  defp remove_trailing_underscore(string) do
-    case String.ends_with?(string, "_") do
-      true -> String.slice(string, 0..-2)
-      false -> string
-    end
   end
 
   defp camel_to_snake_graphemes([letter | rest]) do

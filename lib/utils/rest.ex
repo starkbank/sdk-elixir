@@ -9,8 +9,8 @@ defmodule StarkBank.Utils.Rest do
 
   def get_page({resource_name, resource_maker}, options) do
     case Request.fetch(
-      :get,
-      "#{API.endpoint(resource_name)}",
+      :get, 
+      "#{API.endpoint(resource_name)}", 
       query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(),
       user: options[:user]
     ) do
@@ -21,9 +21,9 @@ defmodule StarkBank.Utils.Rest do
 
   def get_page!({resource_name, resource_maker}, options) do
     case Request.fetch(
-      :get,
-      "#{API.endpoint(resource_name)}",
-      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      :get, 
+      "#{API.endpoint(resource_name)}", 
+      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(), 
       user: options[:user]
     ) do
       {:ok, response} -> process_page_response(resource_name, resource_maker, response)
@@ -125,20 +125,6 @@ defmodule StarkBank.Utils.Rest do
     case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}/#{sub_resource_name}", query: options, user: user) do
       {:ok, content} -> content
       {:error, errors} -> raise API.errors_to_string(errors)
-    end
-  end
-
-  def post_raw({resource_name, resource_maker}, entities, options) do
-    user = options[:user]
-
-    case Request.fetch(
-      :post,
-      "#{API.endpoint(resource_name)}",
-      payload: prepare_payload_raw(entities),
-      user: user
-    ) do
-      {:ok, response} -> {:ok, process_response_raw(response)}
-      {:error, errors} -> {:error, errors}
     end
   end
 
@@ -246,10 +232,6 @@ defmodule StarkBank.Utils.Rest do
     )
   end
 
-  defp prepare_payload_raw(entities) do
-    Enum.map(entities, &API.api_json/1) |> hd
-  end
-
   defp process_single_response(response, resource_name, resource_maker) do
     JSON.decode!(response)[API.last_name(resource_name)]
     |> API.from_api_json(resource_maker)
@@ -260,17 +242,12 @@ defmodule StarkBank.Utils.Rest do
     |> Enum.map(fn json -> API.from_api_json(json, resource_maker) end)
   end
 
-  defp process_response_raw(response) do
-    JSON.decode!(response)["card"]
-    # |> Enum.map(fn json -> API.from_api_json(json, resource_maker) end)
-  end
-
   defp process_page_response(resource_name, resource_maker, response) do
     decoded_response = JSON.decode!(response)
     {
       decoded_response["cursor"],
       decoded_response[API.last_name_plural(resource_name)]
-        |> Enum.map(&(API.from_api_json(&1, resource_maker)))
+        |> Enum.map(&(API.from_api_json(&1, resource_maker))) 
     }
   end
 end

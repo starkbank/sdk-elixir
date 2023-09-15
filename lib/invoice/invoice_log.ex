@@ -18,27 +18,15 @@ defmodule StarkBank.Invoice.Log do
   user, but it can be retrieved to check additional information
   on the Invoice.
 
-  ## Attributes (return-only):
+  ## Attributes:
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:invoice` [Invoice]: Invoice entity to which the log refers to.
     - `:errors` [list of strings]: list of errors linked to this Invoice event
     - `:type` [string]: type of the Invoice event which triggered the log creation. ex: "created", "paid", "canceled" or "overdue"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :id,
-    :invoice,
-    :errors,
-    :type,
-    :created
-  ]
-  defstruct [
-    :id,
-    :invoice,
-    :errors,
-    :type,
-    :created
-  ]
+  @enforce_keys [:id, :invoice, :errors, :type, :created]
+  defstruct [:id, :invoice, :errors, :type, :created]
 
   @type t() :: %__MODULE__{}
 
@@ -48,7 +36,7 @@ defmodule StarkBank.Invoice.Log do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -70,7 +58,7 @@ defmodule StarkBank.Invoice.Log do
   @doc """
   Receive a stream of Log structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -116,10 +104,10 @@ defmodule StarkBank.Invoice.Log do
   end
 
   @doc """
-  Receive a list of up to 100 Invoice.Log objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 Invoice.Log objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -139,8 +127,8 @@ defmodule StarkBank.Invoice.Log do
           types: [binary],
           invoice_ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -156,7 +144,7 @@ defmodule StarkBank.Invoice.Log do
           types: [binary],
           invoice_ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [Log.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -168,7 +156,7 @@ defmodule StarkBank.Invoice.Log do
   ## Parameters (required):
     - `:id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

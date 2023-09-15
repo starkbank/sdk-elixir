@@ -29,24 +29,23 @@ defmodule StarkBank.Invoice do
     - `:fine` [float, default 0.0]: Invoice fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Invoice monthly interest for overdue payment in %. ex: 5.2
     - `:discounts` [list of dictionaries, default nil]: list of dictionaries with "percentage":float and "due":string pairs
-    - `:rules` [list of Invoice.Rule, default []]: list of Invoice.Rule objects for modifying invoice behavior. ex: [Invoice.Rule(key="allowedTaxIds", value=[ "012.345.678-90", "45.059.493/0001-73" ])]
     - `:tags` [list of strings, default nil]: list of strings for tagging
     - `:descriptions` [list of dictionaries, default nil]: list of dictionaries with "key":string and (optional) "value":string pairs
 
   ## Attributes (return-only):
-    - `:pdf` [string]: public Invoice PDF URL. ex: "https://invoice.starkbank.com/pdf/d454fa4e524441c1b0c1a729457ed9d8"
-    - `:link` [string]: public Invoice webpage URL. ex: "https://my-workspace.sandbox.starkbank.com/invoicelink/d454fa4e524441c1b0c1a729457ed9d8"
-    - `:nominal_amount` [integer]: Invoice emission value in cents (will change if invoice is updated, but not if it's paid). ex: 400000
-    - `:fine_amount` [integer]: Invoice fine value calculated over nominal_amount. ex: 20000
-    - `:interest_amount` [integer]: Invoice interest value calculated over nominal_amount. ex: 10000
-    - `:discount_amount` [integer]: Invoice discount value calculated over nominal_amount. ex: 3000
-    - `:id` [string]: unique id returned when Invoice is created. ex: "5656565656565656"
-    - `:brcode` [string]: BR Code for the Invoice payment. ex: "00020101021226800014br.gov.bcb.pix2558invoice.starkbank.com/f5333103-3279-4db2-8389-5efe335ba93d5204000053039865802BR5913Arya Stark6009Sao Paulo6220051656565656565656566304A9A0"
-    - `:status` [string]: current Invoice status. ex: "created", "paid", "canceled" or "overdue"
-    - `:fee` [integer]: fee charged by this Invoice. ex: 65 (= R$ 0.65)
-    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
-    - `:created` [DateTime]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
+    - `:pdf` [string, default nil]: public Invoice PDF URL. ex: "https://invoice.starkbank.com/pdf/d454fa4e524441c1b0c1a729457ed9d8"
+    - `:link` [string, default nil]: public Invoice webpage URL. ex: "https://my-workspace.sandbox.starkbank.com/invoicelink/d454fa4e524441c1b0c1a729457ed9d8"
+    - `:nominal_amount` [integer, default nil]: Invoice emission value in cents (will change if invoice is updated, but not if it's paid). ex: 400000
+    - `:fine_amount` [integer, default nil]: Invoice fine value calculated over nominal_amount. ex: 20000
+    - `:interest_amount` [integer, default nil]: Invoice interest value calculated over nominal_amount. ex: 10000
+    - `:discount_amount` [integer, default nil]: Invoice discount value calculated over nominal_amount. ex: 3000
+    - `:id` [string, default nil]: unique id returned when Invoice is created. ex: "5656565656565656"
+    - `:brcode` [string, default nil]: BR Code for the Invoice payment. ex: "00020101021226800014br.gov.bcb.pix2558invoice.starkbank.com/f5333103-3279-4db2-8389-5efe335ba93d5204000053039865802BR5913Arya Stark6009Sao Paulo6220051656565656565656566304A9A0"
+    - `:status` [string, default nil]: current Invoice status. ex: "created", "paid", "canceled" or "overdue"
+    - `:fee` [integer, default nil]: fee charged by this Invoice. ex: 65 (= R$ 0.65)
+    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this boleto. ex: ["19827356981273"]
+    - `:created` [DateTime, default nil]: creation datetime for the Invoice. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime, default nil]: latest update datetime for the Invoice. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
   @enforce_keys [
     :amount,
@@ -62,7 +61,6 @@ defmodule StarkBank.Invoice do
     :fine,
     :interest,
     :discounts,
-    :rules,
     :tags,
     :descriptions,
     :pdf,
@@ -88,7 +86,7 @@ defmodule StarkBank.Invoice do
   ## Parameters (required):
     - `invoices` [list of Invoice structs]: list of Invoice structs to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -122,7 +120,7 @@ defmodule StarkBank.Invoice do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -147,7 +145,7 @@ defmodule StarkBank.Invoice do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -172,7 +170,7 @@ defmodule StarkBank.Invoice do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -194,7 +192,7 @@ defmodule StarkBank.Invoice do
   @doc """
   Receive a stream of Invoice structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -243,10 +241,10 @@ defmodule StarkBank.Invoice do
   end
 
   @doc """
-  Receive a list of up to 100 Invoice objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 Invoice objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -268,8 +266,8 @@ defmodule StarkBank.Invoice do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [Invoice.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [Invoice.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -286,7 +284,7 @@ defmodule StarkBank.Invoice do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [Invoice.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -348,10 +346,6 @@ defmodule StarkBank.Invoice do
     Rest.get_sub_resource!(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
   end
 
-  defp parse_rules(rule) do
-
-  end
-
   @doc false
   def resource() do
     {
@@ -373,7 +367,6 @@ defmodule StarkBank.Invoice do
       discounts: json[:discounts] |> Enum.map(fn discount -> %{discount | "due" => discount["due"] |> Check.date_or_datetime()} end),
       tags: json[:tags],
       descriptions: json[:descriptions],
-      rules: json[:rules],
       pdf: json[:pdf],
       link: json[:link],
       nominal_amount: json[:nominal_amount],

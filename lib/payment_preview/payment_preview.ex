@@ -45,7 +45,7 @@ defmodule StarkBank.PaymentPreview do
   ## Parameters (required):
     - `:previews` [list of PaymentPreviews structs]: list of PaymentPreviews objects to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

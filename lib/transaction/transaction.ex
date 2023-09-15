@@ -29,19 +29,14 @@ defmodule StarkBank.Transaction do
     - `:tags` [list of strings]: list of strings for reference when searching transactions (may be empty). ex: ["abc", "test"]
 
   ## Attributes (return-only):
-    - `:id` [string]: unique id returned when Transaction is created. ex: "7656565656565656"
+    - `:id` [string, default nil]: unique id returned when Transaction is created. ex: "7656565656565656"
     - `:sender_id` [string]: unique id of the sending workspace. ex: "5656565656565656"
-    - `:fee` [integer]: fee charged when the transaction was created. ex: 200 (= R$ 2.00)
-    - `:source` [string]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
-    - `:balance` [integer]: account balance after transaction was processed. ex: 100000000 (= R$ 1,000,000.00)
-    - `:created` [DateTime]: creation datetime for the transaction. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:fee` [integer, default nil]: fee charged when the transaction was created. ex: 200 (= R$ 2.00)
+    - `:source` [string, default nil]: locator of the entity that generated the transaction. ex: "charge/18276318736" or "transfer/19381639871263/chargeback"
+    - `:balance` [integer, default nil]: account balance after transaction was processed. ex: 100000000 (= R$ 1,000,000.00)
+    - `:created` [DateTime, default nil]: creation datetime for the transaction. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :amount,
-    :description,
-    :external_id,
-    :receiver_id
-  ]
+  @enforce_keys [:amount, :description, :external_id, :receiver_id]
   defstruct [
     :amount,
     :description,
@@ -64,7 +59,7 @@ defmodule StarkBank.Transaction do
   ## Parameters (required):
     - `transactions` [list of Transaction entities]: list of Transaction entities to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -98,7 +93,7 @@ defmodule StarkBank.Transaction do
   ## Parameters (required):
     - `id` [string]: entity unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -120,7 +115,7 @@ defmodule StarkBank.Transaction do
   @doc """
   Receive a stream of Transaction entities previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
@@ -169,10 +164,10 @@ defmodule StarkBank.Transaction do
   end
 
   @doc """
-  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
@@ -194,8 +189,8 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -212,7 +207,7 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [Transaction.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

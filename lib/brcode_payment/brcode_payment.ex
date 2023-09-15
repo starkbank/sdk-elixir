@@ -26,23 +26,18 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (optional):
     - `:scheduled` [Date, DateTime or string, default now]: payment scheduled date or datetime. ex: "2020-12-13T18:36:18.219000+00:00"
     - `:tags` [list of strings]: list of strings for tagging.
-    - `:rules` [list of BrcodePayment.Rules]: list of BrcodePayment.Rule objects for modifying payment behavior.
 
   ## Attributes (return-only):
-    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:name` [string]: receiver name. ex: "Jon Snow"
-    - `:status` [string]: current payment status. ex: "success" or "failed"
-    - `:type` [string]: brcode type. ex: "static" or "dynamic"
-    - `:fee` [integer]: fee charged when a brcode payment is created. ex: 200 (= R$ 2.00)
-    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this BR Code payment. ex: ["19827356981273"]
-    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime]: latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
+    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:name` [string, default nil]: receiver name. ex: "Jon Snow"
+    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
+    - `:type` [string, default nil]: brcode type. ex: "static" or "dynamic"
+    - `:fee` [integer, default nil]: fee charged when a brcode payment is created. ex: 200 (= R$ 2.00)
+    - `:transaction_ids` [list of strings, default nil]: ledger transaction ids linked to this BR Code payment. ex: ["19827356981273"]
+    - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:updated` [DateTime, default nil]: latest update datetime for the Deposit. ex: ~U[2020-08-20 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :brcode,
-    :tax_id,
-    :description
-  ]
+  @enforce_keys [:brcode, :tax_id, :description]
   defstruct [
     :brcode,
     :tax_id,
@@ -50,7 +45,6 @@ defmodule StarkBank.BrcodePayment do
     :amount,
     :scheduled,
     :tags,
-    :rules,
     :id,
     :name,
     :status,
@@ -69,7 +63,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (required):
     - `payments` [list of BrcodePayment structs]: list of BrcodePayment structs to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -103,7 +97,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -128,7 +122,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -150,7 +144,7 @@ defmodule StarkBank.BrcodePayment do
   @doc """
   Receive a stream of BrcodePayment structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -199,10 +193,10 @@ defmodule StarkBank.BrcodePayment do
   end
 
   @doc """
-  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -224,8 +218,8 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -242,11 +236,11 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [BrcodePayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
-  end
+  end  
 
   @doc """
   Update an BrcodePayment by passing id, if it hasn't been paid yet.
@@ -293,7 +287,6 @@ defmodule StarkBank.BrcodePayment do
       scheduled: json[:scheduled] |> Check.datetime(),
       tags: json[:tags],
       id: json[:id],
-      rules: json[:rules],
       name: json[:name],
       status: json[:status],
       type: json[:type],

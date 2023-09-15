@@ -30,22 +30,15 @@ defmodule StarkBank.Event do
   Events cannot be created, but may be retrieved from the Stark Bank API to
   list all generated updates on entities.
 
-  ## Attributes (return-only):
+  ## Attributes:
     - `:id` [string]: unique id returned when the event is created. ex: "5656565656565656"
     - `:log` [Log]: a Log struct from one the subscription services (Transfer.Log, Boleto.Log, BoletoPayment.log, UtilityPayment.Log or TaxPayment.Log)
     - `:created` [DateTime]: creation datetime for the notification event. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:is_delivered` [bool]: true if the event has been successfully delivered to the user url. ex: false
     - `:subscription` [string]: service that triggered this event. ex: "transfer", "utility-payment"
-    - `:workspace_id` [string]: ID of the Workspace that generated this event. Mostly used when multiple Workspaces have Webhooks registered to the same endpoint. ex: "4545454545454545"
+    - `workspace_id` [string]: ID of the Workspace that generated this event. Mostly used when multiple Workspaces have Webhooks registered to the same endpoint. ex: "4545454545454545"
   """
-  defstruct [
-    :id,
-    :log,
-    :created,
-    :is_delivered,
-    :subscription,
-    :workspace_id
-  ]
+  defstruct [:id, :log, :created, :is_delivered, :subscription, :workspace_id]
 
   @type t() :: %__MODULE__{}
 
@@ -55,7 +48,7 @@ defmodule StarkBank.Event do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -77,7 +70,7 @@ defmodule StarkBank.Event do
   @doc """
   Receive a stream of notification Event structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -120,10 +113,10 @@ defmodule StarkBank.Event do
   end
 
   @doc """
-  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -141,8 +134,8 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -157,7 +150,7 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [Event.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -169,7 +162,7 @@ defmodule StarkBank.Event do
   ## Parameters (required):
     - `id` [string]: Event unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

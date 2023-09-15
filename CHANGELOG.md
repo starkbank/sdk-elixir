@@ -13,25 +13,12 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
-### Added
-### Added
-- CorporateBalance resource
-- CorporateCard resource
-- CorporateHolder resource
-- CorporateInvoice resource
-- CorporatePurchase resource
-- CorporateRule resource
-- CorporateTransaction resource
-- CorporateWithdrawal resource
-- CardMethod sub-resource
-- MerchantCategory sub-resource
-- MerchantCountry sub-resource
-- DynamicBrcode resource
-- status attribute to Workspace resource
-- rules attribute to BrcodePayment resource
-- BrcodePayment.Rule sub-resource
-- rules attribute to Transfer resource
-- Transfer.Rule sub-resource
+### Removed 
+- account_created, created and owned attributes to DictKey resource
+- account_number and branch_code to PaymentPreview resource
+
+### Changed
+- account_number and branch_code docstring attributes to DictKey resource
 
 ## [2.6.2] - 2021-11-10
 ### Changed

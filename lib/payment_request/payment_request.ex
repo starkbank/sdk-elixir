@@ -37,19 +37,15 @@ defmodule StarkBank.PaymentRequest do
     - `:tags` [list of strings]: list of strings for tagging
 
     ## Attributes (return-only):
-    - `:id` [string]: unique id returned when PaymentRequest is created. ex: "5656565656565656"
-    - `:amount` [integer]: PaymentRequest amount. ex: 100000 = R$1.000,00
-    - `:description` [string]: payment request description. ex: "Tony Stark's Suit"
-    - `:status` [string]: current PaymentRequest status.ex: "pending" or "approved"
-    - `:actions` [list of maps]: list of actions that are affecting this PaymentRequest. ex: [%{"type": "member", "id": "56565656565656, "action": "requested"}]
-    - `:updated` [DateTime]: latest update datetime for the PaymentRequest. ex: 2020-12-31
-    - `:created` [DateTime]: creation datetime for the PaymentRequest. ex: 2020-12-31
+    - `:id` [string, default nil]: unique id returned when PaymentRequest is created. ex: "5656565656565656"
+    - `:amount` [integer, default nil]: PaymentRequest amount. ex: 100000 = R$1.000,00
+    - `:status` [string, default nil]: current PaymentRequest status.ex: "pending" or "approved"
+    - `:actions` [list of maps, default nil]: list of actions that are affecting this PaymentRequest. ex: [%{"type": "member", "id": "56565656565656, "action": "requested"}]
+    - `:updated` [DateTime, default nil]: latest update datetime for the PaymentRequest. ex: 2020-12-31
+    - `:created` [DateTime, default nil]: creation datetime for the PaymentRequest. ex: 2020-12-31
     """
 
-    @enforce_keys [
-        :center_id,
-        :payment
-    ]
+    @enforce_keys [:center_id, :payment]
     defstruct [
         :id,
         :payment,
@@ -57,7 +53,6 @@ defmodule StarkBank.PaymentRequest do
         :due,
         :tags,
         :amount,
-        :description,
         :status,
         :actions,
         :updated,
@@ -70,10 +65,10 @@ defmodule StarkBank.PaymentRequest do
     @doc """
     Sends a list of PaymentRequests structs for creating in the Stark Bank API
 
-    ## Parameters (required):
+    ## Paramenters (required):
     - `payment_requests` [list of PaymentRequest structs]: list of PaymentRequest objects to be created in the API
 
-    ## Parameters (optional):
+    ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
     ## Return:
@@ -107,7 +102,7 @@ defmodule StarkBank.PaymentRequest do
     @doc """
     Receive a stream of PaymentRequest structs previously created by this user in the Stark Bank API
 
-    ## Parameters (optional):
+    ## Options:
         - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
         - `:center_id` [string]: target cost center ID. ex: '5656565656565656'
         - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -165,10 +160,10 @@ defmodule StarkBank.PaymentRequest do
     end
 
     @doc """
-    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page.
+    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page. 
     Use this function instead of query if you want to manually page your requests.
 
-    ## Parameters (optional):
+    ## Options:
         - `:cursor` [string, default nil]: cursor returned on the previous page function call
         - `:center_id` [string]: target cost center ID. ex: '5656565656565656'
         - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
@@ -196,8 +191,8 @@ defmodule StarkBank.PaymentRequest do
             tags: [binary],
             ids: [binary],
             user: Project.t() | Organization.t()
-            ) ::
-            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]}
+            ) :: 
+            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]} 
     def page(options \\ []) do
         Rest.get_page(resource(), options)
     end
@@ -265,7 +260,6 @@ defmodule StarkBank.PaymentRequest do
             type: json[:type],
             tags: json[:tags],
             amount: json[:amount],
-            description: json[:description],
             status: json[:status],
             actions: json[:actions],
             updated: json[:updated] |> Check.datetime(),

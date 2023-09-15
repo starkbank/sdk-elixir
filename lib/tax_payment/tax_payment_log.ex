@@ -24,13 +24,7 @@ defmodule StarkBank.TaxPayment.Log do
     - `:type` [string]: tax type. ex: "das"
     - `:created` [DateTime]: creation datetime for the payment. ex: "2020-03-10 10:30:00.000"
   """
-  @enforce_keys [
-    :id,
-    :payment,
-    :errors,
-    :type,
-    :created
-  ]
+  @enforce_keys [:id, :payment, :errors, :type, :created]
   defstruct [
     :id,
     :payment,
@@ -47,7 +41,7 @@ defmodule StarkBank.TaxPayment.Log do
   ## Parameters (required):
     - `:id` [string]: entity unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -69,7 +63,7 @@ defmodule StarkBank.TaxPayment.Log do
   @doc """
   Receive a stream of TaxPayment Log structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for entities created only before specified date. ex: ~D[2020-03-25]
@@ -118,7 +112,7 @@ defmodule StarkBank.TaxPayment.Log do
   Receive a list of up to 100 TaxPayment structs previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]

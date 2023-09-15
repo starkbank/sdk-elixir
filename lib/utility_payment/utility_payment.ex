@@ -27,18 +27,13 @@ defmodule StarkBank.UtilityPayment do
     - `:tags` [list of strings]: list of strings for tagging
 
   Attributes (return-only):
-    - `:id` [string]: unique id returned when payment is created. ex: "5656565656565656"
-    - `:status` [string]: current payment status. ex: "success" or "failed"
-    - `:amount` [int]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
-    - `:fee` [integer]: fee charged when a utility payment is created. ex: 200 (= R$ 2.00)
-    - `:type` [string]: payment type. ex: "utility"
-    - `:transaction_ids` [list of strings]: ledger transaction ids linked to this UtilityPayment. ex: ["19827356981273"]
-    - `:created` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
-    - `:updated` [DateTime]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
+    - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
+    - `:amount` [int, default nil]: amount automatically calculated from line or bar_code. ex: 23456 (= R$ 234.56)
+    - `:fee` [integer, default nil]: fee charged when a utility payment is created. ex: 200 (= R$ 2.00)
+    - `:created` [DateTime, default nil]: creation datetime for the payment. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
-  @enforce_keys [
-    :description
-  ]
+  @enforce_keys [:description]
   defstruct [
     :line,
     :bar_code,
@@ -49,10 +44,7 @@ defmodule StarkBank.UtilityPayment do
     :status,
     :amount,
     :fee,
-    :type,
-    :transaction_ids,
-    :created,
-    :updated,
+    :created
   ]
 
   @type t() :: %__MODULE__{}
@@ -63,7 +55,7 @@ defmodule StarkBank.UtilityPayment do
   ## Parameters (required):
     - `payments` [list of UtilityPayment structs]: list of UtilityPayment structs to be created in the API
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -97,7 +89,7 @@ defmodule StarkBank.UtilityPayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -123,7 +115,7 @@ defmodule StarkBank.UtilityPayment do
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -145,7 +137,7 @@ defmodule StarkBank.UtilityPayment do
   @doc """
   Receive a stream of UtilityPayment structs previously created in the Stark Bank API
 
-  ## Parameters (optional):
+  ## Options:
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
     - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
@@ -194,10 +186,10 @@ defmodule StarkBank.UtilityPayment do
   end
 
   @doc """
-  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page.
+  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page. 
   Use this function instead of query if you want to manually page your requests.
 
-  ## Parameters (optional):
+  ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
@@ -219,8 +211,8 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
-            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]}
+          ) :: 
+            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]} 
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -237,7 +229,7 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) ::
+          ) :: 
             [UtilityPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -249,7 +241,7 @@ defmodule StarkBank.UtilityPayment do
   ## Parameters (required):
     - `id` [string]: UtilityPayment unique id. ex: "5656565656565656"
 
-  ## Parameters (optional):
+  ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -288,10 +280,7 @@ defmodule StarkBank.UtilityPayment do
       status: json[:status],
       amount: json[:amount],
       fee: json[:fee],
-      type: json[:type],
-      transaction_ids: json[:transaction_ids],
-      created: json[:created] |> Check.datetime(),
-      updated: json[:updated] |> Check.datetime()
+      created: json[:created] |> Check.datetime()
     }
   end
 end

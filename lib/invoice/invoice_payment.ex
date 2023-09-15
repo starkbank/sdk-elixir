@@ -9,7 +9,7 @@ defmodule StarkBank.Invoice.Payment do
   When an Invoice is paid, its Payment sub-resource will become available.
   It carries all the available information about the invoice payment.
 
-  ## Attributes (return-only):
+  ## Attributes:
     - `:amount` [integer]: amount in cents that was paid. ex: 1234 (= R$ 12.34)
     - `:name` [string]: payer full name. ex: "Anthony Edward Stark"
     - `:tax_id` [string]: payer tax ID (CPF or CNPJ). ex: "20.018.183/0001-80"
