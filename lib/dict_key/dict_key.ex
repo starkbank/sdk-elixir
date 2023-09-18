@@ -23,9 +23,9 @@ defmodule StarkBank.DictKey do
     - `:owner_type` [string, default nil]: DICT key owner type. ex "naturalPerson" or "legalPerson"
     - `:bank_name` [string, default nil]: bank name associated with the DICT key. ex: "Stark Bank"
     - `:ispb` [string, default nil]: bank ISPB associated with the DICT key. ex: "20018183"
-    - `:branch_code` [string, default nil]: bank account branch code associated with the DICT key. ex: "ZW5jcnlwdGVkLWJyYW5jaC1jb2Rl"
-    - `:account_number` [string, default nil]: bank account number associated with the DICT key. ex: "ZW5jcnlwdGVkLWFjY291bnQtbnVtYmVy"
-    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "saving", "salary" or "payment"
+    - `:branch_code` [string, default nil]: encrypted bank account branch code associated with the DICT key. ex: "ZW5jcnlwdGVkLWJyYW5jaC1jb2Rl"
+    - `:account_number` [string, default nil]: encrypted bank account number associated with the DICT key. ex: "ZW5jcnlwdGVkLWFjY291bnQtbnVtYmVy"
+    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "savings", "salary" or "payment"
     - `:status` [string, default nil]: current DICT key status. ex: "created", "registered", "canceled" or "failed"
   """
   defstruct [
