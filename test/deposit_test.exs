@@ -90,4 +90,26 @@ defmodule StarkBankTest.Deposit do
 
     _deposit = StarkBank.Deposit.get!(deposit.id)
   end
+
+  @tag :deposit
+  test "update deposit amount" do
+    deposit =
+      StarkBank.Deposit.query!(status: "created")
+      |> Enum.take(1)
+      |> hd()
+
+    {:ok, updated_deposit} = StarkBank.Deposit.update(deposit.id, amount: 0)
+    assert updated_deposit.amount == 0
+  end
+
+  @tag :deposit
+  test "update! deposit amount" do
+    deposit =
+      StarkBank.Deposit.query!(status: "created")
+      |> Enum.take(1)
+      |> hd()
+
+    updated_deposit = StarkBank.Deposit.update!(deposit.id, amount: 0)
+    assert updated_deposit.amount == 0
+  end
 end

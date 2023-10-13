@@ -20,6 +20,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - account_number and branch_code docstring attributes to DictKey resource
 ### Fixed
 - account_type docstring attribute to DictKey resource
+### Added
+- update function to Deposit resource
 
 ## [2.6.2] - 2021-11-10
 ### Changed

@@ -690,6 +690,18 @@ deposit = StarkBank.Deposit.get!("5738709764800512")
   |> IO.inspect
 ```
 
+## Update a deposit
+
+Update a deposit by passing its id to be partially or fully reversed.
+
+```elixir
+deposit = StarkBank.Deposit.update!(
+  "6750458353811456", 
+  amount: 0
+)
+  |> IO.inspect
+```
+
 ## Query deposit logs
 
 Logs are pretty important to understand the life cycle of a deposit.
