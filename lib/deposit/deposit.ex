@@ -131,7 +131,7 @@ defmodule StarkBank.Deposit do
   end
 
   @doc """
-  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -158,8 +158,8 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -177,10 +177,29 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Deposit.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
+  end
+
+  @doc """
+  Update the Deposit by passing its id to be partially or fully reversed.
+
+  ## Parameters (required):
+    - `:id` [string]: Deposit id. ex: '5656565656565656'
+
+  ## Parameters (optional):
+    - `:amount` [string]: The new amount of the Deposit. If the amount = 0 the Deposit will be fully reversed
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - target Deposit with updated attributes
+  """
+  @spec update(binary, amount: integer, user: Project.t() | Organization.t() | nil) ::
+  {:ok, Deposit.t()} | {:error, [%Error{}]}
+  def update(id, parameters \\ []) do
+  Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc false

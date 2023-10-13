@@ -13,8 +13,6 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
       - `:name` [string]: Payment receiver name. ex: "Tony Stark"
       - `:tax_id` [string]: Payment receiver tax ID. ex: "012.345.678-90"
       - `:bank_code` [string]: Payment receiver bank code. ex: "20018183"
-      - `:branch_code` [string]: Payment receiver branch code. ex: "0001"
-      - `:account_number` [string]: Payment receiver account number. ex: "1234567"
       - `:account_type` [string]: Payment receiver account type. ex: "checking"
       - `:allow_change` [bool]: If True, the payment is able to receive amounts that are different from the nominal one. ex: True or False
       - `:amount` [integer]: Value in cents that this payment is expecting to receive. If 0, any value is accepted. ex: 123 (= R$1,23)
@@ -30,8 +28,6 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
       :name,
       :tax_id,
       :bank_code,
-      :branch_code,
-      :account_number,
       :account_type,
       :allow_change,
       :amount,
@@ -61,8 +57,6 @@ defmodule StarkBank.PaymentPreview.BrcodePreview do
         name: json[:name],
         tax_id: json[:tax_id],
         bank_code: json[:bank_code],
-        branch_code: json[:branch_code],
-        account_number: json[:account_number],
         account_type: json[:account_type],
         allow_change: json[:allow_change],
         amount: json[:amount],

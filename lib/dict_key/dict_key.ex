@@ -23,13 +23,10 @@ defmodule StarkBank.DictKey do
     - `:owner_type` [string, default nil]: DICT key owner type. ex "naturalPerson" or "legalPerson"
     - `:bank_name` [string, default nil]: bank name associated with the DICT key. ex: "Stark Bank"
     - `:ispb` [string, default nil]: bank ISPB associated with the DICT key. ex: "20018183"
-    - `:branch_code` [string, default nil]: bank account branch code associated with the DICT key. ex: "9585"
-    - `:account_number` [string, default nil]: bank account number associated with the DICT key. ex: "9828282578010513"
-    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "saving", "salary" or "payment"
+    - `:branch_code` [string, default nil]: encrypted bank account branch code associated with the DICT key. ex: "ZW5jcnlwdGVkLWJyYW5jaC1jb2Rl"
+    - `:account_number` [string, default nil]: encrypted bank account number associated with the DICT key. ex: "ZW5jcnlwdGVkLWFjY291bnQtbnVtYmVy"
+    - `:account_type` [string, default nil]: bank account type associated with the DICT key. ex: "checking", "savings", "salary" or "payment"
     - `:status` [string, default nil]: current DICT key status. ex: "created", "registered", "canceled" or "failed"
-    - `:account_created` [datetime.datetime, default nil]: creation datetime of the bank account associated with the DICT key. ex: datetime.date(2020, 1, 12, 11, 14, 8)
-    - `:owned` [DateTime, default nil]: datetime since when the current owner hold this DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
-    - `:created` [DateTime, default nil]: creation datetime for the DICT key. ex: ~U[2020-11-26 17:31:45.482618Z]
   """
   defstruct [
     :id,
@@ -42,10 +39,7 @@ defmodule StarkBank.DictKey do
     :branch_code,
     :account_number,
     :account_type,
-    :status,
-    :account_created,
-    :owned,
-    :created
+    :status
   ]
 
   @type t() :: %__MODULE__{}
@@ -127,7 +121,7 @@ defmodule StarkBank.DictKey do
   end
 
   @doc """
-  Receive a list of up to 100 DictKey objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 DictKey objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -152,8 +146,8 @@ defmodule StarkBank.DictKey do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [DictKey.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [DictKey.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -170,7 +164,7 @@ defmodule StarkBank.DictKey do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [DictKey.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
@@ -197,10 +191,7 @@ defmodule StarkBank.DictKey do
       branch_code: json[:branch_code],
       account_number: json[:account_number],
       account_type: json[:account_type],
-      status: json[:status],
-      account_created: json[:account_created] |> Check.datetime(),
-      owned: json[:owned] |> Check.datetime(),
-      created: json[:created] |> Check.datetime()
+      status: json[:status]
     }
   end
 end
