@@ -140,7 +140,7 @@ defmodule StarkBankTest.Workspace do
   end
 
   def example_workspace() do
-    id = Enum.random(0..100_000_000_000) |> Integer.to_string
+    id = Enum.random(0..100_000_000_000//1) |> Integer.to_string
     %StarkBank.Workspace{
       username: "starkv2-" <> id,
       name: "Stark V2: " <> id,

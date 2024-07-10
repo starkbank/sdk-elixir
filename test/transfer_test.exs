@@ -146,7 +146,7 @@ defmodule StarkBankTest.Transfer do
   def example_transfer(push_schedule \\ false)
 
   def example_transfer(push_schedule) when push_schedule do
-    rand = Enum.random(0..1)
+    rand = Enum.random(0..1//1)
     cond do
       rand == 0 -> %{example_transfer(false) | scheduled: Date.utc_today() |> Date.add(1)}
       rand == 1 -> %{example_transfer(false) | scheduled: DateTime.utc_now() |> DateTime.add(86400, :second)}

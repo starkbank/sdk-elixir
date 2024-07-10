@@ -84,7 +84,7 @@ defmodule StarkBank.Utils.API do
       word |> String.ends_with?("ey") ->
         word <> "s"
       word |> String.ends_with?("y") ->
-        (word |> String.slice(0..-2)) <> "ies"
+        (word |> String.slice(0..-2//-1)) <> "ies"
       true -> word <> "s"
     end
   end

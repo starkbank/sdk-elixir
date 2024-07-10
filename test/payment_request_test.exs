@@ -3,7 +3,7 @@ defmodule StarkBankTest.PaymentRequest do
 
   @tag :payment_request
   test "create! PaymentRequest" do
-    requests = for i <- 1..10, i > 0 do
+    requests = for i <- 1..10//1, i > 0 do
       request_example()
     end
     received = StarkBank.PaymentRequest.create!(requests)
@@ -14,7 +14,7 @@ defmodule StarkBankTest.PaymentRequest do
 
   @tag :payment_request
   test "create PaymentRequest" do
-    requests = for i <- 1..10, i > 0 do
+    requests = for i <- 1..10//1, i > 0 do
       request_example()
     end
     {:ok, received} = StarkBank.PaymentRequest.create(requests)
@@ -59,7 +59,7 @@ defmodule StarkBankTest.PaymentRequest do
   end
 
   defp get_days() do
-    days = Enum.random(1..7)
+    days = Enum.random(1..7//1)
     Date.utc_today() |> Date.add(days)
   end
 
@@ -74,7 +74,7 @@ defmodule StarkBankTest.PaymentRequest do
   end
 
   defp create_payment() do
-    case Enum.random(0..4) do
+    case Enum.random(0..4//1) do
       0 -> StarkBankTest.Transfer.example_transfer(false)
       1 -> StarkBankTest.Transaction.example_transaction()
       2 -> StarkBankTest.BoletoPayment.example_payment(false)

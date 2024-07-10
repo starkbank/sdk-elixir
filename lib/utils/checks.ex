@@ -48,7 +48,7 @@ defmodule StarkBank.Utils.Check do
   end
 
   def date_or_datetime(data) do
-    try do 
+    try do
       date(data)
     rescue
       ArgumentError -> datetime(data)
@@ -114,11 +114,9 @@ defmodule StarkBank.Utils.Check do
 
   def language() do
     case Application.fetch_env(:starkbank, :language) do
-      {:ok, 'en-US'} -> 'en-US'
-      {:ok, "en-US"} -> 'en-US'
-      {:ok, 'pt-BR'} -> 'pt-BR'
-      {:ok, "pt-BR"} -> 'pt-BR'
-      :error -> 'en-US'
+      {:ok, "en-US"} -> "en-US"
+      {:ok, "pt-BR"} -> "pt-BR"
+      :error -> "en-US"
     end
   end
 
