@@ -2,8 +2,8 @@ defmodule StarkBank.Transaction do
   alias __MODULE__, as: Transaction
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -164,7 +164,7 @@ defmodule StarkBank.Transaction do
   end
 
   @doc """
-  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -189,8 +189,8 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -207,7 +207,7 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Transaction.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

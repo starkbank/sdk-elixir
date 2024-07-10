@@ -1,8 +1,8 @@
 defmodule StarkBank.Institution do
     alias __MODULE__, as: Institution
     alias StarkBank.Utils.Rest
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
+    alias StarkBank.Project
+    alias StarkBank.Organization
     alias StarkBank.Error
 
     @moduledoc """

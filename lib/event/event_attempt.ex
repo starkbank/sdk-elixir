@@ -2,8 +2,8 @@ defmodule StarkBank.Event.Attempt do
   alias __MODULE__, as: Attempt
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -102,7 +102,7 @@ defmodule StarkBank.Event.Attempt do
   end
 
   @doc """
-  Receive a list of up to 100 Attempt objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Attempt objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -125,8 +125,8 @@ defmodule StarkBank.Event.Attempt do
           event_ids: [binary],
           webhook_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Attempt.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Attempt.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -142,7 +142,7 @@ defmodule StarkBank.Event.Attempt do
           event_ids: [binary],
           webhook_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Attempt.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

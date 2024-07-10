@@ -7,8 +7,8 @@ defmodule StarkBank.PaymentPreview do
   alias StarkBank.PaymentPreview.TaxPreview, as: TaxPreview
   alias StarkBank.PaymentPreview.UtilityPreview, as: UtilityPreview
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """

@@ -2,8 +2,8 @@ defmodule StarkBank.Workspace do
   alias __MODULE__, as: Workspace
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -153,7 +153,7 @@ defmodule StarkBank.Workspace do
   end
 
   @doc """
-  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -172,8 +172,8 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -187,7 +187,7 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Workspace.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

@@ -2,8 +2,8 @@ defmodule StarkBank.Webhook do
   alias __MODULE__, as: Webhook
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -134,9 +134,9 @@ defmodule StarkBank.Webhook do
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
-  
+
   @doc """
-  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -151,8 +151,8 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -164,7 +164,7 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Webhook.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

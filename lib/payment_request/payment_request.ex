@@ -3,8 +3,8 @@ defmodule StarkBank.PaymentRequest do
     alias StarkBank.Utils.Rest
     alias StarkBank.Utils.Check
     alias StarkBank.Utils.API
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
+    alias StarkBank.Project
+    alias StarkBank.Organization
     alias StarkBank.Error
     alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer
@@ -160,7 +160,7 @@ defmodule StarkBank.PaymentRequest do
     end
 
     @doc """
-    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page. 
+    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page.
     Use this function instead of query if you want to manually page your requests.
 
     ## Options:
@@ -191,8 +191,8 @@ defmodule StarkBank.PaymentRequest do
             tags: [binary],
             ids: [binary],
             user: Project.t() | Organization.t()
-            ) :: 
-            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]} 
+            ) ::
+            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]}
     def page(options \\ []) do
         Rest.get_page(resource(), options)
     end

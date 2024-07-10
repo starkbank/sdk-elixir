@@ -4,8 +4,8 @@ defmodule StarkBank.Transfer.Log do
   alias StarkBank.Utils.Check
   alias StarkBank.Utils.API
   alias StarkBank.Transfer
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -103,7 +103,7 @@ defmodule StarkBank.Transfer.Log do
   end
 
   @doc """
-  Receive a list of up to 100 Transfer.Log objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Transfer.Log objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -126,8 +126,8 @@ defmodule StarkBank.Transfer.Log do
           types: [binary],
           transfer_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -143,7 +143,7 @@ defmodule StarkBank.Transfer.Log do
           types: [binary],
           transfer_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Log.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

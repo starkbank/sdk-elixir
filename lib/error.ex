@@ -12,4 +12,5 @@ defmodule StarkBank.Error do
     - `message` [string]: explains the detected error. ex: "Provided digital signature in the header Access-Signature does not check out. See https://docs.api.starkbank.com/#auth for details."
   """
   defstruct [:code, :message]
+  @type t() :: %__MODULE__{}
 end

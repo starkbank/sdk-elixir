@@ -2,8 +2,8 @@ defmodule StarkBank.BrcodePayment do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.BrcodePayment
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -193,7 +193,7 @@ defmodule StarkBank.BrcodePayment do
   end
 
   @doc """
-  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -218,8 +218,8 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -236,11 +236,11 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [BrcodePayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
-  end  
+  end
 
   @doc """
   Update an BrcodePayment by passing id, if it hasn't been paid yet.

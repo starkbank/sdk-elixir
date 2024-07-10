@@ -2,8 +2,8 @@ defmodule StarkBank.UtilityPayment do
   alias __MODULE__, as: UtilityPayment
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -186,7 +186,7 @@ defmodule StarkBank.UtilityPayment do
   end
 
   @doc """
-  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 UtilityPayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -211,8 +211,8 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [UtilityPayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -229,7 +229,7 @@ defmodule StarkBank.UtilityPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [UtilityPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

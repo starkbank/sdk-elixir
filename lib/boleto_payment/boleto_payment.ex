@@ -2,8 +2,8 @@ defmodule StarkBank.BoletoPayment do
   alias StarkBank.Utils.Rest
   alias StarkBank.Utils.Check
   alias StarkBank.BoletoPayment
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -188,7 +188,7 @@ defmodule StarkBank.BoletoPayment do
   end
 
   @doc """
-  Receive a list of up to 100 BoletoPayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 BoletoPayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -213,8 +213,8 @@ defmodule StarkBank.BoletoPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [BoletoPayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [BoletoPayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -231,7 +231,7 @@ defmodule StarkBank.BoletoPayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [BoletoPayment.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

@@ -4,6 +4,7 @@ defmodule StarkBank.Project do
 
   @moduledoc false
   defstruct [:environment, :id, :access_id, :private_key]
+  @type t() :: %__MODULE__{}
 
   def validate(environment, id, private_key) do
     {environment, private_key} = User.validate(private_key, environment)

@@ -1,8 +1,8 @@
 defmodule StarkBank.BrcodePreview do
   alias StarkBank.Utils.Rest
   alias StarkBank.BrcodePreview
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """

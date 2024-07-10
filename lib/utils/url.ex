@@ -31,7 +31,7 @@ defmodule StarkBank.Utils.URL do
           do: {k |> query_key, v |> query_argument}
 
     if length(list) > 0 do
-      endpoint <> "?" <> to_charlist(URI.encode_query(list))
+      endpoint <> "?" <> URI.encode_query(list)
     else
       endpoint
     end

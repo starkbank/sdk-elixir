@@ -4,8 +4,8 @@ defmodule StarkBank.TaxPayment.Log do
   alias StarkBank.Utils.API
   alias StarkBank.TaxPayment
   alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """

@@ -4,8 +4,8 @@ defmodule StarkBank.Deposit.Log do
   alias StarkBank.Utils.Check
   alias StarkBank.Utils.API
   alias StarkBank.Deposit
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkBank.Project
+  alias StarkBank.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -101,9 +101,9 @@ defmodule StarkBank.Deposit.Log do
   def query!(options \\ []) do
     Rest.get_list!(resource(), options)
   end
-  
+
   @doc """
-  Receive a list of up to 100 Deposit.Log objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Deposit.Log objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -126,8 +126,8 @@ defmodule StarkBank.Deposit.Log do
           types: [binary],
           deposit_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -143,7 +143,7 @@ defmodule StarkBank.Deposit.Log do
           types: [binary],
           deposit_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Log.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)
