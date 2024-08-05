@@ -1,9 +1,16 @@
 import Config
+private_key_content = """
+-----BEGIN EC PRIVATE KEY-----
+MHQCAQEEIMshmWWvbnePdooqhQMT2670ZZlATrcza0lbtgBsY2K/oAcGBSuBBAAK
+oUQDQgAEfEtQ9B/RpSB4+Pl5WoKi374kB3xAICPLpXDjyadX5BOwCZcg6qiI9skL
+Y/JUQkznW0+wv1ylC4CgLs9YZuFH7Q==
+-----END EC PRIVATE KEY-----
+"""
 
 config :starkbank,
   language: "en-US",
   project: [
     environment: :sandbox,
-    id: System.fetch_env!("SANDBOX_ID"), # "9999999999999999",
-    private_key: System.fetch_env!("SANDBOX_PRIVATE_KEY") # "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIBEcEJZLk/DyuXVsEjz0w4vrE7plPXhQxODvcG1Jc0WToAcGBSuBBAAK\noUQDQgAE6t4OGx1XYktOzH/7HV6FBukxq0Xs2As6oeN6re1Ttso2fwrh5BJXDq75\nmSYHeclthCRgU8zl6H1lFQ4BKZ5RCQ==\n-----END EC PRIVATE KEY-----"
+    id: "4835910956875776",
+    private_key: private_key_content
   ]

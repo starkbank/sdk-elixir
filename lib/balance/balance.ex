@@ -1,9 +1,9 @@
 defmodule StarkBank.Balance do
   alias __MODULE__, as: Balance
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -37,7 +37,7 @@ defmodule StarkBank.Balance do
   """
   @spec get(user: Project.t() | Organization.t() | nil) :: {:ok, Balance.t()} | {:error, [Error]}
   def get(options \\ []) do
-    case Rest.get_list(resource(), options) |> Enum.take(1) do
+    case Rest.get_list(:bank, resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
       [{:error, error}] -> {:error, error}
     end

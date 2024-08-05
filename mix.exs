@@ -33,13 +33,18 @@ defmodule StarkBank.MixProject do
 
   def application do
     [
-      extra_applications: [:inets]
+      extra_applications: [
+        :inets,
+        :public_key,
+        :ssl
+      ]
     ]
   end
 
   defp deps do
     [
       {:starkbank_ecdsa, "~> 1.1.0"},
+      {:starkcore, ">= 0.1.1", git: "https://github.com/starkinfra/core-elixir.git"},
       {:jason, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]

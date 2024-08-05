@@ -3,9 +3,9 @@ defmodule StarkBank do
   SDK to facilitate Elixir integrations with the Stark Bank API v2.
   """
 
-  alias StarkBank.Project
-  alias StarkBank.Organization
-  alias StarkBank.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Utils.Check
 
   @doc """
   The Project object is an authentication entity for the SDK that is permanently
