@@ -1,12 +1,12 @@
 defmodule StarkBank.DarfPayment.Log do
   alias __MODULE__, as: Log
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.API
-  alias StarkBank.Utils.Check
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.API
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.DarfPayment
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
 
   @moduledoc """
   Groups DarfPayment.Log related functions
@@ -49,7 +49,7 @@ defmodule StarkBank.DarfPayment.Log do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Log.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -57,7 +57,7 @@ defmodule StarkBank.DarfPayment.Log do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Log.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -89,7 +89,7 @@ defmodule StarkBank.DarfPayment.Log do
       any ->
       any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -105,7 +105,7 @@ defmodule StarkBank.DarfPayment.Log do
 ) ::
     ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
@@ -135,7 +135,7 @@ defmodule StarkBank.DarfPayment.Log do
 ) ::
       {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -153,7 +153,7 @@ defmodule StarkBank.DarfPayment.Log do
   ) ::
       [Log.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc false

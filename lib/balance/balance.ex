@@ -2,8 +2,8 @@ defmodule StarkBank.Balance do
   alias __MODULE__, as: Balance
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.User.Project
-  alias StarkCore.User.Organization
+  alias StarkCore.Project
+  alias StarkCore.Organization
   alias StarkBank.Error
 
   @moduledoc """
@@ -35,7 +35,7 @@ defmodule StarkBank.Balance do
   ## Return:
     - Balance struct with updated attributes
   """
-  @spec get(user: Project.t() | Organization.t() | nil) :: {:ok, Balance.t()} | {:error, [Error]}
+  @spec get([user: Organization.t() | Project.t() | nil]) :: {:ok, Balance.t()} | {:error, [Error]}
   def get(options \\ []) do
     case Rest.get_list(:bank, resource(), options) |> Enum.take(1) do
       [{:ok, balance}] -> {:ok, balance}
@@ -48,7 +48,7 @@ defmodule StarkBank.Balance do
   """
   @spec get!(user: Project.t() | Organization.t() | nil) :: Balance.t()
   def get!(options \\ []) do
-    Rest.get_list!(resource(), options) |> Enum.take(1) |> hd()
+    Rest.get_list!(:bank, resource(), options) |> Enum.take(1) |> hd()
   end
 
   @doc false

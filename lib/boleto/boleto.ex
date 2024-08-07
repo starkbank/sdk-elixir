@@ -1,10 +1,10 @@
 defmodule StarkBank.Boleto do
   alias __MODULE__, as: Boleto
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
 
   @moduledoc """
   Groups Boleto related functions
@@ -104,10 +104,13 @@ defmodule StarkBank.Boleto do
   @spec create([Boleto.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Boleto.t()]} | {:error, [Error.t()]}
   def create(boletos, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: boletos
+    })
     Rest.post(
+      :bank,
       resource(),
-      boletos,
-      options
+      opts
     )
   end
 
@@ -116,10 +119,13 @@ defmodule StarkBank.Boleto do
   """
   @spec create!([Boleto.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(boletos, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: boletos
+    })
     Rest.post!(
+      :bank,
       resource(),
-      boletos,
-      options
+      opts
     )
   end
 
@@ -137,7 +143,7 @@ defmodule StarkBank.Boleto do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -145,7 +151,7 @@ defmodule StarkBank.Boleto do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Boleto.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -205,7 +211,7 @@ defmodule StarkBank.Boleto do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -222,11 +228,11 @@ defmodule StarkBank.Boleto do
         ) ::
           ({:cont, [Boleto.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Boleto objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Boleto objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -251,10 +257,10 @@ defmodule StarkBank.Boleto do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Boleto.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Boleto.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -269,10 +275,10 @@ defmodule StarkBank.Boleto do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Boleto.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -289,7 +295,7 @@ defmodule StarkBank.Boleto do
   """
   @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Boleto.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
-    Rest.delete_id(resource(), id, options)
+    Rest.delete_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -297,7 +303,7 @@ defmodule StarkBank.Boleto do
   """
   @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Boleto.t()
   def delete!(id, options \\ []) do
-    Rest.delete_id!(resource(), id, options)
+    Rest.delete_id!(:bank, resource(), id, options)
   end
 
   @doc false

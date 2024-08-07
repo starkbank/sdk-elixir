@@ -1,9 +1,9 @@
 defmodule StarkBank.BrcodePreview do
-  alias StarkBank.Utils.Rest
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.BrcodePreview
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
 
   @moduledoc """
   Groups BrcodePreview related functions
@@ -65,7 +65,7 @@ defmodule StarkBank.BrcodePreview do
              any)
   @deprecated "BrcodePreview is deprecated. Please use PaymentPreview instead."
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -78,7 +78,7 @@ defmodule StarkBank.BrcodePreview do
           ({:cont, [BrcodePreview.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   @deprecated "BrcodePreview is deprecated. Please use PaymentPreview instead."
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc false

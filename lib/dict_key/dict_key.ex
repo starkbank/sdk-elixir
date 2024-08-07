@@ -1,10 +1,10 @@
 defmodule StarkBank.DictKey do
   alias __MODULE__, as: DictKey
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
 
   @moduledoc """
   Groups DictKey related functions
@@ -64,7 +64,7 @@ defmodule StarkBank.DictKey do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, DictKey.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -72,7 +72,7 @@ defmodule StarkBank.DictKey do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: DictKey.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
 @doc """
@@ -106,7 +106,7 @@ defmodule StarkBank.DictKey do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -123,11 +123,11 @@ defmodule StarkBank.DictKey do
         ) ::
           ({:cont, [DictKey.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 DictKey objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 DictKey objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -152,10 +152,10 @@ defmodule StarkBank.DictKey do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [DictKey.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [DictKey.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -170,10 +170,10 @@ defmodule StarkBank.DictKey do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [DictKey.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc false

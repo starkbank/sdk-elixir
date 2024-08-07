@@ -1,10 +1,10 @@
 defmodule StarkBank.BrcodePayment do
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.BrcodePayment
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
 
   @moduledoc """
   Groups BrcodePayment related functions
@@ -72,10 +72,13 @@ defmodule StarkBank.BrcodePayment do
   @spec create([BrcodePayment.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [BrcodePayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: payments
+    })
     Rest.post(
+      :bank,
       resource(),
-      payments,
-      options
+      opts
     )
   end
 
@@ -84,10 +87,13 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec create!([BrcodePayment.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(payments, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: payments
+    })
     Rest.post!(
+      :bank,
       resource(),
-      payments,
-      options
+      opts
     )
   end
 
@@ -105,7 +111,7 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, BrcodePayment.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -113,7 +119,7 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: BrcodePayment.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -130,7 +136,7 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(:bank, resource(), id, "pdf", options)
   end
 
   @doc """
@@ -138,7 +144,7 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(:bank, resource(), id, "pdf", options)
   end
 
   @doc """
@@ -172,7 +178,7 @@ defmodule StarkBank.BrcodePayment do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -189,11 +195,11 @@ defmodule StarkBank.BrcodePayment do
         ) ::
           ({:cont, [BrcodePayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 BrcodePayment objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -218,10 +224,10 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [BrcodePayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -236,11 +242,11 @@ defmodule StarkBank.BrcodePayment do
           ids: [binary],
           status: binary,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [BrcodePayment.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
-  end  
+    Rest.get_page!(:bank, resource(), options)
+  end
 
   @doc """
   Update an BrcodePayment by passing id, if it hasn't been paid yet.
@@ -258,7 +264,7 @@ defmodule StarkBank.BrcodePayment do
   @spec update(binary, status: binary, user: Project.t() | Organization.t() | nil) ::
           {:ok, BrcodePayment.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
-    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc """
@@ -266,7 +272,7 @@ defmodule StarkBank.BrcodePayment do
   """
   @spec update!(binary, status: binary, user: Project.t() | Organization.t() | nil) :: BrcodePayment.t()
   def update!(id, parameters \\ []) do
-    Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id!(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc false

@@ -1,9 +1,9 @@
 defmodule StarkBank.Institution do
     alias __MODULE__, as: Institution
-    alias StarkBank.Utils.Rest
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
+    alias StarkCore.Utils.Rest
+    alias StarkCore.Project
+    alias StarkCore.Organization
+    alias StarkCore.Error
 
     @moduledoc """
     Groups Institution related functions
@@ -52,7 +52,7 @@ defmodule StarkBank.Institution do
              any ->
                any)
     def query(options \\ []) do
-      case Rest.get_page(resource(), options) do
+      case Rest.get_page(:bank, resource(), options) do
         {:ok, {_cursor, entities}} -> {:ok, entities}
         {:error, error} -> {:error, error}
       end
@@ -70,7 +70,7 @@ defmodule StarkBank.Institution do
       ) ::
             ({:cont, [Institution.t()]} | {:halt, any} | {:suspend, any}, any -> any)
     def query!(options \\ []) do
-      Rest.get_page!(resource(), options) |> elem(1)
+      Rest.get_page!(:bank, resource(), options) |> elem(1)
     end
 
     @doc false

@@ -1,20 +1,20 @@
 defmodule StarkBank.DarfPayment do
   alias __MODULE__, as: DarfPayment
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
-  
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
+
   @moduledoc """
   Groups DarfPayment related functions
   """
-  
+
   @doc """
   When you initialize a DarfPayment, the entity will not be automatically
   created in the Stark Bank API. The 'create' function sends the objects
   to the Stark Bank API and returns the list of created objects.
-  
+
   ## Parameters (required):
     - `:description` [string]: Text to be displayed in your statement (min. 10 characters). ex: "payment ABC"
     - `:revenue_code` [string]: 4-digit tax code assigned by Federal Revenue. ex: "5948"
@@ -29,7 +29,7 @@ defmodule StarkBank.DarfPayment do
     - `:reference_number` [string]: number assigned to the region of the tax. ex: "08.1.17.00-4"
     - `:scheduled` [Date or string, default today]: payment scheduled date. ex: ~D[2020-03-25]
     - `:tags` [list of strings]: list of strings for tagging
-  
+
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
     - `:status` [string, default nil]: current payment status. ex: "success" or "failed"
@@ -57,71 +57,77 @@ defmodule StarkBank.DarfPayment do
     :updated,
     :created
   ]
-  
+
   @type t() :: %__MODULE__{}
-  
+
   @doc """
   Send a list of DarfPayment structs for creation in the Stark Bank API
-  
+
   ## Parameters (required):
     - `:payments` [list of DarfPayment structs]: list of DarfPayment structs to be created in the API
-  
+
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - list of DarfPayment structs with updated attributes
   """
   @spec create([DarfPayment.t() | map()], user: Project.t() | Organization.t() | nil) ::
       {:ok, [DarfPayment.t()]} | {:error, [Error.t()]}
   def create(payments, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: payments
+    })
     Rest.post(
+      :bank,
       resource(),
-      payments,
-      options
+      opts
     )
   end
-  
+
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec create!([DarfPayment.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(payments, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: payments
+    })
     Rest.post!(
+      :bank,
       resource(),
-      payments,
-      options
+      opts
     )
   end
-  
+
   @doc """
   Receive a single DarfPayment struct previously created by the Stark Bank API by passing its id
-  
+
   ## Parameters (required):
     - `:id` [string]: entity unique id. ex: "5656565656565656"
-  
+
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - DarfPayment struct with updated attributes
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, DarfPayment.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
-  
+
   @doc """
   Same as get(), but it will unwrap the error tuple and raise in case of errors.
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: DarfPayment.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
-  
+
   @doc """
   Receive a stream of DarfPayment entities previously created in the Stark Bank API
-  
+
   ## Options:
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
     - `:after` [Date or string, default nil]: date filter for entities created only after specified date. ex: ~D[2020-03-25]
@@ -130,7 +136,7 @@ defmodule StarkBank.DarfPayment do
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ['5656565656565656', '4545454545454545']
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: 'success'
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - stream of DarfPayment structs with updated attributes
   """
@@ -150,9 +156,9 @@ defmodule StarkBank.DarfPayment do
         any ->
           any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
-  
+
   @doc """
   Same as query(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -167,13 +173,13 @@ defmodule StarkBank.DarfPayment do
       ) ::
       ({:cont, [DarfPayment.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
-  
+
   @doc """
   Receive a list of up to 100 DarfPayment structs previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
-  
+
   ## Options:
     - `:cursor` [string, default nil]: cursor returned on the previous page function call
     - `:limit` [integer, default nil]: maximum number of entities to be retrieved. Unlimited if nil. ex: 35
@@ -183,7 +189,7 @@ defmodule StarkBank.DarfPayment do
     - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ['5656565656565656', '4545454545454545']
     - `:status` [string, default nil]: filter for status of retrieved structs. ex: 'success'
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
-  
+
   ## Return:
     - list of DarfPayment structs with updated attributes and cursor to retrieve the next page of DarfPayment structs
   """
@@ -196,12 +202,12 @@ defmodule StarkBank.DarfPayment do
       ids: [binary],
       status: binary,
       user: Project.t() | Organization.t()
-  ) :: 
-        {:ok, {binary, [DarfPayment.t()]}} | {:error, [%Error{}]} 
+  ) ::
+        {:ok, {binary, [DarfPayment.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
-  
+
   @doc """
   Same as page(), but it will unwrap the error tuple and raise in case of errors.
   """
@@ -214,10 +220,10 @@ defmodule StarkBank.DarfPayment do
       ids: [binary],
       status: binary,
       user: Project.t() | Organization.t()
-    ) :: 
+    ) ::
         [DarfPayment.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
 
@@ -236,7 +242,13 @@ defmodule StarkBank.DarfPayment do
   """
   @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(
+      :bank,
+      resource(),
+      id,
+      "pdf",
+      options
+    )
   end
 
   @doc """
@@ -244,7 +256,13 @@ defmodule StarkBank.DarfPayment do
   """
   @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(
+      :bank,
+      resource(),
+      id,
+      "pdf",
+      options
+    )
   end
 
   @doc """
@@ -261,7 +279,7 @@ defmodule StarkBank.DarfPayment do
   """
   @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, DarfPayment.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
-    Rest.delete_id(resource(), id, options)
+    Rest.delete_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -269,9 +287,9 @@ defmodule StarkBank.DarfPayment do
   """
   @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: DarfPayment.t()
   def delete!(id, options \\ []) do
-    Rest.delete_id!(resource(), id, options)
+    Rest.delete_id!(:bank, resource(), id, options)
   end
-  
+
   @doc false
   def resource() do
     {
@@ -279,7 +297,7 @@ defmodule StarkBank.DarfPayment do
       &resource_maker/1
     }
   end
-  
+
   @doc false
   def resource_maker(json) do
     %DarfPayment{
@@ -298,7 +316,7 @@ defmodule StarkBank.DarfPayment do
       nominal_amount: json[:nominal_amount],
       id: json[:id],
       updated: json[:updated] |> Check.datetime(),
-      created: json[:created] |> Check.datetime() 
+      created: json[:created] |> Check.datetime()
     }
   end
 end

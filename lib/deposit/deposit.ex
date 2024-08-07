@@ -1,10 +1,10 @@
 defmodule StarkBank.Deposit do
   alias __MODULE__, as: Deposit
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
 
   @moduledoc """
   Groups Deposit related functions
@@ -65,7 +65,7 @@ defmodule StarkBank.Deposit do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Deposit.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -73,7 +73,7 @@ defmodule StarkBank.Deposit do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Deposit.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -109,7 +109,7 @@ defmodule StarkBank.Deposit do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -127,11 +127,11 @@ defmodule StarkBank.Deposit do
         ) ::
           ({:cont, [Deposit.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Deposit objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -158,10 +158,10 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Deposit.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -177,10 +177,10 @@ defmodule StarkBank.Deposit do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Deposit.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc false

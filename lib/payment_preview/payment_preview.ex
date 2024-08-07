@@ -1,15 +1,15 @@
 defmodule StarkBank.PaymentPreview do
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.API
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.API
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.PaymentPreview
   alias StarkBank.PaymentPreview.BrcodePreview, as: BrcodePreview
   alias StarkBank.PaymentPreview.BoletoPreview, as: BoletoPreview
   alias StarkBank.PaymentPreview.TaxPreview, as: TaxPreview
   alias StarkBank.PaymentPreview.UtilityPreview, as: UtilityPreview
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
 
   @moduledoc """
   Groups PaymentPreview related functions
@@ -54,10 +54,13 @@ defmodule StarkBank.PaymentPreview do
   @spec create([PaymentPreview.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [PaymentPreview.t()]} | {:error, [Error.t()]}
   def create(previews, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: previews
+    })
     Rest.post(
+      :bank,
       resource(),
-      previews,
-      options
+      opts
     )
   end
 
@@ -66,10 +69,13 @@ defmodule StarkBank.PaymentPreview do
   """
   @spec create!([PaymentPreview.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(previews, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: previews
+    })
     Rest.post!(
+      :bank,
       resource(),
-      previews,
-      options
+      opts
     )
   end
 

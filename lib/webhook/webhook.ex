@@ -1,10 +1,10 @@
 defmodule StarkBank.Webhook do
   alias __MODULE__, as: Webhook
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
 
   @moduledoc """
   Groups Webhook related functions
@@ -43,16 +43,20 @@ defmodule StarkBank.Webhook do
   @spec create(user: Project.t() | Organization.t() | nil, url: binary, subscriptions: [binary]) ::
           {:ok, Webhook.t()} | {:error, [Error.t()]}
   def create(parameters \\ []) do
-    %{user: user, url: url, subscriptions: subscriptions} =
+    payload =
       Enum.into(
         parameters |> Check.enforced_keys([:url, :subscriptions]),
         %{user: nil}
       )
 
+    opts = Map.merge(parameters, %{
+      payload: payload
+    })
+
     Rest.post_single(
+      :bank,
       resource(),
-      %Webhook{url: url, subscriptions: subscriptions},
-      %{user: user}
+      opts
     )
   end
 
@@ -61,16 +65,20 @@ defmodule StarkBank.Webhook do
   """
   @spec create!(user: Project.t() | Organization.t() | nil, url: binary, subscriptions: [binary]) :: any
   def create!(parameters \\ []) do
-    %{user: user, url: url, subscriptions: subscriptions} =
+    payload =
       Enum.into(
         parameters |> Check.enforced_keys([:url, :subscriptions]),
         %{user: nil, url: nil, subscriptions: nil}
       )
 
+    opts = Map.merge(parameters, %{
+      payload: payload
+    })
+
     Rest.post_single!(
+      :bank,
       resource(),
-      %Webhook{url: url, subscriptions: subscriptions},
-      %{user: user}
+      opts
     )
   end
 
@@ -88,7 +96,7 @@ defmodule StarkBank.Webhook do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -96,7 +104,7 @@ defmodule StarkBank.Webhook do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Webhook.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -120,7 +128,7 @@ defmodule StarkBank.Webhook do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -132,11 +140,11 @@ defmodule StarkBank.Webhook do
         ) ::
           ({:cont, [Webhook.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
-  
+
   @doc """
-  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Webhook objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -151,10 +159,10 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Webhook.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -164,10 +172,10 @@ defmodule StarkBank.Webhook do
           cursor: binary,
           limit: integer,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Webhook.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -184,7 +192,7 @@ defmodule StarkBank.Webhook do
   """
   @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Webhook.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
-    Rest.delete_id(resource(), id, options)
+    Rest.delete_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -192,7 +200,7 @@ defmodule StarkBank.Webhook do
   """
   @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Webhook.t()
   def delete!(id, options \\ []) do
-    Rest.delete_id!(resource(), id, options)
+    Rest.delete_id!(:bank, resource(), id, options)
   end
 
   @doc false

@@ -1,12 +1,12 @@
 defmodule StarkBank.Invoice.Log do
   alias __MODULE__, as: Log
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.Utils.API
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Utils.API
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.Invoice
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
 
   @moduledoc """
   Groups Invoice.Log related functions
@@ -44,7 +44,7 @@ defmodule StarkBank.Invoice.Log do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Log.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -52,7 +52,7 @@ defmodule StarkBank.Invoice.Log do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Log.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -84,7 +84,7 @@ defmodule StarkBank.Invoice.Log do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -100,11 +100,11 @@ defmodule StarkBank.Invoice.Log do
         ) ::
           ({:cont, [Log.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Invoice.Log objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Invoice.Log objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -127,10 +127,10 @@ defmodule StarkBank.Invoice.Log do
           types: [binary],
           invoice_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Log.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -144,10 +144,10 @@ defmodule StarkBank.Invoice.Log do
           types: [binary],
           invoice_ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Log.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -164,7 +164,13 @@ defmodule StarkBank.Invoice.Log do
   """
   @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(
+      :bank,
+      resource(),
+      id,
+      "pdf",
+      options
+    )
   end
 
   @doc """
@@ -172,7 +178,13 @@ defmodule StarkBank.Invoice.Log do
   """
   @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(
+      :bank,
+      resource(),
+      id,
+      "pdf",
+      options
+    )
   end
 
   @doc false

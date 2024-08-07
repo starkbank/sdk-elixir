@@ -4,6 +4,7 @@ defmodule StarkBankTest.Balance do
   @tag :balance
   test "get! balance" do
     balance = StarkBank.Balance.get!()
+    # TBD: Check if we should introduce a breaking change here
     assert !is_nil(balance.amount)
   end
 

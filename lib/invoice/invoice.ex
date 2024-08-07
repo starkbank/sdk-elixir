@@ -1,10 +1,10 @@
 defmodule StarkBank.Invoice do
   alias __MODULE__, as: Invoice
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
   alias StarkBank.Invoice.Payment
 
   @moduledoc """
@@ -95,10 +95,13 @@ defmodule StarkBank.Invoice do
   @spec create([Invoice.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Invoice.t()]} | {:error, [Error.t()]}
   def create(invoices, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: invoices
+    })
     Rest.post(
+      :bank,
       resource(),
-      invoices,
-      options
+      opts
     )
   end
 
@@ -107,10 +110,13 @@ defmodule StarkBank.Invoice do
   """
   @spec create!([Invoice.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(invoices, options \\ []) do
+    opts = Map.merge(options, %{
+      payload: invoices
+    })
     Rest.post!(
+      :bank,
       resource(),
-      invoices,
-      options
+      opts
     )
   end
 
@@ -128,7 +134,7 @@ defmodule StarkBank.Invoice do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Invoice.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -136,7 +142,7 @@ defmodule StarkBank.Invoice do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Invoice.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -153,7 +159,13 @@ defmodule StarkBank.Invoice do
   """
   @spec qrcode(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def qrcode(id, options \\ []) do
-    Rest.get_content(resource(), id, "qrcode", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(
+      :bank,
+      resource(),
+      id,
+      "qrcode",
+      options
+    )
   end
 
   @doc """
@@ -161,7 +173,13 @@ defmodule StarkBank.Invoice do
   """
   @spec qrcode!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def qrcode!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "qrcode", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(
+      :bank,
+      resource(),
+      id,
+      "qrcode",
+      options
+    )
   end
 
   @doc """
@@ -178,7 +196,7 @@ defmodule StarkBank.Invoice do
   """
   @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(:bank, resource(), id, "pdf", options)
   end
 
   @doc """
@@ -186,7 +204,7 @@ defmodule StarkBank.Invoice do
   """
   @spec pdf!(binary, user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(:bank, resource(), id, "pdf", options)
   end
 
   @doc """
@@ -220,7 +238,7 @@ defmodule StarkBank.Invoice do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -237,11 +255,11 @@ defmodule StarkBank.Invoice do
         ) ::
           ({:cont, [Invoice.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Invoice objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Invoice objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -266,10 +284,10 @@ defmodule StarkBank.Invoice do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Invoice.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Invoice.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -284,10 +302,10 @@ defmodule StarkBank.Invoice do
           tags: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Invoice.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -309,7 +327,7 @@ defmodule StarkBank.Invoice do
   @spec update(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | Organization.t() | nil) ::
           {:ok, Invoice.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
-    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc """
@@ -317,7 +335,7 @@ defmodule StarkBank.Invoice do
   """
   @spec update!(binary, status: bool, amount: integer, due: DateTime, expiration: integer, user: Project.t() | Organization.t() | nil) :: Invoice.t()
   def update!(id, parameters \\ []) do
-    Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id!(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc """
@@ -335,7 +353,7 @@ defmodule StarkBank.Invoice do
   @spec payment(binary, user: Project.t() | Organization.t() | nil) ::
           {:ok, Payment.t()} | {:error, [%Error{}]}
   def payment(id, options \\ []) do
-    Rest.get_sub_resource(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
+    Rest.get_sub_resource(:bank, resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
   end
 
   @doc """
@@ -343,7 +361,7 @@ defmodule StarkBank.Invoice do
   """
   @spec payment!(binary, user: Project.t() | Organization.t() | nil) :: Payment.t()
   def payment!(id, options \\ []) do
-    Rest.get_sub_resource!(resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
+    Rest.get_sub_resource!(:bank, resource() |> elem(0), Payment.resource(), id, options |> Enum.into(%{}))
   end
 
   @doc false

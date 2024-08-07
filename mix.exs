@@ -44,7 +44,7 @@ defmodule StarkBank.MixProject do
   defp deps do
     [
       {:starkbank_ecdsa, "~> 1.1.0"},
-      {:starkcore, ">= 0.1.1", git: "https://github.com/starkinfra/core-elixir.git"},
+      {:starkcore, git: "https://github.com/starkinfra/core-elixir.git", tag: "v0.1.1"},
       {:jason, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]

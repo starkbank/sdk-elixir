@@ -3,14 +3,14 @@ defmodule StarkBank.Event do
   alias EllipticCurve.Signature
   alias EllipticCurve.PublicKey
   alias EllipticCurve.Ecdsa
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.Utils.JSON
-  alias StarkBank.Utils.API
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
-  alias StarkBank.Utils.Request
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Utils.JSON
+  alias StarkCore.Utils.API
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
+  alias StarkCore.Utils.Request
   alias StarkBank.Boleto.Log, as: BoletoLog
   alias StarkBank.Invoice.Log, as: InvoiceLog
   alias StarkBank.Transfer.Log, as: TransferLog
@@ -56,7 +56,7 @@ defmodule StarkBank.Event do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -64,7 +64,7 @@ defmodule StarkBank.Event do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Event.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -94,7 +94,7 @@ defmodule StarkBank.Event do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -109,11 +109,11 @@ defmodule StarkBank.Event do
         ) ::
           ({:cont, [Event.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Event objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -134,10 +134,10 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Event.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -150,10 +150,10 @@ defmodule StarkBank.Event do
           before: Date.t() | binary,
           is_delivered: boolean,
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Event.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -170,7 +170,7 @@ defmodule StarkBank.Event do
   """
   @spec delete(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Event.t()} | {:error, [%Error{}]}
   def delete(id, options \\ []) do
-    Rest.delete_id(resource(), id, options)
+    Rest.delete_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -178,7 +178,7 @@ defmodule StarkBank.Event do
   """
   @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Event.t()
   def delete!(id, options \\ []) do
-    Rest.delete_id!(resource(), id, options)
+    Rest.delete_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -198,7 +198,7 @@ defmodule StarkBank.Event do
   @spec update(binary, is_delivered: bool, user: Project.t() | Organization.t() | nil) ::
           {:ok, Event.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
-    Rest.patch_id(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
+    Rest.patch_id(:bank, resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
   end
 
   @doc """
@@ -206,7 +206,7 @@ defmodule StarkBank.Event do
   """
   @spec update!(binary, is_delivered: bool, user: Project.t() | Organization.t() | nil) :: Event.t()
   def update!(id, parameters \\ []) do
-    Rest.patch_id!(resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
+    Rest.patch_id!(:bank, resource(), id, parameters |> Check.enforced_keys([:is_delivered]) |> Enum.into(%{}))
   end
 
   @doc """
@@ -347,7 +347,7 @@ defmodule StarkBank.Event do
   end
 
   defp fill_public_key(public_key, user, cache_pid) when is_nil(public_key) do
-    case Request.fetch(:get, "public-key", query: %{limit: 1}, user: user) do
+    case Request.fetch(:bank, :get, "public-key", query: %{limit: 1}, user: user) do
       {:ok, response} -> {:ok, response |> extract_public_key(cache_pid)}
       {:error, errors} -> {:error, errors}
     end

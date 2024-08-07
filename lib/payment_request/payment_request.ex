@@ -1,11 +1,11 @@
 defmodule StarkBank.PaymentRequest do
     alias __MODULE__, as: PaymentRequest
-    alias StarkBank.Utils.Rest
-    alias StarkBank.Utils.Check
-    alias StarkBank.Utils.API
-    alias StarkBank.User.Project
-    alias StarkBank.User.Organization
-    alias StarkBank.Error
+    alias StarkCore.Utils.Rest
+    alias StarkCore.Utils.Check
+    alias StarkCore.Utils.API
+    alias StarkCore.Project
+    alias StarkCore.Organization
+    alias StarkCore.Error
     alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer
     alias StarkBank.Transaction, as: Transaction
@@ -77,14 +77,18 @@ defmodule StarkBank.PaymentRequest do
     @spec create([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) ::
             {:ok, [PaymentRequest.t()]} | {:error, [Error.t()]}
     def create(payment_requests, options \\ []) do
-        case Rest.post(
-            resource(),
-            Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end),
-            options
-        ) do
-            {:ok, requests} -> {:ok, requests}
-            response -> response
-        end
+      opts = Map.merge(options, %{
+        payload: Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end)
+      })
+
+      case Rest.post(
+        :bank,
+        resource(),
+        opts
+      ) do
+        {:ok, requests} -> {:ok, requests}
+        response -> response
+      end
     end
 
     @doc """
@@ -92,11 +96,12 @@ defmodule StarkBank.PaymentRequest do
     """
     @spec create!([PaymentRequest.t() | map()], user: Project.t() | Organization.t() | nil) :: any
     def create!(payment_requests, options \\ []) do
-        Rest.post!(
-            resource(),
-            Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end),
-            options
-        )
+      opts = Map.merge(options, %{payload: Enum.map(payment_requests, fn request -> %PaymentRequest{request | type: get_type(request.payment)} end)})
+      Rest.post!(
+        :bank,
+        resource(),
+        opts
+      )
     end
 
     @doc """
@@ -136,7 +141,7 @@ defmodule StarkBank.PaymentRequest do
             any ->
                 any)
     def query(options \\ []) do
-        Rest.get_list(resource(), options)
+        Rest.get_list(:bank, resource(), options)
     end
 
     @doc """
@@ -156,11 +161,11 @@ defmodule StarkBank.PaymentRequest do
             ) ::
             ({:cont, [PaymentRequest.t()]} | {:halt, any} | {:suspend, any}, any -> any)
     def query!(options \\ []) do
-        Rest.get_list!(resource(), options)
+        Rest.get_list!(:bank, resource(), options)
     end
 
     @doc """
-    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page. 
+    Receive a list of up to 100 PaymentRequest objects previously created in the Stark Bank API and the cursor to the next page.
     Use this function instead of query if you want to manually page your requests.
 
     ## Options:
@@ -191,10 +196,10 @@ defmodule StarkBank.PaymentRequest do
             tags: [binary],
             ids: [binary],
             user: Project.t() | Organization.t()
-            ) :: 
-            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]} 
+            ) ::
+            {:ok, {binary, [PaymentRequest.t()]}} | {:error, [%Error{}]}
     def page(options \\ []) do
-        Rest.get_page(resource(), options)
+        Rest.get_page(:bank, resource(), options)
     end
 
     @doc """
@@ -215,7 +220,7 @@ defmodule StarkBank.PaymentRequest do
             ) :: [
                 PaymentRequest.t()]
     def page!(options \\ []) do
-        Rest.get_page!(resource(), options)
+        Rest.get_page!(:bank, resource(), options)
     end
 
     defp get_type(resource) do

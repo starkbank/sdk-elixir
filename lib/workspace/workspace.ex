@@ -1,10 +1,10 @@
 defmodule StarkBank.Workspace do
   alias __MODULE__, as: Workspace
-  alias StarkBank.Utils.Rest
-  alias StarkBank.Utils.Check
-  alias StarkBank.User.Project
-  alias StarkBank.User.Organization
-  alias StarkBank.Error
+  alias StarkCore.Utils.Rest
+  alias StarkCore.Utils.Check
+  alias StarkCore.Project
+  alias StarkCore.Organization
+  alias StarkCore.Error
 
   @moduledoc """
   Groups Workspace related functions
@@ -54,16 +54,23 @@ defmodule StarkBank.Workspace do
   @spec create(user: Organization.t() | nil, username: binary, name: binary, allowed_tax_ids: [binary]) ::
           {:ok, Workspace.t()} | {:error, [Error.t()]}
   def create(parameters \\ []) do
-    %{user: user, username: username, name: name, allowed_tax_ids: allowed_tax_ids} =
-      Enum.into(
-        parameters |> Check.enforced_keys([:username, :name]),
-        %{user: nil}
-      )
+    options = Enum.into(
+      parameters |> Check.enforced_keys([:username, :name]),
+      %{user: nil}
+    )
+
+    opts = Map.merge(options, %{
+      payload: %{
+        username: options.get(:username),
+        name: options.get(:name),
+        allowed_tax_ids: options.get(:allowed_tax_ids)
+      }
+    })
 
     Rest.post_single(
+      :bank,
       resource(),
-      %Workspace{username: username, name: name, allowed_tax_ids: allowed_tax_ids},
-      %{user: user}
+      opts
     )
   end
 
@@ -78,10 +85,15 @@ defmodule StarkBank.Workspace do
         %{user: nil, username: nil, name: nil}
       )
 
+    opts = Map.merge(parameters, %{
+      payload: %Workspace{username: username, name: name, allowed_tax_ids: allowed_tax_ids},
+      user: user
+    })
+
     Rest.post_single!(
+      :bank,
       resource(),
-      %Workspace{username: username, name: name, allowed_tax_ids: allowed_tax_ids},
-      %{user: user}
+      opts
     )
   end
 
@@ -99,7 +111,7 @@ defmodule StarkBank.Workspace do
   """
   @spec get(binary, user: Project.t() | Organization.t() | nil) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
   def get(id, options \\ []) do
-    Rest.get_id(resource(), id, options)
+    Rest.get_id(:bank, resource(), id, options)
   end
 
   @doc """
@@ -107,7 +119,7 @@ defmodule StarkBank.Workspace do
   """
   @spec get!(binary, user: Project.t() | Organization.t() | nil) :: Workspace.t()
   def get!(id, options \\ []) do
-    Rest.get_id!(resource(), id, options)
+    Rest.get_id!(:bank, resource(), id, options)
   end
 
   @doc """
@@ -135,7 +147,7 @@ defmodule StarkBank.Workspace do
            any ->
              any)
   def query(options \\ []) do
-    Rest.get_list(resource(), options)
+    Rest.get_list(:bank, resource(), options)
   end
 
   @doc """
@@ -149,11 +161,11 @@ defmodule StarkBank.Workspace do
         ) ::
           ({:cont, [Workspace.t()]} | {:halt, any} | {:suspend, any}, any -> any)
   def query!(options \\ []) do
-    Rest.get_list!(resource(), options)
+    Rest.get_list!(:bank, resource(), options)
   end
 
   @doc """
-  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Workspace objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -172,10 +184,10 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Workspace.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
-    Rest.get_page(resource(), options)
+    Rest.get_page(:bank, resource(), options)
   end
 
   @doc """
@@ -187,10 +199,10 @@ defmodule StarkBank.Workspace do
           username: binary,
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Workspace.t()]
   def page!(options \\ []) do
-    Rest.get_page!(resource(), options)
+    Rest.get_page!(:bank, resource(), options)
   end
 
   @doc """
@@ -210,7 +222,7 @@ defmodule StarkBank.Workspace do
   """
   @spec update(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: {:ok, Workspace.t()} | {:error, [%Error{}]}
   def update(id, parameters \\ []) do
-    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc """
@@ -218,7 +230,7 @@ defmodule StarkBank.Workspace do
   """
   @spec update!(binary, username: binary, name: binary, allowed_tax_ids: [binary], user: Project.t() | Organization.t()) :: Workspace.t()
   def update!(id, parameters \\ []) do
-    Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
+    Rest.patch_id!(:bank, resource(), id, parameters |> Enum.into(%{}))
   end
 
   @doc false

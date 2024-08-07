@@ -1,5 +1,5 @@
 defmodule StarkBank.PaymentPreview.BoletoPreview do
-    alias StarkBank.Utils.Check
+    alias StarkCore.Utils.Check
     alias StarkBank.PaymentPreview.BoletoPreview
 
     @moduledoc """
