@@ -2,8 +2,8 @@ defmodule StarkBank.Boleto do
   alias __MODULE__, as: Boleto
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
 
   @moduledoc """
@@ -104,9 +104,10 @@ defmodule StarkBank.Boleto do
   @spec create([Boleto.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Boleto.t()]} | {:error, [Error.t()]}
   def create(boletos, options \\ []) do
-    opts = Map.merge(options, %{
+    opts = Keyword.merge(options, [
       payload: boletos
-    })
+    ])
+
     Rest.post(
       :bank,
       resource(),
@@ -119,9 +120,9 @@ defmodule StarkBank.Boleto do
   """
   @spec create!([Boleto.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(boletos, options \\ []) do
-    opts = Map.merge(options, %{
+    opts = Keyword.merge(options, [
       payload: boletos
-    })
+    ])
     Rest.post!(
       :bank,
       resource(),
@@ -167,17 +168,17 @@ defmodule StarkBank.Boleto do
   ## Return:
     - Boleto pdf file content
   """
-  @spec pdf(binary, layout: binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
+  @spec pdf(String.t(), layout: String.t(), user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
-    Rest.get_content(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content(:bank, elem(resource(),0), id, "pdf", options)
   end
 
   @doc """
   Same as pdf(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec pdf!(binary, layout: binary, user: Project.t() | Organization.t() | nil) :: binary
+  @spec pdf!(String.t(), layout: String.t(), user: Project.t() | Organization.t() | nil) :: binary
   def pdf!(id, options \\ []) do
-    Rest.get_content!(resource(), id, "pdf", options |> Keyword.delete(:user), options[:user])
+    Rest.get_content!(:bank, elem(resource(),0), id, "pdf", options)
   end
 
   @doc """

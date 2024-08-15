@@ -2,8 +2,8 @@ defmodule StarkBank.Balance do
   alias __MODULE__, as: Balance
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkBank.Error
 
   @moduledoc """

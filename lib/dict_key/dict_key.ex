@@ -2,8 +2,8 @@ defmodule StarkBank.DictKey do
   alias __MODULE__, as: DictKey
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
 
   @moduledoc """

@@ -7,8 +7,8 @@ defmodule StarkBank.Event do
   alias StarkCore.Utils.Check
   alias StarkCore.Utils.JSON
   alias StarkCore.Utils.API
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
   alias StarkCore.Utils.Request
   alias StarkBank.Boleto.Log, as: BoletoLog

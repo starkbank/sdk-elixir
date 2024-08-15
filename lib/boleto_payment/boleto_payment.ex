@@ -1,8 +1,8 @@
 defmodule StarkBank.BoletoPayment do
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
   alias StarkBank.BoletoPayment
 

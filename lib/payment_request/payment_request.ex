@@ -3,8 +3,8 @@ defmodule StarkBank.PaymentRequest do
     alias StarkCore.Utils.Rest
     alias StarkCore.Utils.Check
     alias StarkCore.Utils.API
-    alias StarkCore.Project
-    alias StarkCore.Organization
+    alias StarkCore.User.Project
+    alias StarkCore.User.Organization
     alias StarkCore.Error
     alias StarkBank.BrcodePayment, as: BrcodePayment
     alias StarkBank.Transfer, as: Transfer

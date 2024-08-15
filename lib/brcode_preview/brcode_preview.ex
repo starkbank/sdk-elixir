@@ -1,7 +1,7 @@
 defmodule StarkBank.BrcodePreview do
   alias StarkCore.Utils.Rest
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
   alias StarkBank.BrcodePreview
 

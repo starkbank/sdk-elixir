@@ -3,8 +3,8 @@ defmodule StarkBank do
   SDK to facilitate Elixir integrations with the Stark Bank API v2.
   """
 
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Utils.Check
 
   @doc """

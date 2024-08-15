@@ -2,8 +2,8 @@ defmodule StarkBank.Event.Attempt do
   alias __MODULE__, as: Attempt
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
 
   @moduledoc """

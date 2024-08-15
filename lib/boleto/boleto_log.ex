@@ -3,8 +3,8 @@ defmodule StarkBank.Boleto.Log do
   alias StarkCore.Utils.Rest
   alias StarkCore.Utils.Check
   alias StarkCore.Utils.API
-  alias StarkCore.Project
-  alias StarkCore.Organization
+  alias StarkCore.User.Project
+  alias StarkCore.User.Organization
   alias StarkCore.Error
   alias StarkBank.Boleto
 
@@ -78,11 +78,11 @@ defmodule StarkBank.Boleto.Log do
           user: Project.t() | Organization.t()
         ) ::
           ({:cont, {:ok, [Log.t()]}}
-           | {:error, [Error.t()]}
-           | {:halt, any}
-           | {:suspend, any},
-           any ->
-             any)
+            | {:error, [Error.t()]}
+            | {:halt, any}
+            | {:suspend, any},
+            any ->
+            any)
   def query(options \\ []) do
     Rest.get_list(:bank, resource(), options)
   end
