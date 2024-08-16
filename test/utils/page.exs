@@ -17,9 +17,7 @@ defmodule StarkBankTest.Utils.Page do
       ids,
       new_entities,
       options
-        |> Enum.into(%{})
-        |> Map.put(:cursor, new_cursor)
-        |> Map.to_list
+      |> put_in([:query, :cursor], new_cursor)
     )
   end
 
@@ -44,9 +42,7 @@ defmodule StarkBankTest.Utils.Page do
       ids,
       new_entities,
       options
-        |> Enum.into(%{})
-        |> Map.put(:cursor, new_cursor)
-        |> Map.to_list
+      |> put_in([:query, :cursor], new_cursor)
     )
   end
 

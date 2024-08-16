@@ -249,16 +249,16 @@ defmodule StarkBank.Boleto do
   ## Return:
     - stream of Boleto structs with updated attributes
   """
-  @spec page(
-          cursor: binary,
-          limit: integer,
-          after: Date.t() | binary,
-          before: Date.t() | binary,
-          status: binary,
-          tags: [binary],
-          ids: [binary],
-          user: Project.t() | Organization.t()
-          ) ::
+  @spec page([
+            cursor: binary,
+            limit: integer,
+            after: Date.t() | binary,
+            before: Date.t() | binary,
+            status: binary,
+            tags: [binary],
+            ids: [binary],
+            user: Project.t() | Organization.t()
+          ]) ::
             {:ok, {binary, [Boleto.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(:bank, resource(), options)

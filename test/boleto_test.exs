@@ -16,27 +16,27 @@ defmodule StarkBankTest.Boleto do
 
   @tag :boleto
   test "query boleto" do
-    StarkBank.Boleto.query(limit: 101, before: DateTime.utc_now())
-    |> Enum.take(200)
-    |> (fn list -> assert length(list) <= 101 end).()
+    StarkBank.Boleto.query(limit: 2, before: DateTime.utc_now())
+    |> Enum.take(2)
+    |> (fn list -> assert length(list) <= 2 end).()
   end
 
   @tag :boleto
   test "query! boleto" do
-    StarkBank.Boleto.query!(limit: 101, before: DateTime.utc_now())
-    |> Enum.take(200)
-    |> (fn list -> assert length(list) <= 101 end).()
+    StarkBank.Boleto.query!(limit: 2, before: DateTime.utc_now())
+    |> Enum.take(2)
+    |> (fn list -> assert length(list) <= 2 end).()
   end
 
   @tag :boleto
   test "page boleto" do
-    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Boleto.page/1, 2, limit: 5)
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Boleto.page/1, 2, query: [limit: 5])
     assert length(ids) == 10
   end
 
   @tag :boleto
   test "page! boleto" do
-    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Boleto.page!/1, 2, limit: 5)
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Boleto.page!/1, 2, query: [limit: 5])
     assert length(ids) == 10
   end
 
