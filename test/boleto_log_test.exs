@@ -3,14 +3,14 @@ defmodule StarkBankTest.BoletoLog do
 
   @tag :boleto_log
   test "query boleto log" do
-    StarkBank.Boleto.Log.query(limit: 101)
+    StarkBank.Boleto.Log.query(query: [limit: 101])
     |> Enum.take(200)
     |> (fn list -> assert length(list) <= 101 end).()
   end
 
   @tag :boleto_log
   test "query! boleto log" do
-    StarkBank.Boleto.Log.query!(limit: 101)
+    StarkBank.Boleto.Log.query!(query: [limit: 101])
     |> Enum.take(200)
     |> (fn list -> assert length(list) <= 101 end).()
   end
@@ -22,20 +22,20 @@ defmodule StarkBankTest.BoletoLog do
       |> Enum.take(1)
       |> hd()
 
-    StarkBank.Boleto.Log.query!(limit: 1, boleto_ids: [boleto.id], types: "paid")
+    StarkBank.Boleto.Log.query!(query: [limit: 1], boleto_ids: [boleto.id], types: "paid")
     |> Enum.take(5)
     |> (fn list -> assert length(list) == 1 end).()
   end
 
   @tag :boleto_log
   test "page boleto log" do
-    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Boleto.Log.page/1, 2, limit: 5)
+    {:ok, ids} = StarkBankTest.Utils.Page.get(&StarkBank.Boleto.Log.page/1, 2, query: [limit: 5])
     assert length(ids) == 10
   end
 
   @tag :boleto_log
   test "page! boleto log" do
-    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Boleto.Log.page!/1, 2, limit: 5)
+    ids = StarkBankTest.Utils.Page.get!(&StarkBank.Boleto.Log.page!/1, 2, query: [limit: 5])
     assert length(ids) == 10
   end
 
