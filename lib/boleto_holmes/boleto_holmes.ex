@@ -58,9 +58,9 @@ defmodule StarkBank.BoletoHolmes do
   @spec create([BoletoHolmes.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [BoletoHolmes.t()]} | {:error, [Error.t()]}
   def create(holmes, options \\ []) do
-    opts = Map.merge(options, %{
+    opts = Keyword.merge(options, [
       payload: holmes
-    })
+    ])
     Rest.post(
       :bank,
       resource(),
@@ -73,9 +73,9 @@ defmodule StarkBank.BoletoHolmes do
   """
   @spec create!([BoletoHolmes.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(holmes, options \\ []) do
-    opts = Map.merge(options, %{
+    opts = Keyword.merge(options, [
       payload: holmes
-    })
+    ])
     Rest.post!(
       :bank,
       resource(),
