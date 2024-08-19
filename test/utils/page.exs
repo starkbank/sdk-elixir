@@ -11,13 +11,16 @@ defmodule StarkBankTest.Utils.Page do
 
   defp get!(function, iterations, ids, entities, options) when length(entities) == 0 do
     {new_cursor, new_entities} = function.(options)
+    query = Keyword.get(options, :query, [])
+    |> Keyword.put(:cursor, new_cursor)
+
     get!(
       function,
       get_iterations(iterations, new_cursor),
       ids,
       new_entities,
       options
-      |> put_in([:query, :cursor], new_cursor)
+      |> Keyword.put(:query, query)
     )
   end
 
@@ -36,13 +39,16 @@ defmodule StarkBankTest.Utils.Page do
 
   defp get(function, iterations, ids, entities, options) when length(entities) == 0 do
     {:ok, {new_cursor, new_entities}} = function.(options)
+    query = Keyword.get(options, :query, [])
+    |> Keyword.put(:cursor, new_cursor)
+
     get(
       function,
       get_iterations(iterations, new_cursor),
       ids,
       new_entities,
       options
-      |> put_in([:query, :cursor], new_cursor)
+      |> Keyword.put(:query, query)
     )
   end
 
