@@ -3,15 +3,9 @@ defmodule StarkBankTest.Transaction do
 
   @tag :transaction
   test "create transaction" do
-    {:ok, transactions} = StarkBank.Transaction.create([example_transaction()])
-    transaction = transactions |> hd
-    assert transaction.amount < 0
-  end
-
-  @tag :transaction
-  test "create! transaction" do
-    transaction = StarkBank.Transaction.create!([example_transaction()]) |> hd
-    assert transaction.amount < 0
+    assert_raise RuntimeError, "Function deprecated since v2.7.0", fn ->
+      StarkBank.Transaction.create([example_transaction()])
+    end
   end
 
   @tag :transaction
@@ -109,7 +103,7 @@ defmodule StarkBankTest.Transaction do
       amount: 1,
       receiver_id: "5768064935133184",
       external_id: :crypto.strong_rand_bytes(30) |> Base.url_encode64() |> binary_part(0, 30),
-      description: "Transferencia para Workspace aleatorio"
+      description: "Transaction to random workspace"
     }
   end
 end

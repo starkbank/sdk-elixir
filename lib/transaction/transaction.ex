@@ -67,12 +67,9 @@ defmodule StarkBank.Transaction do
   """
   @spec create([Transaction.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [Transaction.t()]} | {:error, [Error.t()]}
+  @deprecated "Function deprecated since v2.7.0"
   def create(transactions, options \\ []) do
-    Rest.post(
-      resource(),
-      transactions,
-      options
-    )
+    raise "Function deprecated since v2.7.0"
   end
 
   @doc """
@@ -164,7 +161,7 @@ defmodule StarkBank.Transaction do
   end
 
   @doc """
-  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page. 
+  Receive a list of up to 100 Transaction objects previously created in the Stark Bank API and the cursor to the next page.
   Use this function instead of query if you want to manually page your requests.
 
   ## Options:
@@ -189,8 +186,8 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
-            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]} 
+          ) ::
+            {:ok, {binary, [Transaction.t()]}} | {:error, [%Error{}]}
   def page(options \\ []) do
     Rest.get_page(resource(), options)
   end
@@ -207,7 +204,7 @@ defmodule StarkBank.Transaction do
           external_ids: [binary],
           ids: [binary],
           user: Project.t() | Organization.t()
-          ) :: 
+          ) ::
             [Transaction.t()]
   def page!(options \\ []) do
     Rest.get_page!(resource(), options)

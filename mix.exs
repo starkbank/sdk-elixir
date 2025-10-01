@@ -33,7 +33,11 @@ defmodule StarkBank.MixProject do
 
   def application do
     [
-      extra_applications: [:inets]
+      extra_applications: [
+        :inets,
+        :public_key,
+        :ssl
+      ]
     ]
   end
 
