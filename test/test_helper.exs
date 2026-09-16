@@ -16,7 +16,6 @@ ExUnit.start(
     # :deposit_log,
     # :brcode_payment,
     # :brcode_payment_log,
-    # :brcode_preview,
     # :transaction,
     # :transfer,
     # :transfer_log,
