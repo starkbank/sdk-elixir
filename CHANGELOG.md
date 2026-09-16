@@ -14,6 +14,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 ## [Unreleased]
 ### Added
+- DynamicBrcode resource
 - Deposit.update() and Deposit.update!() methods
 ### Removed
 - deprecated BrcodePreview resource

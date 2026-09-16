@@ -31,6 +31,7 @@ is as easy as sending a text message to your client!
     - [DictKeys](#get-dict-key): Pix Key queries to use with Transfers
     - [Institutions](#query-bacen-institutions): Instutitions recognized by the Central Bank
     - [Invoices](#create-invoices): Reconciled receivables (dynamic PIX QR Codes)
+    - [DynamicBrcodes](#create-dynamicbrcodes): Generic dynamic PIX QR Codes
     - [Deposits](#query-deposits): Other cash-ins (static PIX QR Codes, manual PIX, etc)
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
@@ -665,6 +666,46 @@ Once an invoice has been paid, you can get the payment information using the Inv
 ```elixir
 payment_information = StarkBank.Invoice.payment!("5155165527080960")
   |> IO.inspect
+```
+
+## Create DynamicBrcodes
+
+DynamicBrcode objects are generic PIX QR Codes that can be used to receive any type of PIX payment.
+When a DynamicBrcode is paid, a Deposit is created with a tag containing "dynamic-brcode/{uuid}" for conciliation.
+
+```elixir
+brcodes = StarkBank.DynamicBrcode.create!([
+  %StarkBank.DynamicBrcode{
+    amount: 400000,
+    display_description: "Payment for service #1234",
+    tags: ["War supply", "Invoice #1234"]
+  }
+]) |> IO.inspect
+```
+
+**Note**: Instead of using DynamicBrcode structs, you can also pass each element in map format
+
+## Get a DynamicBrcode
+
+After its creation, information on a DynamicBrcode may be retrieved by its uuid.
+
+```elixir
+brcode = StarkBank.DynamicBrcode.get!("901e71f2447c43c886f58366a5432c4b")
+  |> IO.inspect
+```
+
+## Query DynamicBrcodes
+
+You can get a list of created DynamicBrcodes given some filters.
+
+```elixir
+for brcode <- StarkBank.DynamicBrcode.query!(
+  after: "2020-10-01",
+  before: "2020-10-10",
+  limit: 1
+) do
+  brcode |> IO.inspect
+end
 ```
 
 ## Query deposits
