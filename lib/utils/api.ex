@@ -14,6 +14,10 @@ defmodule StarkBank.Utils.API do
     |> cast_json_to_api_format()
   end
 
+  def cast_json_to_api_format(%{__struct__: _} = struct) do
+    api_json(struct)
+  end
+
   def cast_json_to_api_format(map) when is_map(map) do
     map
     |> Enum.filter(fn {_field, value} -> !is_nil(value) end)

@@ -83,24 +83,27 @@ defmodule StarkBank.CorporateRule do
   defp parse_categories(nil), do: []
 
   defp parse_categories(categories) do
-    Enum.map(categories, fn category ->
-      category |> API.from_api_json(&MerchantCategory.resource_maker/1)
+    Enum.map(categories, fn
+      %MerchantCategory{} = category -> category
+      category -> category |> API.from_api_json(&MerchantCategory.resource_maker/1)
     end)
   end
 
   defp parse_countries(nil), do: []
 
   defp parse_countries(countries) do
-    Enum.map(countries, fn country ->
-      country |> API.from_api_json(&MerchantCountry.resource_maker/1)
+    Enum.map(countries, fn
+      %MerchantCountry{} = country -> country
+      country -> country |> API.from_api_json(&MerchantCountry.resource_maker/1)
     end)
   end
 
   defp parse_methods(nil), do: []
 
   defp parse_methods(methods) do
-    Enum.map(methods, fn method ->
-      method |> API.from_api_json(&CardMethod.resource_maker/1)
+    Enum.map(methods, fn
+      %CardMethod{} = method -> method
+      method -> method |> API.from_api_json(&CardMethod.resource_maker/1)
     end)
   end
 end

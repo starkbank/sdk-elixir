@@ -55,13 +55,12 @@ defmodule StarkBank.CorporateHolder do
     - `holders` [list of CorporateHolder structs]: list of CorporateHolder structs to be created in the API
 
   ## Options:
-    - `:expand` [list of strings, default nil]: fields to expand information. Options: ["rules"]
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
     - list of CorporateHolder structs with updated attributes
   """
-  @spec create([CorporateHolder.t() | map()], expand: [binary], user: Project.t() | Organization.t() | nil) ::
+  @spec create([CorporateHolder.t() | map()], user: Project.t() | Organization.t() | nil) ::
           {:ok, [CorporateHolder.t()]} | {:error, [Error.t()]}
   def create(holders, options \\ []) do
     Rest.post(
@@ -74,7 +73,7 @@ defmodule StarkBank.CorporateHolder do
   @doc """
   Same as create(), but it will unwrap the error tuple and raise in case of errors.
   """
-  @spec create!([CorporateHolder.t() | map()], expand: [binary], user: Project.t() | Organization.t() | nil) :: any
+  @spec create!([CorporateHolder.t() | map()], user: Project.t() | Organization.t() | nil) :: any
   def create!(holders, options \\ []) do
     Rest.post!(
       resource(),

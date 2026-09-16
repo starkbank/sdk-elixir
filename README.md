@@ -801,9 +801,7 @@ end
 ## Get CorporateBalance
 
 The CorporateBalance struct displays the current corporate balance of the Workspace, which is
-the result of the sum of all transactions within this Workspace. CorporateRules (used to define
-CorporateHolder and CorporateCard spending limits) are embedded structs built from CardMethod,
-MerchantCategory and MerchantCountry filters — see the CorporateHolders section below for an example.
+the result of the sum of all transactions within this Workspace.
 
 ```elixir
 balance = StarkBank.CorporateBalance.get!()
@@ -813,6 +811,8 @@ balance = StarkBank.CorporateBalance.get!()
 ## Create CorporateHolders
 
 You can create CorporateHolders to grant a user access to purchase with a CorporateCard.
+CorporateRules (used to define CorporateHolder and CorporateCard spending limits) are embedded
+structs built from CardMethod, MerchantCategory and MerchantCountry filters, as shown below.
 
 ```elixir
 holders = StarkBank.CorporateHolder.create!([

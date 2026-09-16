@@ -120,11 +120,13 @@ defmodule StarkBankTest.CorporateHolder do
     {:ok, [first, second]} =
       StarkBank.CorporateHolder.create([example_corporate_holder(), example_corporate_holder()])
 
-    {:ok, updated_holder} = StarkBank.CorporateHolder.update(first.id, name: "Updated Holder Name")
-    assert updated_holder.name == "Updated Holder Name"
+    new_name = "Updated Holder Name #{:rand.uniform(1_000_000)}"
+    {:ok, updated_holder} = StarkBank.CorporateHolder.update(first.id, name: new_name)
+    assert updated_holder.name == new_name
 
-    updated_holder! = StarkBank.CorporateHolder.update!(second.id, name: "Updated Holder Name!")
-    assert updated_holder!.name == "Updated Holder Name!"
+    new_name! = "Updated Holder Name #{:rand.uniform(1_000_000)}"
+    updated_holder! = StarkBank.CorporateHolder.update!(second.id, name: new_name!)
+    assert updated_holder!.name == new_name!
   end
 
   @tag :corporate_holder
