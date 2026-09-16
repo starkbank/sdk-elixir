@@ -33,6 +33,9 @@ is as easy as sending a text message to your client!
     - [Invoices](#create-invoices): Reconciled receivables (dynamic PIX QR Codes)
     - [DynamicBrcodes](#create-dynamicbrcodes): Generic dynamic PIX QR Codes
     - [Deposits](#query-deposits): Other cash-ins (static PIX QR Codes, manual PIX, etc)
+    - [CardMethods](#query-cardmethods): Corporate card purchase methods
+    - [MerchantCategories](#query-merchantcategories): Merchant categories accepted in CorporateRules
+    - [MerchantCountries](#query-merchantcountries): Merchant countries accepted in CorporateRules
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -761,6 +764,36 @@ You can get a single log by its id.
 ```elixir
 log = StarkBank.Deposit.Log.get!("6610264099127296")
 |> IO.inspect
+```
+
+## Query CardMethods
+
+You can query the available card purchase methods, used to define method filters in CorporateRules.
+
+```elixir
+for method <- StarkBank.CardMethod.query!(search: "token") do
+  method |> IO.inspect
+end
+```
+
+## Query MerchantCategories
+
+You can query the available merchant categories, used to define category filters in CorporateRules.
+
+```elixir
+for category <- StarkBank.MerchantCategory.query!(search: "food") do
+  category |> IO.inspect
+end
+```
+
+## Query MerchantCountries
+
+You can query the available merchant countries, used to define country filters in CorporateRules.
+
+```elixir
+for country <- StarkBank.MerchantCountry.query!(search: "brazil") do
+  country |> IO.inspect
+end
 ```
 
 ## Create boletos

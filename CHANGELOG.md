@@ -16,6 +16,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - DynamicBrcode resource
 - Deposit.update() and Deposit.update!() methods
+- CardMethod resource
+- MerchantCategory resource
+- MerchantCountry resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
