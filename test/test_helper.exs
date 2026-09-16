@@ -14,6 +14,7 @@ ExUnit.start(
     # :dict_key,
     # :deposit,
     # :deposit_log,
+    # :dynamic_brcode,
     # :brcode_payment,
     # :brcode_payment_log,
     # :transaction,

@@ -6,6 +6,7 @@ defmodule StarkBankTest.BrcodePayment do
     {:ok, payments} = StarkBank.BrcodePayment.create([example_payment()])
     payment = payments |> hd
     assert !is_nil(payment)
+    assert payment.rules == [%{"key" => "resendingLimit", "value" => 5}]
   end
 
   @tag :brcode_payment
@@ -93,7 +94,8 @@ defmodule StarkBankTest.BrcodePayment do
     %StarkBank.BrcodePayment{
       brcode: invoice.brcode,
       description: "loading a random account",
-      tax_id: invoice.tax_id
+      tax_id: invoice.tax_id,
+      rules: [%{"key" => "resendingLimit", "value" => 5}]
     }
   end
 end

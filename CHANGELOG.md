@@ -13,10 +13,14 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 
 
 ## [Unreleased]
+### Added
+- DynamicBrcode resource
+- Deposit.update() and Deposit.update!() methods
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
 - Docstrings to carry the business rules stated by the API reference
+- Transfer, BrcodePayment and Invoice :rules field missing from the struct and resource_maker despite being documented
 
 ## [2.6.2] - 2021-11-10
 ### Changed

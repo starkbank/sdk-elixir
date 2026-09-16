@@ -90,4 +90,22 @@ defmodule StarkBankTest.Deposit do
 
     _deposit = StarkBank.Deposit.get!(deposit.id)
   end
+
+  @tag :deposit
+  test "update and update! deposit" do
+    # One listing, two distinct deposits: a reversal leaves the deposit in
+    # status "created" behind a lock, so two tests picking index 0 and 1 from
+    # separate listings can collide on the same deposit. TED deposits cannot
+    # be reversed at all, as in the Python reference test.
+    [first, second | _] =
+      StarkBank.Deposit.query!(status: "created", limit: 20)
+      |> Enum.filter(fn deposit -> deposit.type != "ted" end)
+      |> Enum.take(2)
+
+    {:ok, updated_deposit} = StarkBank.Deposit.update(first.id, amount: 0)
+    assert updated_deposit.amount == 0
+
+    updated_deposit! = StarkBank.Deposit.update!(second.id, amount: 0)
+    assert updated_deposit!.amount == 0
+  end
 end

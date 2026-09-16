@@ -6,7 +6,7 @@ defmodule StarkBankTest.Invoice do
     {:ok, invoices} = StarkBank.Invoice.create([example_invoice()])
     invoice = invoices |> hd
     assert !is_nil(invoice)
-
+    assert invoice.rules == [%{"key" => "allowedTaxIds", "value" => ["012.345.678-90", "45.059.493/0001-73"]}]
   end
 
   @tag :invoice
@@ -200,6 +200,12 @@ defmodule StarkBankTest.Invoice do
         %{
           key: "Field1",
           value: "Something"
+        }
+      ],
+      rules: [
+        %{
+          "key" => "allowedTaxIds",
+          "value" => ["012.345.678-90", "45.059.493/0001-73"]
         }
       ]
     }
