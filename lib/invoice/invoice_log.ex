@@ -151,7 +151,7 @@ defmodule StarkBank.Invoice.Log do
   end
 
   @doc """
-  Receive a single Invoice.Log pdf file generated in the Stark Bank API by passing its id.
+  Receive a single Invoice.Log reversal receipt pdf file generated in the Stark Bank API by passing its id. This pdf is only available for logs created when an Invoice is successfully reversed.
 
   ## Parameters (required):
     - `:id` [string]: struct unique id. ex: "5656565656565656"

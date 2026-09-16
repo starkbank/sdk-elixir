@@ -110,7 +110,7 @@ defmodule StarkBank.UtilityPayment do
 
   @doc """
   Receive a single UtilityPayment pdf file generated in the Stark Bank API by passing its id.
-  Only valid for utility payments with "success" status.
+  Only valid for utility payments with "success", "processing" or "created" status.
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
@@ -236,7 +236,7 @@ defmodule StarkBank.UtilityPayment do
   end
 
   @doc """
-  Delete a UtilityPayment entity previously created in the Stark Bank API
+  Delete a UtilityPayment entity previously created in the Stark Bank API. You can only cancel a utility payment before it starts being processed; a payment that has already been processed can still be deleted, but this no longer cancels it.
 
   ## Parameters (required):
     - `id` [string]: UtilityPayment unique id. ex: "5656565656565656"

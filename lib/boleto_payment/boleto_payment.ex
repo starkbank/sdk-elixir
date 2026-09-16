@@ -112,7 +112,7 @@ defmodule StarkBank.BoletoPayment do
 
   @doc """
   Receive a single BoletoPayment pdf file generated in the Stark Bank API by passing its id.
-  Only valid for boleto payments with "success" status.
+  Only valid for boleto payments with "success", "processing" or "created" status.
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
@@ -238,7 +238,7 @@ defmodule StarkBank.BoletoPayment do
   end
 
   @doc """
-  Delete a BoletoPayment entity previously created in the Stark Bank API
+  Delete a BoletoPayment entity previously created in the Stark Bank API. You can only cancel a boleto payment before it starts being processed; a payment that has already been processed can still be deleted, but this no longer cancels it.
 
   ## Parameters (required):
     - `id` [string]: BoletoPayment unique id. ex: "5656565656565656"

@@ -17,9 +17,10 @@ defmodule StarkBank.Invoice do
   to the Stark Bank API and returns the list of created structs.
   To create scheduled Invoices, which will display the discount, interest, etc. on the final users banking interface,
   use dates instead of datetimes on the "due" and "discounts" fields.
+  You can send up to 100 Invoice structs per request.
 
   ## Parameters (required):
-    - `:amount` [integer]: Invoice value in cents. Minimum = 0 (any value will be accepted). ex: 1234 (= R$ 12.34)
+    - `:amount` [integer]: Invoice value in cents. Minimum = 0. ex: 1234 (= R$ 12.34). If the Invoice is created with amount zero, any amount paid by the customer will be accepted; otherwise, only the exact amount specified will be accepted.
     - `:tax_id` [string]: payer tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - `:name` [string]: payer name. ex: "Iron Bank S.A."
 
@@ -28,9 +29,11 @@ defmodule StarkBank.Invoice do
     - `:expiration` [integer, default 59 days]: time interval in seconds between due date and expiration date. ex 123456789
     - `:fine` [float, default 0.0]: Invoice fine for overdue payment in %. ex: 2.5
     - `:interest` [float, default 0.0]: Invoice monthly interest for overdue payment in %. ex: 5.2
-    - `:discounts` [list of dictionaries, default nil]: list of dictionaries with "percentage":float and "due":string pairs
+    - `:discounts` [list of up to 5 dictionaries, default nil]: list of dictionaries with "percentage":float and "due":string pairs
     - `:tags` [list of strings, default nil]: list of strings for tagging
-    - `:descriptions` [list of dictionaries, default nil]: list of dictionaries with "key":string and (optional) "value":string pairs
+    - `:descriptions` [list of up to 15 dictionaries, default nil]: list of dictionaries with "key":string and (optional) "value":string pairs
+    - `:rules` [list of maps, default nil]: list of maps for modifying Invoice behavior.
+    - `:splits` [list of maps, default nil]: list of maps to indicate the payment receivers when the Invoice amount is shared between different accounts.
 
   ## Attributes (return-only):
     - `:pdf` [string, default nil]: public Invoice PDF URL. ex: "https://invoice.starkbank.com/pdf/d454fa4e524441c1b0c1a729457ed9d8"
@@ -146,6 +149,7 @@ defmodule StarkBank.Invoice do
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
+    - `:size` [integer, default 7]: number of pixels in each "box" of the QR code. Minimum = 1, maximum = 50.
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -291,7 +295,7 @@ defmodule StarkBank.Invoice do
   end
 
   @doc """
-  Update an Invoice by passing id, if it hasn't been paid yet.
+  Update an Invoice by passing its id. If the invoice hasn't been paid yet, you can adjust parameters such as the amount, due date and expiration; if it has already been paid, you may only decrease the amount, which triggers a payment reversal.
 
   ## Parameters (required):
     - `:id` [string]: Invoice id. ex: '5656565656565656'

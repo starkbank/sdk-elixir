@@ -15,6 +15,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ## [Unreleased]
 ### Removed
 - deprecated BrcodePreview resource
+### Fixed
+- Docstrings to carry the business rules stated by the API reference
 
 ## [2.6.2] - 2021-11-10
 ### Changed

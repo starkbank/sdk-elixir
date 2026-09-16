@@ -14,6 +14,7 @@ defmodule StarkBank.BrcodePayment do
   When you initialize a BrcodePayment, the entity will not be automatically
   created in the Stark Bank API. The 'create' function sends the structs
   to the Stark Bank API and returns the list of created structs.
+  Because the BR Code is processed asynchronously, the returned `:amount` will initially be zero and will be filled in once processing completes.
 
   ## Parameters (required):
     - `:brcode` [string]: String loaded directly from the QRCode or copied from the invoice. ex: "00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"
@@ -26,6 +27,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (optional):
     - `:scheduled` [Date, DateTime or string, default now]: payment scheduled date or datetime. ex: "2020-12-13T18:36:18.219000+00:00"
     - `:tags` [list of strings]: list of strings for tagging.
+    - `:rules` [list of maps, default nil]: list of maps for modifying BrcodePayment behavior.
 
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
@@ -117,7 +119,7 @@ defmodule StarkBank.BrcodePayment do
   end
 
   @doc """
-  Receive a single BrcodePayment pdf file generated in the Stark Bank API by passing its id.
+  Receive a single BrcodePayment pdf file generated in the Stark Bank API by passing its id. Only valid for brcode payments with "success", "processing" or "created" status.
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"

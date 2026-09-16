@@ -222,8 +222,8 @@ defmodule StarkBank.DarfPayment do
 
 
   @doc """
-  Receive a single Transfer pdf receipt file generated in the Stark Bank API by passing its id.
-  Only valid for transfers with "processing" or "success" status.
+  Receive a single DarfPayment pdf file generated in the Stark Bank API by passing its id.
+  Only valid for darf payments with "success", "processing" or "created" status.
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
@@ -232,7 +232,7 @@ defmodule StarkBank.DarfPayment do
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
-    - Transfer pdf file content
+    - DarfPayment pdf file content
   """
   @spec pdf(binary, user: Project.t() | Organization.t() | nil) :: {:ok, binary} | {:error, [%Error{}]}
   def pdf(id, options \\ []) do
@@ -248,10 +248,10 @@ defmodule StarkBank.DarfPayment do
   end
 
   @doc """
-  Delete a DarfPayment entity previously created in the Stark Bank API
+  Cancel a scheduled Darf payment. This is only allowed while the payment's status is still "created" — once it has started processing, it can no longer be cancelled or deleted.
 
   ## Parameters (required):
-    - `:id` [string]: Boleto unique id. ex: "5656565656565656"
+    - `:id` [string]: DarfPayment unique id. ex: "5656565656565656"
 
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.

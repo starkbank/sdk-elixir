@@ -7,7 +7,7 @@ defmodule StarkBank.DictKey do
   alias StarkBank.Error
 
   @moduledoc """
-  Groups DictKey related functions
+  Groups DictKey related functions. Note: whenever a Workspace is created, an EVP (random) DICT key is automatically created and associated with it, since the Invoice service requires an active DICT key to work.
   """
 
   @doc """
@@ -51,7 +51,7 @@ defmodule StarkBank.DictKey do
   @type t() :: %__MODULE__{}
 
   @doc """
-  Receive a single DictKey struct by passing its id
+  Receive a single DictKey struct by passing its id. This method includes keys you do not own and can be used to retrieve a key's information before creating a Transfer. Avoid looking up DICT keys without sending a transfer afterwards: Bacen blocks users who make too many standalone requests in a short timespan, and invalid key searches count towards this block. The returned encrypted parameters can be used to create a Transfer without decrypting them first.
 
   ## Parameters (required):
     - `:id` [string]: DictKey object unique id and PIX key itself. ex: "tony@starkbank.com", "722.461.430-04", "20.018.183/0001-80", "+5511988887777", "b6295ee1-f054-47d1-9e90-ee57b74f60d9"
