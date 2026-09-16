@@ -183,6 +183,33 @@ defmodule StarkBank.Deposit do
     Rest.get_page!(resource(), options)
   end
 
+  @doc """
+  Update a Deposit by passing its id, to be partially or fully reversed.
+
+  ## Parameters (required):
+    - `id` [string]: Deposit id. ex: "5656565656565656"
+
+  ## Options:
+    - `:amount` [integer]: The new amount of the Deposit, in cents. Required -- pass 0 to fully reverse the Deposit.
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - target Deposit with updated attributes
+  """
+  @spec update(binary, amount: integer, user: Project.t() | Organization.t() | nil) ::
+          {:ok, Deposit.t()} | {:error, [%Error{}]}
+  def update(id, parameters \\ []) do
+    Rest.patch_id(resource(), id, parameters |> Enum.into(%{}))
+  end
+
+  @doc """
+  Same as update(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec update!(binary, amount: integer, user: Project.t() | Organization.t() | nil) :: Deposit.t()
+  def update!(id, parameters \\ []) do
+    Rest.patch_id!(resource(), id, parameters |> Enum.into(%{}))
+  end
+
   @doc false
   def resource() do
     {

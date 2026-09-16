@@ -6,6 +6,7 @@ defmodule StarkBankTest.Transfer do
     {:ok, transfers} = StarkBank.Transfer.create([example_transfer(true)])
     transfer = transfers |> hd
     assert !is_nil(transfer)
+    assert transfer.rules == [%{"key" => "resendingLimit", "value" => 5}]
   end
 
   @tag :transfer
@@ -169,7 +170,8 @@ defmodule StarkBankTest.Transfer do
         |> String.pad_leading(5, "0")
         |> (fn s -> s <> "-#{:rand.uniform(9)}" end).(),
       account_type: ["checking", "savings", "salary", "payment"] |> Enum.random(),
-      external_id: "elixir-#{:rand.uniform(9999999999)}"
+      external_id: "elixir-#{:rand.uniform(9999999999)}",
+      rules: [%{"key" => "resendingLimit", "value" => 5}]
     }
   end
 end
