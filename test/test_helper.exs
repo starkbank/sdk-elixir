@@ -18,6 +18,7 @@ ExUnit.start(
     # :card_method,
     # :merchant_category,
     # :merchant_country,
+    # :corporate_balance,
     # :brcode_payment,
     # :brcode_payment_log,
     # :transaction,

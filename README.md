@@ -36,6 +36,7 @@ is as easy as sending a text message to your client!
     - [CardMethods](#query-cardmethods): Corporate card purchase methods
     - [MerchantCategories](#query-merchantcategories): Merchant categories accepted in CorporateRules
     - [MerchantCountries](#query-merchantcountries): Merchant countries accepted in CorporateRules
+    - [CorporateBalance](#get-corporatebalance): Corporate Workspace balance
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -794,6 +795,18 @@ You can query the available merchant countries, used to define country filters i
 for country <- StarkBank.MerchantCountry.query!(search: "brazil") do
   country |> IO.inspect
 end
+```
+
+## Get CorporateBalance
+
+The CorporateBalance struct displays the current corporate balance of the Workspace, which is
+the result of the sum of all transactions within this Workspace. CorporateRules (used to define
+CorporateHolder and CorporateCard spending limits) are embedded structs built from CardMethod,
+MerchantCategory and MerchantCountry filters — see the CorporateHolders section below for an example.
+
+```elixir
+balance = StarkBank.CorporateBalance.get!()
+  |> IO.inspect
 ```
 
 ## Create boletos

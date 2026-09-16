@@ -19,6 +19,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - CardMethod resource
 - MerchantCategory resource
 - MerchantCountry resource
+- CorporateRule sub-resource
+- CorporateBalance resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
