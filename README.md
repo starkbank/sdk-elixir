@@ -37,6 +37,7 @@ is as easy as sending a text message to your client!
     - [MerchantCategories](#query-merchantcategories): Merchant categories accepted in CorporateRules
     - [MerchantCountries](#query-merchantcountries): Merchant countries accepted in CorporateRules
     - [CorporateBalance](#get-corporatebalance): Corporate Workspace balance
+    - [CorporateHolders](#create-corporateholders): Manage cardholders that group Corporate Cards
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -807,6 +808,86 @@ MerchantCategory and MerchantCountry filters — see the CorporateHolders sectio
 ```elixir
 balance = StarkBank.CorporateBalance.get!()
   |> IO.inspect
+```
+
+## Create CorporateHolders
+
+You can create CorporateHolders to grant a user access to purchase with a CorporateCard.
+
+```elixir
+holders = StarkBank.CorporateHolder.create!([
+  %StarkBank.CorporateHolder{
+    name: "Tony Stark",
+    tags: ["Marvel"],
+    rules: [
+      %StarkBank.CorporateRule{
+        name: "General",
+        interval: "week",
+        amount: 100000,
+        currency_code: "BRL"
+      }
+    ]
+  }
+]) |> IO.inspect
+```
+
+**Note**: Instead of using CorporateHolder structs, you can also pass each element in map format
+
+## Query CorporateHolders
+
+You can get a list of created CorporateHolders given some filters.
+
+```elixir
+for holder <- StarkBank.CorporateHolder.query!(limit: 5) do
+  holder |> IO.inspect
+end
+```
+
+## Get a CorporateHolder
+
+Information on a CorporateHolder may be retrieved by its id. Use the `:expand` option
+to retrieve the holder's spending rules together with it.
+
+```elixir
+holder = StarkBank.CorporateHolder.get!("5155165527080960", expand: ["rules"])
+  |> IO.inspect
+```
+
+## Update a CorporateHolder
+
+You can update a specific CorporateHolder by its id.
+
+```elixir
+holder = StarkBank.CorporateHolder.update!("5155165527080960", name: "Updated Name")
+  |> IO.inspect
+```
+
+## Cancel a CorporateHolder
+
+You can cancel a specific CorporateHolder by its id.
+
+```elixir
+holder = StarkBank.CorporateHolder.cancel!("5155165527080960")
+  |> IO.inspect
+```
+
+## Query CorporateHolder logs
+
+Logs are pretty important to understand the life cycle of a CorporateHolder.
+
+```elixir
+logs = StarkBank.CorporateHolder.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a CorporateHolder log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporateHolder.Log.get!("6610264099127296")
+|> IO.inspect
 ```
 
 ## Create boletos

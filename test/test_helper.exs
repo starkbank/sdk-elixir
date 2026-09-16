@@ -19,6 +19,8 @@ ExUnit.start(
     # :merchant_category,
     # :merchant_country,
     # :corporate_balance,
+    # :corporate_holder,
+    # :corporate_holder_log,
     # :brcode_payment,
     # :brcode_payment_log,
     # :transaction,

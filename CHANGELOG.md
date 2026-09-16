@@ -21,6 +21,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - MerchantCountry resource
 - CorporateRule sub-resource
 - CorporateBalance resource
+- CorporateHolder resource
+- CorporateHolder.Log sub-resource
+- CorporateHolder.Permission sub-resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
