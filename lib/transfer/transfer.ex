@@ -14,6 +14,7 @@ defmodule StarkBank.Transfer do
   When you initialize a Transfer, the entity will not be automatically
   created in the Stark Bank API. The 'create' function sends the structs
   to the Stark Bank API and returns the list of created structs.
+  You can send up to 100 Transfer structs per request.
 
   ## Parameters (required):
     - `:amount` [integer]: amount in cents to be transferred. ex: 1234 (= R$ 12.34)
@@ -26,9 +27,10 @@ defmodule StarkBank.Transfer do
   ## Parameters (optional):
     - `:account_type` [string, default "checking"]: Receiver bank account type. This parameter only has effect on Pix Transfers. ex: "checking", "savings", "salary" or "payment"
     - `:external_id` [string, default nil]: url safe string that must be unique among all your transfers. Duplicated external_ids will cause failures. By default, this parameter will block any transfer that repeats amount and receiver information on the same date. ex: "my-internal-id-123456"
-    - `:scheduled` [Date, DateTime or string, default now]: date or datetime when the transfer will be processed. May be pushed to next business day if necessary. ex: ~U[2020-03-26 19:32:35.418698Z]
+    - `:scheduled` [Date, DateTime or string, default now]: date or datetime when the transfer will be processed. TED transfers scheduled for today are accepted until 16:00 (BRT) and pushed to the next business day afterwards; Pix transfers are available 24/7 and can be scheduled for any date and time. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:description` [string, default nil]: optional description to override default description to be shown in the bank statement. ex: "Payment for service #1234"
     - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
+    - `:rules` [list of maps, default nil]: list of maps for modifying Transfer behavior.
 
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
@@ -121,10 +123,10 @@ defmodule StarkBank.Transfer do
   end
 
   @doc """
-  Delete a list of Transfer entities previously created in the Stark Bank API
+  Cancel a scheduled Transfer entity previously created in the Stark Bank API. You can only cancel a transfer before it starts being processed. Canceled transfers will still appear in your queries.
 
   ## Parameters (required):
-    - `id` [string]: Boleto unique id. ex: "5656565656565656"
+    - `id` [string]: Transfer unique id. ex: "5656565656565656"
 
   ## Options:
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
@@ -139,6 +141,8 @@ defmodule StarkBank.Transfer do
 
   @doc """
   Same as delete(), but it will unwrap the error tuple and raise in case of errors.
+
+  Note: this function returns a Transfer.t() struct, even though its current @spec annotation says Boleto.t().
   """
   @spec delete!(binary, user: Project.t() | Organization.t() | nil) :: Boleto.t()
   def delete!(id, options \\ []) do

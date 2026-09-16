@@ -27,7 +27,7 @@ defmodule StarkBank.PaymentRequest do
 
     ## Parameters (required):
     - `:center_id` [string]: target cost center ID. ex: "5656565656565656"
-    - `:payment` [Transfer, BrcodePayments, BoletoPayment, UtilityPayment, TaxPayment, DarfPayment, Transaction or map]: payment entity that should be approved and executed.
+    - `:payment` [Transfer, BrcodePayment, BoletoPayment, UtilityPayment, TaxPayment, DarfPayment, Transaction or map]: payment entity that should be approved and executed. Do not set a `:scheduled` value on this payment struct/map: the PaymentRequest's own `:due` parameter serves that purpose instead.
 
     ## Parameters (conditionally required):
     - `:type` [string]: payment type, inferred from the payment parameter if it is not a map. ex: "transfer", "boleto-payment"

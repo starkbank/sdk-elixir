@@ -7,7 +7,7 @@ defmodule StarkBank.BoletoHolmes do
   alias StarkBank.Error
 
   @moduledoc """
-  Groups BoletoHolmes related functions
+  Groups BoletoHolmes related functions. A BoletoHolmes investigates the updated status of a Boleto according to CIP in less than an hour. Since results are asynchronous, register a webhook subscription to the "boleto-holmes" service to receive the investigation result instead of polling this resource.
   """
 
   @doc """

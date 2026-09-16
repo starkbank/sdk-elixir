@@ -12,8 +12,9 @@ defmodule StarkBank.Webhook do
 
   @doc """
   A Webhook is used to subscribe to notification events on a user-selected endpoint.
-  Currently available services for subscription are transfer, invoice, deposit, brcode-payment,
-  boleto, boleto-holmes, boleto-payment and utility-payment.
+  If your endpoint does not return a 200 status, delivery is retried at most three times, at 5, 30 and 120 minute intervals; after the third failed attempt, delivery is no longer retried.
+  Currently available services for subscription are boleto, boleto-holmes, boleto-payment,
+  brcode-payment, darf-payment, deposit, invoice, payment-request, tax-payment, transfer and utility-payment.
 
   ## Parameters (required):
     - `:url` [string]: Url that will be notified when an event occurs.

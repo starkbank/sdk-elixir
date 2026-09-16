@@ -194,15 +194,18 @@ defmodule StarkBank.Workspace do
   end
 
   @doc """
-  Update a Workspace by passing its ID.
+  Update a workspace by passing its id and the fields you want to update.
 
   ## Parameters (required):
-    - `:id` [string]: Invoice id. ex: '5656565656565656'
+    - `:id` [string]: Workspace unique id. ex: "5656565656565656"
 
   ## Parameters (optional):
     - `:username` [string, default nil]: Simplified name to define the workspace URL. This name must be unique across all Stark Bank Workspaces. Ex: "starkbank-workspace"
     - `:name` [string, default nil]: Full name that identifies the Workspace. This name will appear when people access the Workspace on our platform, for example. Ex: "Stark Bank Workspace"
     - `:allowed_tax_ids` [list of strings, default nil]: list of tax IDs that will be allowed to send Deposits to this Workspace. If empty, all are allowed. ex: ["012.345.678-90", "20.018.183/0001-80"]
+    - `:picture` [binary, default nil]: binary buffer of the picture to set as the Workspace logo.
+    - `:picture_type` [string, default nil]: picture MIME type, required whenever `:picture` is informed. ex: "image/png" or "image/jpeg"
+    - `:status` [string, default nil]: you can block or activate a specific Workspace by passing "blocked" or "active".
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:

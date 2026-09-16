@@ -14,9 +14,10 @@ defmodule StarkBank.Boleto do
   When you initialize a Boleto struct, the entity will not be automatically
   sent to the Stark Bank API. The 'create' function sends the structs
   to the Stark Bank API and returns the list of created structs.
+  You can send up to 100 Boleto structs per request.
 
   ## Parameters (required):
-    - `:amount` [integer]: Boleto value in cents. Minimum amount = 200 (R$2,00). ex: 1234 (= R$ 12.34)
+    - `:amount` [integer]: Boleto value in cents. Minimum amount = 200 (R$2,00). ex: 1234 (= R$ 12.34). If the Boleto is paid late with fine or interest applied, or paid with a discount, this attribute will be updated to reflect the amount actually paid.
     - `:name` [string]: payer full name. ex: "Anthony Edward Stark"
     - `:tax_id` [string]: payer tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
     - `:street_line_1` [string]: payer main address. ex: Av. Paulista, 200
@@ -28,14 +29,15 @@ defmodule StarkBank.Boleto do
 
   ## Parameters (optional):
     - `:due` [Date or string, default today + 2 days]: Boleto due date in ISO format. ex: 2020-04-30
-    - `:fine` [float, default 0.0]: Boleto fine for overdue payment in %. ex: 2.5
-    - `:interest` [float, default 0.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
-    - `:overdue_limit` [integer, default 59]: limit in days for payment after due date. ex: 7 (max: 59)
-    - `:receiver_name` [string]: receiver (Sacador Avalista) full name. ex: "Anthony Edward Stark"
-    - `:receiver_tax_id` [string]: receiver (Sacador Avalista) tax ID (CPF or CNPJ) with or without formatting. ex: "01234567890" or "20.018.183/0001-80"
-    - `:descriptions` [list of maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs
-    - `:discounts` [list of maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
+    - `:fine` [float, default 2.0]: Boleto fine for overdue payment in %. ex: 2.5
+    - `:interest` [float, default 1.0]: Boleto monthly interest for overdue payment in %. ex: 5.2
+    - `:overdue_limit` [integer, default 59]: limit in days for payment after due date. Valid range is 0 to 59. ex: 7 (max: 59)
+    - `:receiver_name` [string, default nil]: receiver (Sacador Avalista) full name. If none is informed, the workspace owner name will be used. If informed, `:receiver_tax_id` must also be informed. ex: "Anthony Edward Stark"
+    - `:receiver_tax_id` [string, default nil]: receiver (Sacador Avalista) tax ID (CPF or CNPJ) with or without formatting. If none is informed, the workspace owner tax ID will be used. If informed, `:receiver_name` must also be informed. ex: "01234567890" or "20.018.183/0001-80"
+    - `:descriptions` [list of up to 15 maps, default nil]: list of maps with :text (string) and :amount (int, optional) pairs. When the PDF is generated with the "booklet" layout, only the text of the first description is used, to fill the installment cell.
+    - `:discounts` [list of up to 2 maps, default nil]: list of maps with :percentage (float) and :date (Date or string) pairs
     - `:tags` [list of strings]: list of strings for tagging
+    - `:splits` [list of maps, default nil]: list of maps to indicate the payment receivers when the Boleto amount is shared between different accounts.
 
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Boleto is created. ex: "5656565656565656"
@@ -149,13 +151,14 @@ defmodule StarkBank.Boleto do
   end
 
   @doc """
-  Receive a single Boleto pdf file generated in the Stark Bank API by passing its id.
+  Receive a single Boleto pdf file generated in the Stark Bank API by passing its id. This route is public and does not require the usual authentication headers, but repeated requests for an invalid boleto id will get your IP blocked for this specific route.
 
   ## Parameters (required):
     - `id` [string]: struct unique id. ex: "5656565656565656"
 
   ## Options:
     - `:layout` [string]: Layout specification. Available options are "default" and "booklet".
+    - `:hidden_fields` [list of strings, default nil]: list of fields to be hidden in the Boleto pdf. ex: ["customerAddress"]
     - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
 
   ## Return:
@@ -276,7 +279,7 @@ defmodule StarkBank.Boleto do
   end
 
   @doc """
-  Delete a list of Boleto entities previously created in the Stark Bank API
+  Delete a Boleto entity previously created in the Stark Bank API. A request will be sent to CIP to cancel the boleto registration; once canceled, it can no longer be paid. This action cannot be undone.
 
   ## Parameters (required):
     - `id` [string]: Boleto unique id. ex: "5656565656565656"
