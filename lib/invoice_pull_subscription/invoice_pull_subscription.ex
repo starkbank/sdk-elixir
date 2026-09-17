@@ -285,10 +285,10 @@ defmodule StarkBank.InvoicePullSubscription do
       amount: json[:amount],
       amount_min_limit: json[:amount_min_limit],
       display_description: json[:display_description],
-      due: json[:due] |> Check.date_or_datetime(),
+      due: json[:due] |> parse_date(),
       external_id: json[:external_id],
       reference_code: json[:reference_code],
-      end: json[:end] |> Check.date_or_datetime(),
+      end: json[:end] |> parse_date(),
       data: json[:data],
       name: json[:name],
       tax_id: json[:tax_id],
@@ -301,4 +301,7 @@ defmodule StarkBank.InvoicePullSubscription do
       updated: json[:updated] |> Check.datetime()
     }
   end
+
+  defp parse_date(""), do: nil
+  defp parse_date(date), do: date |> Check.date_or_datetime()
 end
