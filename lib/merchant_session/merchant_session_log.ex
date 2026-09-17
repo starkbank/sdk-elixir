@@ -19,7 +19,7 @@ defmodule StarkBank.MerchantSession.Log do
   ## Attributes:
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:session` [MerchantSession]: MerchantSession entity to which the log refers to.
-    - `:errors` [list of strings]: list of errors linked to this MerchantSession event
+    - `:errors` [list of Error structs]: list of errors linked to this MerchantSession event. ex: [%StarkBank.Error{code: "sessionExpired", message: "The session has expired"}]
     - `:type` [string]: type of the MerchantSession event which triggered the log creation. ex: "created", "updated"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
   """
@@ -162,8 +162,17 @@ defmodule StarkBank.MerchantSession.Log do
       id: json[:id],
       created: json[:created] |> Check.datetime(),
       type: json[:type],
-      errors: json[:errors],
+      errors: json[:errors] |> parse_errors(),
       session: json[:session] |> API.from_api_json(&MerchantSession.resource_maker/1)
     }
+  end
+
+  defp parse_errors(nil), do: []
+
+  defp parse_errors(errors) do
+    Enum.map(errors, fn
+      %Error{} = error -> error
+      error -> %Error{code: error["code"], message: error["message"]}
+    end)
   end
 end

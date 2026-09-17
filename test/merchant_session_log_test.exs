@@ -22,7 +22,17 @@ defmodule StarkBankTest.MerchantSessionLog do
       |> Enum.take(1)
       |> hd()
 
-    {:ok, _log} = StarkBank.MerchantSession.Log.get(log.id)
+    {:ok, get_log} = StarkBank.MerchantSession.Log.get(log.id)
+    assert get_log.id == log.id
+    assert !is_nil(get_log.type)
+    # exercita o parse do sub-objeto e o de errors
+    assert %StarkBank.MerchantSession{} = get_log.session
+    assert !is_nil(get_log.session.id)
+    assert is_list(get_log.errors)
+
+    Enum.each(get_log.errors, fn error ->
+      assert %StarkBank.Error{} = error
+    end)
   end
 
   @tag :merchant_session_log
@@ -32,7 +42,9 @@ defmodule StarkBankTest.MerchantSessionLog do
       |> Enum.take(1)
       |> hd()
 
-    _log = StarkBank.MerchantSession.Log.get!(log.id)
+    get_log = StarkBank.MerchantSession.Log.get!(log.id)
+    assert get_log.id == log.id
+    assert %StarkBank.MerchantSession{} = get_log.session
   end
 
   @tag :merchant_session_log
