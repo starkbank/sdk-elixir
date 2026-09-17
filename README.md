@@ -50,6 +50,8 @@ is as easy as sending a text message to your client!
     - [SplitReceivers](#create-splitreceivers): Manage accounts that receive Splits
     - [Splits](#query-splits): Amounts routed to a SplitReceiver by an Invoice/Boleto payment
     - [SplitProfiles](#create-or-update-a-splitprofile): Configure how your Splits are transferred out
+    - [InvoicePullSubscriptions](#create-invoicepullsubscriptions): Recurring authorization to pull Invoice payments from a payer
+    - [InvoicePullRequests](#create-invoicepullrequests): Individual pull requests issued under an InvoicePullSubscription
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -1491,6 +1493,143 @@ You can also get a specific log by its id.
 
 ```elixir
 log = StarkBank.SplitProfile.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Create InvoicePullSubscriptions
+
+You can create InvoicePullSubscriptions to set up a recurring authorization that pulls Invoice
+payments from a payer on your behalf.
+
+```elixir
+subscriptions = StarkBank.InvoicePullSubscription.create!(
+  [
+    %StarkBank.InvoicePullSubscription{
+      start: ~D[2022-04-01],
+      interval: "month",
+      pull_mode: "manual",
+      pull_retry_limit: 3,
+      type: "qrcode",
+      amount: 100,
+      tags: ["iron", "bank"]
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using InvoicePullSubscription structs, you can also pass each element in map format.
+
+## Query InvoicePullSubscriptions
+
+You can get a list of created InvoicePullSubscriptions given some filters.
+
+```elixir
+for subscription <- StarkBank.InvoicePullSubscription.query!(limit: 5) do
+  subscription |> IO.inspect
+end
+```
+
+## Get an InvoicePullSubscription
+
+You can get a single InvoicePullSubscription struct previously created by passing its id.
+
+```elixir
+subscription = StarkBank.InvoicePullSubscription.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Cancel an InvoicePullSubscription
+
+You can cancel an InvoicePullSubscription if it is still active.
+
+```elixir
+subscription = StarkBank.InvoicePullSubscription.cancel!("5155165527080960")
+|> IO.inspect
+```
+
+## Query InvoicePullSubscription logs
+
+Logs are pretty important to understand the life cycle of an InvoicePullSubscription.
+
+```elixir
+logs = StarkBank.InvoicePullSubscription.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get an InvoicePullSubscription log
+
+You can also get a specific log by its id.
+
+```elixir
+log = StarkBank.InvoicePullSubscription.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Create InvoicePullRequests
+
+You can create InvoicePullRequests to send a specific Invoice for payment under an existing
+InvoicePullSubscription.
+
+```elixir
+requests = StarkBank.InvoicePullRequest.create!(
+  [
+    %StarkBank.InvoicePullRequest{
+      subscription_id: "5155165527080960",
+      invoice_id: "5622812248649728",
+      due: "2023-10-28T17:59:26.249976+00:00",
+      tags: ["iron", "bank"]
+    }
+  ]
+) |> IO.inspect
+```
+
+**Note**: Instead of using InvoicePullRequest structs, you can also pass each element in map format.
+
+## Query InvoicePullRequests
+
+You can get a list of created InvoicePullRequests given some filters.
+
+```elixir
+for request <- StarkBank.InvoicePullRequest.query!(limit: 5) do
+  request |> IO.inspect
+end
+```
+
+## Get an InvoicePullRequest
+
+You can get a single InvoicePullRequest struct previously created by passing its id.
+
+```elixir
+request = StarkBank.InvoicePullRequest.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Cancel an InvoicePullRequest
+
+You can cancel an InvoicePullRequest if it has not been settled yet.
+
+```elixir
+request = StarkBank.InvoicePullRequest.cancel!("5155165527080960")
+|> IO.inspect
+```
+
+## Query InvoicePullRequest logs
+
+Logs are pretty important to understand the life cycle of an InvoicePullRequest.
+
+```elixir
+logs = StarkBank.InvoicePullRequest.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get an InvoicePullRequest log
+
+You can also get a specific log by its id.
+
+```elixir
+log = StarkBank.InvoicePullRequest.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 

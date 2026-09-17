@@ -47,6 +47,10 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - Split.Log sub-resource
 - SplitProfile resource
 - SplitProfile.Log sub-resource
+- InvoicePullSubscription resource
+- InvoicePullSubscription.Log sub-resource
+- InvoicePullRequest resource
+- InvoicePullRequest.Log sub-resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
