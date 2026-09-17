@@ -21,7 +21,7 @@ defmodule StarkBank.MerchantInstallment.Log do
   ## Attributes:
     - `:id` [string]: unique id returned when the log is created. ex: "5656565656565656"
     - `:installment` [MerchantInstallment]: MerchantInstallment entity to which the log refers to.
-    - `:errors` [list of strings]: list of errors linked to this MerchantInstallment event
+    - `:errors` [list of Error structs]: list of errors linked to this MerchantInstallment event. ex: [%StarkBank.Error{code: "invalidCard", message: "The card was declined"}]
     - `:type` [string]: type of the MerchantInstallment event which triggered the log creation. ex: "created", "updated"
     - `:created` [DateTime]: creation datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:updated` [DateTime]: latest update datetime for the log. ex: ~U[2020-03-26 19:32:35.418698Z]
@@ -164,10 +164,19 @@ defmodule StarkBank.MerchantInstallment.Log do
     %Log{
       id: json[:id],
       installment: json[:installment] |> API.from_api_json(&MerchantInstallment.resource_maker/1),
-      errors: json[:errors],
+      errors: json[:errors] |> parse_errors(),
       type: json[:type],
       created: json[:created] |> Check.datetime(),
       updated: json[:updated] |> Check.datetime()
     }
+  end
+
+  defp parse_errors(nil), do: []
+
+  defp parse_errors(errors) do
+    Enum.map(errors, fn
+      %Error{} = error -> error
+      error -> %Error{code: error["code"], message: error["message"]}
+    end)
   end
 end
