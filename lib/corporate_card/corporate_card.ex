@@ -336,9 +336,22 @@ defmodule StarkBank.CorporateCard do
       status: json[:status],
       number: json[:number],
       security_code: json[:security_code],
-      expiration: json[:expiration] |> Check.datetime(),
+      expiration: json[:expiration] |> parse_expiration(),
       updated: json[:updated] |> Check.datetime(),
       created: json[:created] |> Check.datetime()
     }
   end
+
+  # The API always sends an `expiration` key, masking it with "*" characters
+  # whenever the field is not expanded. Check.datetime/1 has no mask guard, so
+  # it must be bypassed here or every non-expanded read would raise.
+  defp parse_expiration(value) when is_binary(value) do
+    if String.contains?(value, "*") do
+      nil
+    else
+      value |> Check.datetime()
+    end
+  end
+
+  defp parse_expiration(value), do: value |> Check.datetime()
 end
