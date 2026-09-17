@@ -51,6 +51,13 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - InvoicePullSubscription.Log sub-resource
 - InvoicePullRequest resource
 - InvoicePullRequest.Log sub-resource
+- Transfer.Rule sub-resource
+- Invoice.Rule sub-resource
+- BrcodePayment.Rule sub-resource
+- DynamicBrcode.Rule sub-resource
+- VerifiedAccount resource
+- VerifiedAccount.Log sub-resource
+- VerifiedTransfer resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
@@ -58,6 +65,7 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - Transfer, BrcodePayment and Invoice :rules field missing from the struct and resource_maker despite being documented
 - Nested structs inside list fields (CorporateHolder rules and permissions) now serialize instead of raising Protocol.UndefinedError
 - Rest.get_id forwards options other than :user as query parameters, so CorporateHolder.get expand: reaches the API
+- Transfer, Invoice, BrcodePayment and DynamicBrcode :rules now hydrate into Rule structs instead of raw maps (maps are still accepted on input for backwards compatibility)
 
 ## [2.6.2] - 2021-11-10
 ### Changed

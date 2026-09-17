@@ -52,6 +52,8 @@ is as easy as sending a text message to your client!
     - [SplitProfiles](#create-or-update-a-splitprofile): Configure how your Splits are transferred out
     - [InvoicePullSubscriptions](#create-invoicepullsubscriptions): Recurring authorization to pull Invoice payments from a payer
     - [InvoicePullRequests](#create-invoicepullrequests): Individual pull requests issued under an InvoicePullSubscription
+    - [VerifiedAccounts](#create-verifiedaccounts): Verify ownership of a bank account or Pix key before transferring to it
+    - [VerifiedTransfers](#create-verifiedtransfers): Transfer to a VerifiedAccount
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -426,6 +428,25 @@ transfers = StarkBank.Transfer.create!(
 
 **Note**: Instead of using Transfer structs, you can also pass each transfer element in map format
 
+### Rules
+
+You can pass a list of `StarkBank.Transfer.Rule` structs in the `:rules` field to modify a Transfer's
+behavior (e.g. `resendingLimit`). Plain maps with `"key"`/`"value"` pairs are still accepted for
+backwards compatibility and are hydrated into `Transfer.Rule` structs when the Transfer comes back
+from the API.
+
+```elixir
+%StarkBank.Transfer{
+  amount: 100,
+  bank_code: "20018183",
+  branch_code: "0001",
+  account_number: "10000-0",
+  tax_id: "012.345.678-90",
+  name: "Tony Stark",
+  rules: [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
+}
+```
+
 ## Query transfers
 
 You can query multiple transfers according to filters.
@@ -566,6 +587,22 @@ invoice = StarkBank.Invoice.create!(
 
 **Note**: Instead of using Invoice objects, you can also pass each invoice element in dictionary format
 
+### Rules
+
+You can pass a list of `StarkBank.Invoice.Rule` structs in the `:rules` field to modify an Invoice's
+behavior (e.g. `allowedTaxIds`). Plain maps with `"key"`/`"value"` pairs are still accepted for
+backwards compatibility and are hydrated into `Invoice.Rule` structs when the Invoice comes back from
+the API.
+
+```elixir
+%StarkBank.Invoice{
+  amount: 400000,
+  tax_id: "012.345.678-90",
+  name: "Iron Bank S.A.",
+  rules: [%StarkBank.Invoice.Rule{key: "allowedTaxIds", value: ["012.345.678-90", "45.059.493/0001-73"]}]
+}
+```
+
 ## Get an invoice
 
 After its creation, information on an invoice may be retrieved by its id. 
@@ -703,6 +740,20 @@ brcodes = StarkBank.DynamicBrcode.create!([
 ```
 
 **Note**: Instead of using DynamicBrcode structs, you can also pass each element in map format
+
+### Rules
+
+You can pass a list of `StarkBank.DynamicBrcode.Rule` structs in the `:rules` field to modify a
+DynamicBrcode's behavior. Only the `"allowedTaxIds"` key is currently supported, and at most one rule
+is accepted. Plain maps with `"key"`/`"value"` pairs are still accepted for backwards compatibility and
+are hydrated into `DynamicBrcode.Rule` structs when the DynamicBrcode comes back from the API.
+
+```elixir
+%StarkBank.DynamicBrcode{
+  amount: 400000,
+  rules: [%StarkBank.DynamicBrcode.Rule{key: "allowedTaxIds", value: ["012.345.678-90"]}]
+}
+```
 
 ## Get a DynamicBrcode
 
@@ -1633,6 +1684,95 @@ log = StarkBank.InvoicePullRequest.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 
+## Create VerifiedAccounts
+
+Before sending a VerifiedTransfer, you need to verify ownership of the receiver's bank account or
+Pix key by creating a VerifiedAccount.
+
+```elixir
+accounts = StarkBank.VerifiedAccount.create!(
+  [
+    %StarkBank.VerifiedAccount{
+        tax_id: "012.345.678-90",
+        bank_code: "20018183",
+        branch_code: "0001",
+        number: "10000-0",
+        name: "Tony Stark",
+        type: "checking",
+        tags: ["employees", "monthly"]
+    }
+]) |> IO.inspect
+```
+
+**Note**: Instead of using VerifiedAccount structs, you can also pass each element in map format
+
+## Query VerifiedAccounts
+
+You can get a list of created VerifiedAccounts given some filters.
+
+```elixir
+for account <- StarkBank.VerifiedAccount.query!(limit: 10) do
+  account |> IO.inspect
+end
+```
+
+## Get a VerifiedAccount
+
+You can get a single VerifiedAccount struct previously created by passing its id.
+
+```elixir
+account = StarkBank.VerifiedAccount.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Cancel a VerifiedAccount
+
+You can cancel a VerifiedAccount entity previously created in the Stark Bank API.
+
+```elixir
+account = StarkBank.VerifiedAccount.cancel!("5155165527080960")
+|> IO.inspect
+```
+
+## Query VerifiedAccount logs
+
+Logs are pretty important to understand the life cycle of a VerifiedAccount.
+
+```elixir
+logs = StarkBank.VerifiedAccount.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a VerifiedAccount log
+
+You can also get a specific log by its id.
+
+```elixir
+log = StarkBank.VerifiedAccount.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Create VerifiedTransfers
+
+Once a VerifiedAccount is active, you can send VerifiedTransfers to it. Rules work the same way as for
+regular Transfers: pass a list of `StarkBank.Transfer.Rule` structs (or plain maps, for backwards
+compatibility) in the `:rules` field.
+
+```elixir
+transfers = StarkBank.VerifiedTransfer.create!(
+  [
+    %StarkBank.VerifiedTransfer{
+        amount: 100,
+        account_id: "5155165527080960",
+        external_id: "my-internal-id-12345",
+        rules: [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
+    }
+]) |> IO.inspect
+```
+
+**Note**: Instead of using VerifiedTransfer structs, you can also pass each element in map format
+
 ## Create boletos
 
 You can create boletos to charge customers or to receive money from accounts
@@ -1810,6 +1950,22 @@ payments = StarkBank.BrcodePayment.create!(
 ```
 
 **Note**: Instead of using BrcodePayment objects, you can also pass each payment element in dictionary format
+
+### Rules
+
+You can pass a list of `StarkBank.BrcodePayment.Rule` structs in the `:rules` field to modify a
+BrcodePayment's behavior (e.g. `resendingLimit`). Plain maps with `"key"`/`"value"` pairs are still
+accepted for backwards compatibility and are hydrated into `BrcodePayment.Rule` structs when the
+BrcodePayment comes back from the API.
+
+```elixir
+%StarkBank.BrcodePayment{
+  brcode: "00020101021226860014br.gov.bcb.pix...",
+  tax_id: "012.345.678-90",
+  description: "paying the bill",
+  rules: [%StarkBank.BrcodePayment.Rule{key: "resendingLimit", value: 5}]
+}
+```
 
 ## Get a BR Code payment
 
