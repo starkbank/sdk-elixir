@@ -31,6 +31,10 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - CorporateTransaction resource
 - CorporateInvoice resource
 - CorporateWithdrawal resource
+- MerchantSession resource
+- MerchantSession.Log sub-resource
+- MerchantSession.Purchase sub-resource
+- MerchantSession.AllowedInstallment sub-resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
