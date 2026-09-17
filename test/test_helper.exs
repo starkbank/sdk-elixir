@@ -28,6 +28,8 @@ ExUnit.start(
     # :corporate_transaction,
     # :corporate_invoice,
     # :corporate_withdrawal,
+    # :merchant_session,
+    # :merchant_session_log,
     # :brcode_payment,
     # :brcode_payment_log,
     # :transaction,
