@@ -38,6 +38,7 @@ is as easy as sending a text message to your client!
     - [MerchantCountries](#query-merchantcountries): Merchant countries accepted in CorporateRules
     - [CorporateBalance](#get-corporatebalance): Corporate Workspace balance
     - [CorporateHolders](#create-corporateholders): Manage cardholders that group Corporate Cards
+    - [CorporateCards](#create-corporatecards): Manage Corporate Cards issued to CorporateHolders
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -887,6 +888,77 @@ You can get a single log by its id.
 
 ```elixir
 log = StarkBank.CorporateHolder.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Create CorporateCards
+
+You can create CorporateCards to give your employees the ability to make purchases with a
+CorporateHolder's spending rules, or with rules of its own.
+
+```elixir
+card = StarkBank.CorporateCard.create!(
+  %StarkBank.CorporateCard{holder_id: "5155165527080960"},
+  expand: ["rules", "security_code", "number", "expiration"]
+) |> IO.inspect
+```
+
+**Note**: Instead of using a CorporateCard struct, you can also pass a map with the same fields
+
+## Query CorporateCards
+
+You can get a list of created CorporateCards given some filters.
+
+```elixir
+for card <- StarkBank.CorporateCard.query!(limit: 5) do
+  card |> IO.inspect
+end
+```
+
+## Get a CorporateCard
+
+Information on a CorporateCard may be retrieved by its id. Use the `:expand` option
+to retrieve the card's sensitive information together with it.
+
+```elixir
+card = StarkBank.CorporateCard.get!("5155165527080960", expand: ["number", "security_code", "expiration"])
+  |> IO.inspect
+```
+
+## Update a CorporateCard
+
+You can update a specific CorporateCard by its id.
+
+```elixir
+card = StarkBank.CorporateCard.update!("5155165527080960", status: "blocked")
+  |> IO.inspect
+```
+
+## Cancel a CorporateCard
+
+You can cancel a specific CorporateCard by its id.
+
+```elixir
+card = StarkBank.CorporateCard.cancel!("5155165527080960")
+  |> IO.inspect
+```
+
+## Query CorporateCard logs
+
+Logs are pretty important to understand the life cycle of a CorporateCard.
+
+```elixir
+logs = StarkBank.CorporateCard.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a CorporateCard log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporateCard.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 
