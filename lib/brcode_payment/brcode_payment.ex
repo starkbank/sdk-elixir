@@ -5,6 +5,7 @@ defmodule StarkBank.BrcodePayment do
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
+  alias StarkBank.BrcodePayment.Rule
 
   @moduledoc """
   Groups BrcodePayment related functions
@@ -27,7 +28,7 @@ defmodule StarkBank.BrcodePayment do
   ## Parameters (optional):
     - `:scheduled` [Date, DateTime or string, default now]: payment scheduled date or datetime. ex: "2020-12-13T18:36:18.219000+00:00"
     - `:tags` [list of strings]: list of strings for tagging.
-    - `:rules` [list of maps, default nil]: list of maps for modifying BrcodePayment behavior.
+    - `:rules` [list of BrcodePayment.Rule structs or maps, default nil]: list of BrcodePayment.Rule structs for modifying payment behavior. Passing plain maps (e.g. `%{"key" => "resendingLimit", "value" => 5}`) is still accepted for backwards compatibility; they are hydrated into BrcodePayment.Rule structs on the way back from the API. ex: [%StarkBank.BrcodePayment.Rule{key: "resendingLimit", value: 5}]
 
   ## Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when payment is created. ex: "5656565656565656"
@@ -289,7 +290,7 @@ defmodule StarkBank.BrcodePayment do
       amount: json[:amount],
       scheduled: json[:scheduled] |> Check.datetime(),
       tags: json[:tags],
-      rules: json[:rules],
+      rules: json[:rules] |> Rule.parse_rules(),
       id: json[:id],
       name: json[:name],
       status: json[:status],

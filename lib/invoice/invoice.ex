@@ -6,6 +6,7 @@ defmodule StarkBank.Invoice do
   alias StarkBank.User.Organization
   alias StarkBank.Error
   alias StarkBank.Invoice.Payment
+  alias StarkBank.Invoice.Rule
 
   @moduledoc """
   Groups Invoice related functions
@@ -32,7 +33,7 @@ defmodule StarkBank.Invoice do
     - `:discounts` [list of up to 5 dictionaries, default nil]: list of dictionaries with "percentage":float and "due":string pairs
     - `:tags` [list of strings, default nil]: list of strings for tagging
     - `:descriptions` [list of up to 15 dictionaries, default nil]: list of dictionaries with "key":string and (optional) "value":string pairs
-    - `:rules` [list of maps, default nil]: list of maps for modifying Invoice behavior.
+    - `:rules` [list of Invoice.Rule structs or maps, default nil]: list of Invoice.Rule structs for modifying invoice behavior. Passing plain maps (e.g. `%{"key" => "allowedTaxIds", "value" => ["012.345.678-90"]}`) is still accepted for backwards compatibility; they are hydrated into Invoice.Rule structs on the way back from the API. ex: [%StarkBank.Invoice.Rule{key: "allowedTaxIds", value: ["012.345.678-90", "45.059.493/0001-73"]}]
     - `:splits` [list of maps, default nil]: list of maps to indicate the payment receivers when the Invoice amount is shared between different accounts.
 
   ## Attributes (return-only):
@@ -372,7 +373,7 @@ defmodule StarkBank.Invoice do
       discounts: json[:discounts] |> Enum.map(fn discount -> %{discount | "due" => discount["due"] |> Check.date_or_datetime()} end),
       tags: json[:tags],
       descriptions: json[:descriptions],
-      rules: json[:rules],
+      rules: json[:rules] |> Rule.parse_rules(),
       pdf: json[:pdf],
       link: json[:link],
       nominal_amount: json[:nominal_amount],

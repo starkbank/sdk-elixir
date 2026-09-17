@@ -5,6 +5,7 @@ defmodule StarkBank.Transfer do
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
+  alias StarkBank.Transfer.Rule
 
   @moduledoc """
   Groups Transfer related functions
@@ -30,7 +31,7 @@ defmodule StarkBank.Transfer do
     - `:scheduled` [Date, DateTime or string, default now]: date or datetime when the transfer will be processed. TED transfers scheduled for today are accepted until 16:00 (BRT) and pushed to the next business day afterwards; Pix transfers are available 24/7 and can be scheduled for any date and time. ex: ~U[2020-03-26 19:32:35.418698Z]
     - `:description` [string, default nil]: optional description to override default description to be shown in the bank statement. ex: "Payment for service #1234"
     - `:tags` [list of strings]: list of strings for reference when searching for transfers. ex: ["employees", "monthly"]
-    - `:rules` [list of maps, default nil]: list of maps for modifying Transfer behavior.
+    - `:rules` [list of Transfer.Rule structs or maps, default nil]: list of Transfer.Rule structs for modifying transfer behavior. Passing plain maps (e.g. `%{"key" => "resendingLimit", "value" => 5}`) is still accepted for backwards compatibility; they are hydrated into Transfer.Rule structs on the way back from the API. ex: [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
 
   Attributes (return-only):
     - `:id` [string, default nil]: unique id returned when Transfer is created. ex: "5656565656565656"
@@ -316,7 +317,7 @@ defmodule StarkBank.Transfer do
       external_id: json[:external_id],
       scheduled: json[:scheduled] |> Check.datetime(),
       description: json[:description],
-      rules: json[:rules],
+      rules: json[:rules] |> Rule.parse_rules(),
       transaction_ids: json[:transaction_ids],
       fee: json[:fee],
       tags: json[:tags],
