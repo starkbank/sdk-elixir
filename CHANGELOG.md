@@ -16,11 +16,21 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 ### Added
 - DynamicBrcode resource
 - Deposit.update() and Deposit.update!() methods
+- CardMethod resource
+- MerchantCategory resource
+- MerchantCountry resource
+- CorporateRule sub-resource
+- CorporateBalance resource
+- CorporateHolder resource
+- CorporateHolder.Log sub-resource
+- CorporateHolder.Permission sub-resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
 - Docstrings to carry the business rules stated by the API reference
 - Transfer, BrcodePayment and Invoice :rules field missing from the struct and resource_maker despite being documented
+- Nested structs inside list fields (CorporateHolder rules and permissions) now serialize instead of raising Protocol.UndefinedError
+- Rest.get_id forwards options other than :user as query parameters, so CorporateHolder.get expand: reaches the API
 
 ## [2.6.2] - 2021-11-10
 ### Changed

@@ -99,9 +99,12 @@ defmodule StarkBank.Utils.Rest do
   end
 
   def get_id({resource_name, resource_maker}, id, options) do
-    user = options[:user]
-
-    case Request.fetch(:get, "#{API.endpoint(resource_name)}/#{id}", user: user) do
+    case Request.fetch(
+      :get,
+      "#{API.endpoint(resource_name)}/#{id}",
+      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      user: options[:user]
+    ) do
       {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
       {:error, errors} -> {:error, errors}
     end
