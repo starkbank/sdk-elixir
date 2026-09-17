@@ -38,6 +38,8 @@ is as easy as sending a text message to your client!
     - [MerchantCountries](#query-merchantcountries): Merchant countries accepted in CorporateRules
     - [CorporateBalance](#get-corporatebalance): Corporate Workspace balance
     - [CorporateHolders](#create-corporateholders): Manage cardholders that group Corporate Cards
+    - [CorporateCards](#create-corporatecards): Manage Corporate Cards issued to CorporateHolders
+    - [CorporatePurchases](#query-corporatepurchases): Corporate Card purchases created by the sub-issuer
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -888,6 +890,142 @@ You can get a single log by its id.
 ```elixir
 log = StarkBank.CorporateHolder.Log.get!("6610264099127296")
 |> IO.inspect
+```
+
+## Create CorporateCards
+
+You can create CorporateCards to give your employees the ability to make purchases with a
+CorporateHolder's spending rules, or with rules of its own.
+
+```elixir
+card = StarkBank.CorporateCard.create!(
+  %StarkBank.CorporateCard{holder_id: "5155165527080960"},
+  expand: ["rules", "security_code", "number", "expiration"]
+) |> IO.inspect
+```
+
+**Note**: Instead of using a CorporateCard struct, you can also pass a map with the same fields
+
+## Query CorporateCards
+
+You can get a list of created CorporateCards given some filters.
+
+```elixir
+for card <- StarkBank.CorporateCard.query!(limit: 5) do
+  card |> IO.inspect
+end
+```
+
+## Get a CorporateCard
+
+Information on a CorporateCard may be retrieved by its id. Use the `:expand` option
+to retrieve the card's sensitive information together with it.
+
+```elixir
+card = StarkBank.CorporateCard.get!("5155165527080960", expand: ["number", "security_code", "expiration"])
+  |> IO.inspect
+```
+
+## Update a CorporateCard
+
+You can update a specific CorporateCard by its id.
+
+```elixir
+card = StarkBank.CorporateCard.update!("5155165527080960", status: "blocked")
+  |> IO.inspect
+```
+
+## Cancel a CorporateCard
+
+You can cancel a specific CorporateCard by its id.
+
+```elixir
+card = StarkBank.CorporateCard.cancel!("5155165527080960")
+  |> IO.inspect
+```
+
+## Query CorporateCard logs
+
+Logs are pretty important to understand the life cycle of a CorporateCard.
+
+```elixir
+logs = StarkBank.CorporateCard.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a CorporateCard log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporateCard.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Query CorporatePurchases
+
+You can get a list of created CorporatePurchases given some filters. CorporatePurchases are
+generated directly by the sub-issuer whenever a CorporateCard is used, so there is no `create`
+function for this resource.
+
+```elixir
+for purchase <- StarkBank.CorporatePurchase.query!(limit: 5) do
+  purchase |> IO.inspect
+end
+```
+
+## Get a CorporatePurchase
+
+Information on a CorporatePurchase may be retrieved by its id.
+
+```elixir
+purchase = StarkBank.CorporatePurchase.get!("5155165527080960")
+  |> IO.inspect
+```
+
+## Query CorporatePurchase logs
+
+Logs are pretty important to understand the life cycle of a CorporatePurchase.
+
+```elixir
+logs = StarkBank.CorporatePurchase.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a CorporatePurchase log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporatePurchase.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+
+## Process CorporatePurchase authorizations
+
+It's easy to process authorization requests that have arrived at your endpoint. Remember to pass the
+signature header so the SDK can make sure it's really StarkBank that has sent you the request.
+The `cache_pid` works exactly as in `StarkBank.Event.parse!`.
+
+```elixir
+request = listen()  # this is the function you made to get the authorization requests posted to your endpoint
+
+{purchase, cache_pid} = StarkBank.CorporatePurchase.parse!(
+  content: request.content,
+  signature: request.headers["Digital-Signature"]
+) |> IO.inspect
+```
+
+Answer the request with the authorization decision. The response body is what the API expects,
+so send it back as is:
+
+```elixir
+body = StarkBank.CorporatePurchase.response("approved")
+# or
+body = StarkBank.CorporatePurchase.response("denied", reason: "stolenCard", amount: 1000)
 ```
 
 ## Create boletos

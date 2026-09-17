@@ -208,6 +208,30 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
+  # Single-entity POST to a custom sub-path off the resource's own endpoint
+  # (no id in the path, unlike get_sub_resource/4) - e.g. CorporateCard.create
+  # posts to "corporate-card/token" and decodes the response under the
+  # resource's own key, not a distinct sub-resource key.
+  def post_single_to_sub_path({resource_name, resource_maker}, sub_path, entity, options) do
+    case Request.fetch(
+      :post,
+      "#{API.endpoint(resource_name)}/#{sub_path}",
+      payload: API.api_json(entity),
+      query: Enum.into(options, %{}) |> Map.delete(:user) |> API.cast_json_to_api_format(),
+      user: options[:user]
+    ) do
+      {:ok, response} -> {:ok, process_single_response(response, resource_name, resource_maker)}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def post_single_to_sub_path!({resource_name, resource_maker}, sub_path, entity, options) do
+    case post_single_to_sub_path({resource_name, resource_maker}, sub_path, entity, options) do
+      {:ok, entity} -> entity
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
   def get_sub_resource(resource_name, {sub_resource_name, sub_resource_maker}, id, options) do
     case Request.fetch(
       :get,
