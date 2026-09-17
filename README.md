@@ -1003,6 +1003,31 @@ log = StarkBank.CorporatePurchase.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 
+
+## Process CorporatePurchase authorizations
+
+It's easy to process authorization requests that have arrived at your endpoint. Remember to pass the
+signature header so the SDK can make sure it's really StarkBank that has sent you the request.
+The `cache_pid` works exactly as in `StarkBank.Event.parse!`.
+
+```elixir
+request = listen()  # this is the function you made to get the authorization requests posted to your endpoint
+
+{purchase, cache_pid} = StarkBank.CorporatePurchase.parse!(
+  content: request.content,
+  signature: request.headers["Digital-Signature"]
+) |> IO.inspect
+```
+
+Answer the request with the authorization decision. The response body is what the API expects,
+so send it back as is:
+
+```elixir
+body = StarkBank.CorporatePurchase.response("approved")
+# or
+body = StarkBank.CorporatePurchase.response("denied", reason: "stolenCard", amount: 1000)
+```
+
 ## Create boletos
 
 You can create boletos to charge customers or to receive money from accounts
