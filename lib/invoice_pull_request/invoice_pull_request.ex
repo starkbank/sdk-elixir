@@ -1,0 +1,277 @@
+defmodule StarkBank.InvoicePullRequest do
+  alias __MODULE__, as: InvoicePullRequest
+  alias StarkBank.Utils.Rest
+  alias StarkBank.Utils.Check
+  alias StarkBank.User.Project
+  alias StarkBank.User.Organization
+  alias StarkBank.Error
+
+  @moduledoc """
+  Groups InvoicePullRequest related functions
+  """
+
+  @doc """
+  When you initialize an InvoicePullRequest struct, the entity will not be automatically
+  sent to the Stark Bank API. The 'create' function sends the structs
+  to the Stark Bank API and returns the list of created structs.
+
+  ## Parameters (required):
+    - `:subscription_id` [string]: unique id of the InvoicePullSubscription related to the invoice. ex: "5656565656565656"
+    - `:invoice_id` [string]: id of the invoice previously created to be sent for payment. ex: "5656565656565656"
+    - `:due` [DateTime, Date or string]: payment scheduled date in UTC ISO format. ex: "2023-10-28T17:59:26.249976+00:00"
+
+  ## Parameters (optional):
+    - `:attempt_type` [string, default "default"]: attempt type for the payment. Options: "default", "retry"
+    - `:tags` [list of strings, default []]: list of strings for tagging
+    - `:external_id` [string, default nil]: a string that must be unique among all your InvoicePullRequests. Duplicated external_ids will cause failures. ex: "my-external-id"
+    - `:display_description` [string, default nil]: description to be shown to the payer. ex: "Payment for services"
+
+  ## Attributes (return-only):
+    - `:id` [string, default nil]: unique id returned when InvoicePullRequest is created. ex: "5656565656565656"
+    - `:status` [string, default nil]: current InvoicePullRequest status. ex: "pending", "scheduled", "success", "failed", "canceled"
+    - `:installment_id` [string, default nil]: unique id of the installment related to this request. ex: "5656565656565656"
+    - `:created` [DateTime, default nil]: creation datetime for the InvoicePullRequest. ex: ~U[2020-03-10 10:30:00.000000Z]
+    - `:updated` [DateTime, default nil]: latest update datetime for the InvoicePullRequest. ex: ~U[2020-03-10 10:30:00.000000Z]
+  """
+  @enforce_keys [:subscription_id, :invoice_id, :due]
+  defstruct [
+    :subscription_id,
+    :invoice_id,
+    :due,
+    :attempt_type,
+    :tags,
+    :external_id,
+    :display_description,
+    :id,
+    :status,
+    :installment_id,
+    :created,
+    :updated
+  ]
+
+  @type t() :: %__MODULE__{}
+
+  @doc """
+  Send a list of InvoicePullRequest structs for creation in the Stark Bank API
+
+  ## Parameters (required):
+    - `requests` [list of InvoicePullRequest structs]: list of InvoicePullRequest structs to be created in the API
+
+  ## Options:
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of InvoicePullRequest structs with updated attributes
+  """
+  @spec create([InvoicePullRequest.t() | map], user: Project.t() | Organization.t() | nil) ::
+          {:ok, [InvoicePullRequest.t()]} | {:error, [Error.t()]}
+  def create(requests, options \\ []) do
+    Rest.post(resource(), requests, options)
+  end
+
+  @doc """
+  Same as create(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec create!([InvoicePullRequest.t() | map], user: Project.t() | Organization.t() | nil) ::
+          [InvoicePullRequest.t()]
+  def create!(requests, options \\ []) do
+    Rest.post!(resource(), requests, options)
+  end
+
+  @doc """
+  Receive a single InvoicePullRequest struct previously created in the Stark Bank API by passing its id
+
+  ## Parameters (required):
+    - `id` [string]: struct unique id. ex: "5656565656565656"
+
+  ## Options:
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - InvoicePullRequest struct with updated attributes
+  """
+  @spec get(binary, user: Project.t() | Organization.t() | nil) ::
+          {:ok, InvoicePullRequest.t()} | {:error, [%Error{}]}
+  def get(id, options \\ []) do
+    Rest.get_id(resource(), id, options)
+  end
+
+  @doc """
+  Same as get(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec get!(binary, user: Project.t() | Organization.t() | nil) :: InvoicePullRequest.t()
+  def get!(id, options \\ []) do
+    Rest.get_id!(resource(), id, options)
+  end
+
+  @doc """
+  Receive a stream of InvoicePullRequest structs previously created in the Stark Bank API
+
+  ## Options:
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:status` [list of strings, default nil]: filter for status of retrieved structs. ex: ["success", "failed"]
+    - `:invoice_ids` [list of strings, default nil]: list of Invoice ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:subscription_ids` [list of strings, default nil]: list of InvoicePullSubscription ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:external_ids` [list of strings, default nil]: list of external_ids to filter retrieved structs. ex: ["my-external-id-1", "my-external-id-2"]
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - stream of InvoicePullRequest structs with updated attributes
+  """
+  @spec query(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: [binary],
+          invoice_ids: [binary],
+          subscription_ids: [binary],
+          external_ids: [binary],
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+        ) ::
+          ({:cont, {:ok, [InvoicePullRequest.t()]}}
+           | {:error, [Error.t()]}
+           | {:halt, any}
+           | {:suspend, any},
+           any ->
+             any)
+  def query(options \\ []) do
+    Rest.get_list(resource(), options)
+  end
+
+  @doc """
+  Same as query(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec query!(
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: [binary],
+          invoice_ids: [binary],
+          subscription_ids: [binary],
+          external_ids: [binary],
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+        ) ::
+          ({:cont, [InvoicePullRequest.t()]} | {:halt, any} | {:suspend, any}, any -> any)
+  def query!(options \\ []) do
+    Rest.get_list!(resource(), options)
+  end
+
+  @doc """
+  Receive a list of up to 100 InvoicePullRequest structs previously created in the Stark Bank API and the cursor to the next page.
+  Use this function instead of query if you want to manually page your requests.
+
+  ## Options:
+    - `:cursor` [string, default nil]: cursor returned on the previous page function call
+    - `:limit` [integer, default nil]: maximum number of structs to be retrieved. Unlimited if nil. ex: 35
+    - `:after` [Date or string, default nil]: date filter for structs created only after specified date. ex: ~D[2020-03-25]
+    - `:before` [Date or string, default nil]: date filter for structs created only before specified date. ex: ~D[2020-03-25]
+    - `:status` [list of strings, default nil]: filter for status of retrieved structs. ex: ["success", "failed"]
+    - `:invoice_ids` [list of strings, default nil]: list of Invoice ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:subscription_ids` [list of strings, default nil]: list of InvoicePullSubscription ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:external_ids` [list of strings, default nil]: list of external_ids to filter retrieved structs. ex: ["my-external-id-1", "my-external-id-2"]
+    - `:tags` [list of strings, default nil]: tags to filter retrieved structs. ex: ["tony", "stark"]
+    - `:ids` [list of strings, default nil]: list of ids to filter retrieved structs. ex: ["5656565656565656", "4545454545454545"]
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - list of InvoicePullRequest structs with updated attributes and cursor to retrieve the next page of InvoicePullRequest objects
+  """
+  @spec page(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: [binary],
+          invoice_ids: [binary],
+          subscription_ids: [binary],
+          external_ids: [binary],
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+        ) ::
+          {:ok, {binary, [InvoicePullRequest.t()]}} | {:error, [%Error{}]}
+  def page(options \\ []) do
+    Rest.get_page(resource(), options)
+  end
+
+  @doc """
+  Same as page(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec page!(
+          cursor: binary,
+          limit: integer,
+          after: Date.t() | binary,
+          before: Date.t() | binary,
+          status: [binary],
+          invoice_ids: [binary],
+          subscription_ids: [binary],
+          external_ids: [binary],
+          tags: [binary],
+          ids: [binary],
+          user: Project.t() | Organization.t()
+        ) ::
+          [InvoicePullRequest.t()]
+  def page!(options \\ []) do
+    Rest.get_page!(resource(), options)
+  end
+
+  @doc """
+  Cancel an InvoicePullRequest entity previously created in the Stark Bank API
+
+  ## Parameters (required):
+    - `id` [string]: InvoicePullRequest unique id. ex: "5656565656565656"
+
+  ## Options:
+    - `:user` [Organization/Project, default nil]: Organization or Project struct returned from StarkBank.project(). Only necessary if default project or organization has not been set in configs.
+
+  ## Return:
+    - canceled InvoicePullRequest struct
+  """
+  @spec cancel(binary, user: Project.t() | Organization.t() | nil) ::
+          {:ok, InvoicePullRequest.t()} | {:error, [%Error{}]}
+  def cancel(id, options \\ []) do
+    Rest.delete_id(resource(), id, options)
+  end
+
+  @doc """
+  Same as cancel(), but it will unwrap the error tuple and raise in case of errors.
+  """
+  @spec cancel!(binary, user: Project.t() | Organization.t() | nil) :: InvoicePullRequest.t()
+  def cancel!(id, options \\ []) do
+    Rest.delete_id!(resource(), id, options)
+  end
+
+  @doc false
+  def resource() do
+    {
+      "InvoicePullRequest",
+      &resource_maker/1
+    }
+  end
+
+  @doc false
+  def resource_maker(json) do
+    %InvoicePullRequest{
+      subscription_id: json[:subscription_id],
+      invoice_id: json[:invoice_id],
+      due: json[:due] |> Check.date_or_datetime(),
+      attempt_type: json[:attempt_type],
+      tags: json[:tags],
+      external_id: json[:external_id],
+      display_description: json[:display_description],
+      id: json[:id],
+      status: json[:status],
+      installment_id: json[:installment_id],
+      created: json[:created] |> Check.datetime(),
+      updated: json[:updated] |> Check.datetime()
+    }
+  end
+end
