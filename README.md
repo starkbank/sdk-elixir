@@ -43,6 +43,7 @@ is as easy as sending a text message to your client!
     - [CorporateTransactions](#get-a-corporatetransaction): Corporate balance shifts
     - [CorporateInvoices](#create-corporateinvoices): Charge your Corporate balance
     - [CorporateWithdrawals](#create-corporatewithdrawals): Send money from your Corporate balance to your Banking balance
+    - [MerchantSessions](#create-merchantsessions): Create card-purchase sessions for your Merchant integration
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -1100,6 +1101,87 @@ Information on a CorporateWithdrawal may be retrieved by its id.
 
 ```elixir
 withdrawal = StarkBank.CorporateWithdrawal.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Create MerchantSessions
+
+You can create a MerchantSession to allow your Merchant integration to create a single card purchase.
+
+```elixir
+session = StarkBank.MerchantSession.create!(
+  %StarkBank.MerchantSession{
+    allowed_funding_types: ["debit", "credit"],
+    allowed_installments: [
+      %StarkBank.MerchantSession.AllowedInstallment{total_amount: 5000, count: 1},
+      %StarkBank.MerchantSession.AllowedInstallment{total_amount: 5500, count: 2}
+    ],
+    expiration: 3600,
+    challenge_mode: "disabled",
+    tags: ["yourTags"]
+  }
+) |> IO.inspect
+```
+
+**Note**: Instead of using a MerchantSession struct, you can also pass a map with the same fields.
+
+## Query MerchantSessions
+
+You can get a list of created MerchantSessions given some filters.
+
+```elixir
+for session <- StarkBank.MerchantSession.query!(limit: 10) do
+  session |> IO.inspect
+end
+```
+
+## Get a MerchantSession
+
+Information on a MerchantSession may be retrieved by its id.
+
+```elixir
+session = StarkBank.MerchantSession.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Create a MerchantSession Purchase
+
+Once you have a MerchantSession's uuid, you can create a MerchantSession.Purchase against it with the card
+and billing data collected from your buyer.
+
+```elixir
+purchase = StarkBank.MerchantSession.purchase!(
+  session.uuid,
+  %StarkBank.MerchantSession.Purchase{
+    amount: 6000,
+    installment_count: 12,
+    card_expiration: "2035-01",
+    card_number: "5277696455399733",
+    card_security_code: "123",
+    holder_name: "Holder Name",
+    funding_type: "credit"
+  }
+) |> IO.inspect
+```
+
+**Note**: Instead of using a MerchantSession.Purchase struct, you can also pass a map with the same fields.
+
+## Query MerchantSession logs
+
+You can get a list of created MerchantSession logs given some filters.
+
+```elixir
+for log <- StarkBank.MerchantSession.Log.query!(limit: 10) do
+  log |> IO.inspect
+end
+```
+
+## Get a MerchantSession log
+
+You can get a single MerchantSession log by its id.
+
+```elixir
+log = StarkBank.MerchantSession.Log.get!("5155165527080960")
 |> IO.inspect
 ```
 
