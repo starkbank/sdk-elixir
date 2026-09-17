@@ -274,7 +274,7 @@ defmodule StarkBank.MerchantSession do
     }
   end
 
-  defp parse_allowed_installments(nil), do: nil
+  defp parse_allowed_installments(nil), do: []
 
   defp parse_allowed_installments(allowed_installments) do
     Enum.map(allowed_installments, fn

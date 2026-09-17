@@ -5,6 +5,15 @@ defmodule StarkBankTest.MerchantSession do
   test "create merchant_session" do
     {:ok, session} = StarkBank.MerchantSession.create(example_merchant_session())
     assert !is_nil(session.id)
+    assert !is_nil(session.uuid)
+    assert !is_nil(session.status)
+    assert length(session.allowed_installments) == 2
+
+    Enum.each(session.allowed_installments, fn installment ->
+      assert %StarkBank.MerchantSession.AllowedInstallment{} = installment
+      assert !is_nil(installment.total_amount)
+      assert !is_nil(installment.count)
+    end)
   end
 
   @tag :merchant_session
@@ -42,13 +51,16 @@ defmodule StarkBankTest.MerchantSession do
   @tag :merchant_session
   test "get merchant_session" do
     session = StarkBank.MerchantSession.create!(example_merchant_session())
-    {:ok, _session} = StarkBank.MerchantSession.get(session.id)
+    {:ok, get_session} = StarkBank.MerchantSession.get(session.id)
+    assert get_session.id == session.id
+    assert get_session.uuid == session.uuid
   end
 
   @tag :merchant_session
   test "get! merchant_session" do
     session = StarkBank.MerchantSession.create!(example_merchant_session())
-    _session = StarkBank.MerchantSession.get!(session.id)
+    get_session = StarkBank.MerchantSession.get!(session.id)
+    assert get_session.id == session.id
   end
 
   @tag :merchant_session
@@ -57,6 +69,10 @@ defmodule StarkBankTest.MerchantSession do
 
     {:ok, purchase} = StarkBank.MerchantSession.purchase(session.uuid, example_merchant_session_purchase())
     assert !is_nil(purchase.id)
+    assert purchase.amount == 5000
+    assert purchase.installment_count == 1
+    assert !is_nil(purchase.status)
+    assert !is_nil(purchase.card_ending)
   end
 
   @tag :merchant_session
@@ -65,6 +81,8 @@ defmodule StarkBankTest.MerchantSession do
 
     purchase = StarkBank.MerchantSession.purchase!(session.uuid, example_merchant_session_purchase())
     assert !is_nil(purchase.id)
+    assert purchase.amount == 5000
+    assert !is_nil(purchase.status)
   end
 
   def example_merchant_session(challenge_mode \\ "disabled") do
@@ -81,9 +99,11 @@ defmodule StarkBankTest.MerchantSession do
   end
 
   def example_merchant_session_purchase() do
+    # amount and installment_count must match one of the session's allowed_installments,
+    # otherwise the API answers amountInstallmentCountMismatch
     %StarkBank.MerchantSession.Purchase{
-      amount: 6000,
-      installment_count: 12,
+      amount: 5000,
+      installment_count: 1,
       card_expiration: "2035-01",
       card_number: "5277696455399733",
       card_security_code: "123",
