@@ -6,7 +6,20 @@ defmodule StarkBankTest.Transfer do
     {:ok, transfers} = StarkBank.Transfer.create([example_transfer(true)])
     transfer = transfers |> hd
     assert !is_nil(transfer)
-    assert transfer.rules == [%{"key" => "resendingLimit", "value" => 5}]
+    assert transfer.rules == [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
+  end
+
+  @tag :transfer
+  test "create transfer with rules as Transfer.Rule structs" do
+    transfer_with_struct_rules = %{
+      example_transfer(false)
+      | rules: [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
+    }
+
+    {:ok, transfers} = StarkBank.Transfer.create([transfer_with_struct_rules])
+    transfer = transfers |> hd
+    assert !is_nil(transfer)
+    assert transfer.rules == [%StarkBank.Transfer.Rule{key: "resendingLimit", value: 5}]
   end
 
   @tag :transfer

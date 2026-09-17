@@ -5,6 +5,7 @@ defmodule StarkBank.DynamicBrcode do
   alias StarkBank.User.Project
   alias StarkBank.User.Organization
   alias StarkBank.Error
+  alias StarkBank.DynamicBrcode.Rule
 
   @moduledoc """
   Groups DynamicBrcode related functions
@@ -23,7 +24,7 @@ defmodule StarkBank.DynamicBrcode do
   ## Parameters (optional):
     - `:expiration` [integer, default 3600 (1 hour)]: time interval in seconds counted from creation until the brcode expires. After expiration, the brcode cannot be paid anymore.
     - `:display_description` [string, default nil]: description shown in the payer's bank interface. ex: "Payment for service #1234"
-    - `:rules` [list of maps, default nil]: list of maps for modifying DynamicBrcode behavior. Only the "allowedTaxIds" key is currently supported, and at most one rule is accepted.
+    - `:rules` [list of DynamicBrcode.Rule structs or maps, default nil]: list of DynamicBrcode.Rule structs for modifying brcode behavior. Only the "allowedTaxIds" key is currently supported, and at most one rule is accepted. Passing plain maps (e.g. `%{"key" => "allowedTaxIds", "value" => ["012.345.678-90"]}`) is still accepted for backwards compatibility; they are hydrated into DynamicBrcode.Rule structs on the way back from the API. ex: [%StarkBank.DynamicBrcode.Rule{key: "allowedTaxIds", value: ["012.345.678-90"]}]
     - `:tags` [list of strings, default nil]: list of strings for tagging. All tags will be converted to lowercase.
 
   Attributes (return-only):
@@ -218,7 +219,7 @@ defmodule StarkBank.DynamicBrcode do
       amount: json[:amount],
       expiration: json[:expiration],
       display_description: json[:display_description],
-      rules: json[:rules],
+      rules: json[:rules] |> Rule.parse_rules(),
       tags: json[:tags],
       id: json[:id],
       uuid: json[:uuid],
