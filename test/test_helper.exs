@@ -23,6 +23,8 @@ ExUnit.start(
     # :corporate_holder_log,
     # :corporate_card,
     # :corporate_card_log,
+    # :corporate_purchase,
+    # :corporate_purchase_log,
     # :brcode_payment,
     # :brcode_payment_log,
     # :transaction,

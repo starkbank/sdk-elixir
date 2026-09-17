@@ -39,6 +39,7 @@ is as easy as sending a text message to your client!
     - [CorporateBalance](#get-corporatebalance): Corporate Workspace balance
     - [CorporateHolders](#create-corporateholders): Manage cardholders that group Corporate Cards
     - [CorporateCards](#create-corporatecards): Manage Corporate Cards issued to CorporateHolders
+    - [CorporatePurchases](#query-corporatepurchases): Corporate Card purchases created by the sub-issuer
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -959,6 +960,46 @@ You can get a single log by its id.
 
 ```elixir
 log = StarkBank.CorporateCard.Log.get!("6610264099127296")
+|> IO.inspect
+```
+
+## Query CorporatePurchases
+
+You can get a list of created CorporatePurchases given some filters. CorporatePurchases are
+generated directly by the sub-issuer whenever a CorporateCard is used, so there is no `create`
+function for this resource.
+
+```elixir
+for purchase <- StarkBank.CorporatePurchase.query!(limit: 5) do
+  purchase |> IO.inspect
+end
+```
+
+## Get a CorporatePurchase
+
+Information on a CorporatePurchase may be retrieved by its id.
+
+```elixir
+purchase = StarkBank.CorporatePurchase.get!("5155165527080960")
+  |> IO.inspect
+```
+
+## Query CorporatePurchase logs
+
+Logs are pretty important to understand the life cycle of a CorporatePurchase.
+
+```elixir
+logs = StarkBank.CorporatePurchase.Log.query!(limit: 10)
+|> Enum.take(10)
+|> IO.inspect
+```
+
+## Get a CorporatePurchase log
+
+You can get a single log by its id.
+
+```elixir
+log = StarkBank.CorporatePurchase.Log.get!("6610264099127296")
 |> IO.inspect
 ```
 
