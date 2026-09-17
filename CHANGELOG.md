@@ -28,6 +28,9 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - CorporateCard.Log sub-resource
 - CorporatePurchase resource
 - CorporatePurchase.Log sub-resource
+- CorporateTransaction resource
+- CorporateInvoice resource
+- CorporateWithdrawal resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed

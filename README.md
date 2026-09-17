@@ -40,6 +40,9 @@ is as easy as sending a text message to your client!
     - [CorporateHolders](#create-corporateholders): Manage cardholders that group Corporate Cards
     - [CorporateCards](#create-corporatecards): Manage Corporate Cards issued to CorporateHolders
     - [CorporatePurchases](#query-corporatepurchases): Corporate Card purchases created by the sub-issuer
+    - [CorporateTransactions](#get-a-corporatetransaction): Corporate balance shifts
+    - [CorporateInvoices](#create-corporateinvoices): Charge your Corporate balance
+    - [CorporateWithdrawals](#create-corporatewithdrawals): Send money from your Corporate balance to your Banking balance
     - [Boletos](#create-boletos): Boleto receivables
     - [BoletoHolmes](#investigate-a-boleto): Boleto receivables investigator
     - [BrcodePayments](#pay-a-br-code): Pay Pix QR Codes
@@ -1026,6 +1029,78 @@ so send it back as is:
 body = StarkBank.CorporatePurchase.response("approved")
 # or
 body = StarkBank.CorporatePurchase.response("denied", reason: "stolenCard", amount: 1000)
+```
+
+## Query CorporateTransactions
+
+You can get a list of created CorporateTransactions given some filters.
+
+```elixir
+for transaction <- StarkBank.CorporateTransaction.query!(limit: 10) do
+  transaction |> IO.inspect
+end
+```
+
+## Get a CorporateTransaction
+
+The CorporateTransaction struct represents each balance shift resulting from Corporate operations.
+
+```elixir
+transaction = StarkBank.CorporateTransaction.get!("5155165527080960")
+|> IO.inspect
+```
+
+## Create CorporateInvoices
+
+You can create a CorporateInvoice to load your Corporate balance when it is paid.
+
+```elixir
+invoice = StarkBank.CorporateInvoice.create!(
+  %StarkBank.CorporateInvoice{amount: 1000}
+) |> IO.inspect
+```
+
+**Note**: Instead of using a CorporateInvoice struct, you can also pass a map with the same fields.
+
+## Query CorporateInvoices
+
+You can get a list of created CorporateInvoices given some filters.
+
+```elixir
+for invoice <- StarkBank.CorporateInvoice.query!(limit: 10) do
+  invoice |> IO.inspect
+end
+```
+
+## Create CorporateWithdrawals
+
+You can create a CorporateWithdrawal to send cash back from your Corporate balance to your Banking balance.
+
+```elixir
+withdrawal = StarkBank.CorporateWithdrawal.create!(
+  %StarkBank.CorporateWithdrawal{amount: 1000, external_id: "123"}
+) |> IO.inspect
+```
+
+**Note**: Instead of using a CorporateWithdrawal struct, you can also pass a map with the same fields.
+
+## Query CorporateWithdrawals
+
+You can get a list of created CorporateWithdrawals given some filters.
+
+```elixir
+for withdrawal <- StarkBank.CorporateWithdrawal.query!(limit: 10) do
+  withdrawal |> IO.inspect
+end
+```
+
+## Get a CorporateWithdrawal
+
+Information on a CorporateWithdrawal may be retrieved by its id.
+
+```elixir
+withdrawal = StarkBank.CorporateWithdrawal.get!("5155165527080960")
+|> IO.inspect
 ```
 
 ## Create boletos
