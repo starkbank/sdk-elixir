@@ -236,7 +236,7 @@ defmodule StarkBank.MerchantSession do
   @spec purchase(binary, Purchase.t() | map, user: Project.t() | Organization.t() | nil) ::
           {:ok, Purchase.t()} | {:error, [%Error{}]}
   def purchase(uuid, purchase, options \\ []) do
-    Rest.post_sub_resource(resource() |> elem(0), Purchase.resource(), uuid, purchase, options |> Enum.into(%{}))
+    Rest.post_sub_resource(resource() |> elem(0), Purchase.resource(), uuid, purchase, options)
   end
 
   @doc """
@@ -244,7 +244,7 @@ defmodule StarkBank.MerchantSession do
   """
   @spec purchase!(binary, Purchase.t() | map, user: Project.t() | Organization.t() | nil) :: Purchase.t()
   def purchase!(uuid, purchase, options \\ []) do
-    Rest.post_sub_resource!(resource() |> elem(0), Purchase.resource(), uuid, purchase, options |> Enum.into(%{}))
+    Rest.post_sub_resource!(resource() |> elem(0), Purchase.resource(), uuid, purchase, options)
   end
 
   @doc false
