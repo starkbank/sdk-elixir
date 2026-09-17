@@ -152,6 +152,30 @@ defmodule StarkBank.Utils.Rest do
     end
   end
 
+  # Same batch shape as post/3 (a list of entities under the plural key,
+  # a list back), but PUT - the API's create-or-update-if-exists verb,
+  # e.g. SplitProfile.put.
+  def put({resource_name, resource_maker}, entities, options) do
+    user = options[:user]
+
+    case Request.fetch(
+      :put,
+      "#{API.endpoint(resource_name)}",
+      payload: prepare_payload(resource_name, entities),
+      user: user
+    ) do
+      {:ok, response} -> {:ok, process_response(resource_name, resource_maker, response)}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def put!({resource_name, resource_maker}, entities, options) do
+    case put({resource_name, resource_maker}, entities, options) do
+      {:ok, entities} -> entities
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
+  end
+
   def post_single({resource_name, resource_maker}, entity, options) do
     user = options[:user]
 

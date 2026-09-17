@@ -41,6 +41,12 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - MerchantInstallment.Log sub-resource
 - MerchantPurchase resource
 - MerchantPurchase.Log sub-resource
+- SplitReceiver resource
+- SplitReceiver.Log sub-resource
+- Split resource
+- Split.Log sub-resource
+- SplitProfile resource
+- SplitProfile.Log sub-resource
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed
