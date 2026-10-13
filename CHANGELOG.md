@@ -58,6 +58,8 @@ Given a version number MAJOR.MINOR.PATCH, increment:
 - VerifiedAccount resource
 - VerifiedAccount.Log sub-resource
 - VerifiedTransfer resource
+### Deprecated
+- MerchantSession.purchase function, since card data must be sent directly from the front-end to the Stark Bank API
 ### Removed
 - deprecated BrcodePreview resource
 ### Fixed

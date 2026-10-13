@@ -1203,27 +1203,9 @@ session = StarkBank.MerchantSession.get!("5155165527080960")
 |> IO.inspect
 ```
 
-## Create a MerchantSession Purchase
+With the MerchantSession's UUID, your front-end must send the card data directly to the Stark Bank API through the `POST /v2/merchant-session/:uuid/purchase` route, so that sensitive card data never passes through the back-end of your integration.
 
-Once you have a MerchantSession's uuid, you can create a MerchantSession.Purchase against it with the card
-and billing data collected from your buyer.
-
-```elixir
-purchase = StarkBank.MerchantSession.purchase!(
-  session.uuid,
-  %StarkBank.MerchantSession.Purchase{
-    amount: 6000,
-    installment_count: 12,
-    card_expiration: "2035-01",
-    card_number: "5277696455399733",
-    card_security_code: "123",
-    holder_name: "Holder Name",
-    funding_type: "credit"
-  }
-) |> IO.inspect
-```
-
-**Note**: Instead of using a MerchantSession.Purchase struct, you can also pass a map with the same fields.
+**Note**: `StarkBank.MerchantSession.purchase` is deprecated since v2.7.0 and returns an error when called.
 
 ## Query MerchantSession logs
 

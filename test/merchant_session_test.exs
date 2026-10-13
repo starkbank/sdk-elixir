@@ -63,26 +63,23 @@ defmodule StarkBankTest.MerchantSession do
     assert get_session.id == session.id
   end
 
-  @tag :merchant_session
-  test "purchase merchant_session" do
-    session = StarkBank.MerchantSession.create!(example_merchant_session("disabled"))
+  @tag :merchant_session_deprecated
+  test "purchase merchant_session is deprecated" do
+    {:error, [error]} =
+      StarkBank.MerchantSession.purchase("0bb894a2697d41d99fe02cad2c00c9bc", example_merchant_session_purchase())
 
-    {:ok, purchase} = StarkBank.MerchantSession.purchase(session.uuid, example_merchant_session_purchase())
-    assert !is_nil(purchase.id)
-    assert purchase.amount == 5000
-    assert purchase.installment_count == 1
-    assert !is_nil(purchase.status)
-    assert !is_nil(purchase.card_ending)
+    assert error.code == "deprecated"
+    assert error.message == "Function deprecated since v2.7.0"
   end
 
-  @tag :merchant_session
-  test "purchase! merchant_session" do
-    session = StarkBank.MerchantSession.create!(example_merchant_session("disabled"))
+  @tag :merchant_session_deprecated
+  test "purchase! merchant_session is deprecated" do
+    error =
+      assert_raise RuntimeError, fn ->
+        StarkBank.MerchantSession.purchase!("0bb894a2697d41d99fe02cad2c00c9bc", example_merchant_session_purchase())
+      end
 
-    purchase = StarkBank.MerchantSession.purchase!(session.uuid, example_merchant_session_purchase())
-    assert !is_nil(purchase.id)
-    assert purchase.amount == 5000
-    assert !is_nil(purchase.status)
+    assert error.message =~ "Function deprecated since v2.7.0"
   end
 
   def example_merchant_session(challenge_mode \\ "disabled") do

@@ -216,6 +216,10 @@ defmodule StarkBank.MerchantSession do
   end
 
   @doc """
+  Deprecated since v2.7.0: card data must be sent directly from the front-end to the Stark Bank API
+  through the POST /v2/merchant-session/:uuid/purchase route. This function makes no request and
+  always returns an error.
+
   Send a MerchantSession.Purchase struct linked to a previously created MerchantSession, identified by its uuid,
   for creation in the Stark Bank API. Depending on the MerchantSession's allowed_funding_types and 3DS
   configuration, the billing and card holder fields on the MerchantSession.Purchase (card_expiration,
@@ -233,18 +237,22 @@ defmodule StarkBank.MerchantSession do
   ## Return:
     - MerchantSession.Purchase struct with updated attributes
   """
+  @deprecated "Function deprecated since v2.7.0"
   @spec purchase(binary, Purchase.t() | map, user: Project.t() | Organization.t() | nil) ::
           {:ok, Purchase.t()} | {:error, [%Error{}]}
-  def purchase(uuid, purchase, options \\ []) do
-    Rest.post_sub_resource(resource() |> elem(0), Purchase.resource(), uuid, purchase, options)
+  def purchase(_uuid, _purchase, _options \\ []) do
+    {:error, [%Error{code: "deprecated", message: "Function deprecated since v2.7.0"}]}
   end
 
   @doc """
-  Same as purchase(), but it will unwrap the error tuple and raise in case of errors.
+  Deprecated since v2.7.0. Same as purchase(), but it will unwrap the error tuple and raise in case of errors.
   """
+  @deprecated "Function deprecated since v2.7.0"
   @spec purchase!(binary, Purchase.t() | map, user: Project.t() | Organization.t() | nil) :: Purchase.t()
   def purchase!(uuid, purchase, options \\ []) do
-    Rest.post_sub_resource!(resource() |> elem(0), Purchase.resource(), uuid, purchase, options)
+    case purchase(uuid, purchase, options) do
+      {:error, errors} -> raise API.errors_to_string(errors)
+    end
   end
 
   @doc false
